@@ -1,0 +1,21 @@
+{
+  "name": "HTTPMonitor",
+  "description": "HTTP communication visualizer",
+  "version": "0.4.2",
+  "homepage" : "",
+  "engines": {
+    "node": ">= 0.6.6"
+  },
+  "dependencies": {
+    "dryice": ">= 0.4.4",
+    "shelljs": ">= 0.0.2"
+  },
+  "author": "Jan Odvarko <odvarko@gmail.com>",
+  "repository" : {
+    "type" : "git",
+     "url" : "git://github.com/janodvarko/httpmonitor.git"
+  },
+  "licenses": [
+    { "type": "BSD", "url": "http://opensource.org/licenses/BSD-3-Clause" }
+  ]
+}
