@@ -4,7 +4,6 @@ define([
     "lib/object",
     "firebug",
     "lib/domplate",
-    "chrome/reps",
     "lib/events",
     "net/requestObserver",
     "lib/http",
@@ -23,7 +22,7 @@ define([
     "net/netPanel",
     "console/errors"
 ],
-function(Obj, Firebug, Domplate, FirebugReps, Events, HttpRequestObserver,
+function(Obj, Firebug, Domplate, Events, HttpRequestObserver,
     Http, Css, Dom, Win, System, Str, Url, Arr, Debug, NetHttpActivityObserver, NetUtils,
     TraceListener, TraceModule) {
 
@@ -867,10 +866,10 @@ Firebug.Spy.XHR = domplate(Firebug.Rep,
                         ),
                         TD({"class": "spyCol"},
                             SPAN({"class": "spyTime"})
-                        ),
+                        )/*,
                         TD({"class": "spyCol"},
                             TAG(FirebugReps.SourceLink.tag, {object: "$object.sourceLink"})
-                        )
+                        )*/
                     )
                 )
             )

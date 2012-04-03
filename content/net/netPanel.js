@@ -25,9 +25,6 @@ define([
     "net/svgViewer",
     "net/jsonViewer",
     "net/fontViewer",
-    "css/cssPanel",
-    "chrome/searchBox",
-    "console/errors",
     "net/netMonitor",
     "net/netReps"
 ],

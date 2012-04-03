@@ -14,8 +14,6 @@ define([
     "dom/toggleBranch",
     "lib/array",
     "lib/system",
-    "dom/domPanel",
-    "chrome/reps"
 ],
 function(Obj, Firebug, Domplate, Locale, Events, Css, Dom, Http, Str, Json,
     ToggleBranch, Arr, System) {

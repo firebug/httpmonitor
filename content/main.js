@@ -16,7 +16,8 @@ config.baseUrl = "resource://httpmonitor/content";
 
 // Load application
 require(config, [
-    "net/netMonitor"
+    "net/netMonitor",
+    "net/netPanel"
 ],
 function() {
 

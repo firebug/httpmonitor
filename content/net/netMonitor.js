@@ -417,7 +417,7 @@ var NetHttpObserver =
         {
             var browser = Firefox.getBrowserForWindow(win);
 
-            if (!Firebug.TabWatcher.shouldCreateContext(browser, name, null))
+            //if (!Firebug.TabWatcher.shouldCreateContext(browser, name, null))
             {
                 if (FBTrace.DBG_NET)
                     FBTrace.sysout("net.onModifyRequest; Activation logic says don't create " +
