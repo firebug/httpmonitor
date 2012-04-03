@@ -10,7 +10,7 @@
     screenX="10" screenY="10"
     persist="screenX screenY width height sizemode">
 
-    <script type="application/x-javascript" src="require.js"/>
+    <script type="application/x-javascript" src="mini-require.js"/>
     <script type="application/x-javascript" src="main.js"/>
 
     <commandset id="mainCommandSet">
