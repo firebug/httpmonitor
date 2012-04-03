@@ -1,49 +1,42 @@
 /* See license.txt for terms of usage */
 
+(function() {
 // ********************************************************************************************* //
-// Tracing
-
-/**
- * Import FBTrace global into this scope. Use for logging: FBTrace.sysout("hello");
- */
-Components.utils.import("resource://httpmonitor/modules/fbtrace.js");
-
-// ********************************************************************************************* //
-// Application Initialization
 
 var config = {};
 config.baseUrl = "resource://httpmonitor/content";
 
-// Load application
+/**
+ * Load application
+ */
 require(config, [
-    "net/netMonitor",
-    "net/netPanel"
+    "app/httpMonitor",
+    "lib/trace"
 ],
-function() {
+function(HttpMonitor, FBTrace) {
 
 // ********************************************************************************************* //
 
-FBTrace.sysout("httpMonitor; Loaded ");
+// This is the only application global (within monitor.xul window)
+top.HttpMonitor = HttpMonitor;
 
-// ********************************************************************************************* //
-
-top.HttpMonitor =
+function initialize()
 {
-    startMonitor: function()
-    {
-        
-    },
-
-    stopMonitor: function()
-    {
-        
-    },
-
-    onContextShowing: function()
-    {
-        
-    }
+    window.removeEventListener("load", initialize, false);
+    HttpMonitor.initialize(this);
 }
 
+function shutdown()
+{
+    window.removeEventListener("unload", shutdown, false);
+    HttpMonitor.shutdown();
+}
+
+// Register window listeners so, we can manage application life-time.
+window.addEventListener("load", initialize, false);
+window.addEventListener("unload", shutdown, false);
+
+FBTrace.sysout("httpMonitor; Initialized");
+
 // ********************************************************************************************* //
-});
+})})();

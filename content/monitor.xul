@@ -15,18 +15,16 @@
 
     <commandset id="mainCommandSet">
         <command id="cmd_startMonitor" oncommand="HttpMonitor.startMonitor()"/>
-        <command id="cmd_stopMonitor" oncommand="gFindBar.stopMonitor();"/>
+        <command id="cmd_stopMonitor" oncommand="HttpMonitor.stopMonitor();"/>
     </commandset>
 
     <!-- Toolbar -->
     <toolbox id="monitorToolbox">
         <toolbar id="monitorToolbar" align="center">
-            <toolbarbutton id="startMonitor"
-                label="Start" class="toolbar-image-button"
-                command="cmd_startMonitor"/>
-            <toolbarbutton id="findConsole"
-                label="Stop" class="toolbar-image-button"
-                command="cmd_stopMonitor"/>
+            <toolbarbutton id="currentTab" type="menu">
+                <menupopup onpopupshowing="return HttpMonitor.onTabListMenuShowing(this);"
+                    onpopuphidden="HttpMonitor.onTabListMenuHidden(this)"/>
+            </toolbarbutton>
         </toolbar>
     </toolbox>
 
