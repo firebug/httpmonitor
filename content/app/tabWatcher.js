@@ -49,16 +49,14 @@ TabWatcher.prototype =
     {
         NetMonitor.destroyContext(this.context);
 
-        this.context.destroy();
+        this.context.destroy(this.persistedState);
         this.context = null;
     },
 
     getContextByWindow: function(win)
     {
-        if (!this.context)
-            return null;
-
-        return this.context.window == win ? this.context : null;
+        return this.context;
+        //return (this.context && this.context.window == win) ? this.context : null;
     }
 }
 

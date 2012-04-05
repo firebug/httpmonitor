@@ -71,7 +71,7 @@ TabContext.prototype =
         this.netPanel = this.createNetPanel(doc);
     },
 
-    destroy: function()
+    destroy: function(state)
     {
         // All existing timeouts need to be cleared
         if (this.timeouts)

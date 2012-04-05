@@ -11,9 +11,10 @@ define([
     "lib/domplate",
     "lib/options",
     "lib/events",
-    "lib/dom"
+    "lib/dom",
+    "lib/array"
 ],
-function(FBTrace, Css, Obj, Domplate, Options, Events, Dom) {
+function(FBTrace, Css, Obj, Domplate, Options, Events, Dom, Arr) {
 
 // ********************************************************************************************* //
 // Constants

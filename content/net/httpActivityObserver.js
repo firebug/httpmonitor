@@ -165,14 +165,20 @@ var NetHttpActivityObserver =
         var context = HttpMonitor.tabWatcher.context;
         var tabId = Win.getWindowProxyIdForWindow(win);
         if (!(tabId && win))
+        {
+            FBTrace.sysout("no tab");
             return;
+        }
 
         var networkContext = Firebug.NetMonitor.contexts[tabId];
         if (!networkContext)
             networkContext = context ? context.netProgress : null;
 
         if (!networkContext)
+        {
+            FBTrace.sysout("no network context");
             return;
+        }
 
         var time = new Date();
         time.setTime(timestamp/1000);

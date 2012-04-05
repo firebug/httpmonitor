@@ -304,8 +304,9 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
 
     updateMaxLimit: function()
     {
-        var value = Options.get("net.logLimit");
-        this.maxQueueRequests = value ? value : this.maxQueueRequests;
+        //xxxHonza
+        //var value = Options.get("net.logLimit");
+        //this.maxQueueRequests = value ? value : this.maxQueueRequests;
     },
 
     addTimeStamp: function(context, time, label, color)
@@ -378,6 +379,11 @@ var NetHttpObserver =
             // xxxHonza
             //var context = Firebug.connection.getContextByWindow(win);
             var context = HttpMonitor.tabWatcher.getContextByWindow(win);
+            if (!context)
+            {
+                FBTrace.sysout("DO no watch this request");
+                return;
+            }
 
             // The context doesn't have to exist yet. In such cases a temp Net context is
             // created within onModifyRequest.
@@ -431,12 +437,13 @@ var NetHttpObserver =
             // Create a new network context prematurely.
             if (!Firebug.NetMonitor.contexts[tabId])
             {
-                Firebug.NetMonitor.contexts[tabId] = createNetProgress(null);
+                //monitorContext(context);
+                //Firebug.NetMonitor.contexts[tabId] = createNetProgress(context);
 
                 // OK, we definitelly want to watch this page load, temp context is created
                 // so, make sure the activity-observer is registered and we have detailed
                 // timing info for this first document request.
-                NetHttpActivityObserver.registerObserver();
+                //NetHttpActivityObserver.registerObserver();
 
                 if (FBTrace.DBG_NET)
                     FBTrace.sysout("net.onModifyRequest; Temp Context created (" +
@@ -569,7 +576,7 @@ function monitorContext(context)
     }
 
     // Register activity-distributor observer if available (#488270)
-    //NetHttpActivityObserver.registerObserver();
+    NetHttpActivityObserver.registerObserver();
 
     context.netProgress = networkContext;
 
@@ -586,6 +593,8 @@ function monitorContext(context)
         panel.insertActivationMessage();
 
     updateStartButton(true);
+
+    return networkContext;
 }
 
 function unmonitorContext(context)
@@ -605,7 +614,7 @@ function unmonitorContext(context)
     if (panel)
         panel.updateLayout();
 
-    //NetHttpActivityObserver.unregisterObserver();
+    NetHttpActivityObserver.unregisterObserver();
 
     // Remove cache listener. Safe to call multiple times.
     netProgress.cacheListener.unregister();

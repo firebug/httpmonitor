@@ -273,8 +273,6 @@ var Options =
     {
         var prefName = prefDomain + "." + name;
 
-        FBTrace.sysout("options.setPref; " + prefName);
-
         var type = this.getPreferenceTypeByExample((prefType ? prefType : typeof(value)));
         if (!this.setPreference(prefName, value, type, prefs))
             return;
