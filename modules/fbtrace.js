@@ -31,4 +31,12 @@ catch (err)
 
 var FBTrace = scope.traceConsoleService.getTracer("extensions.firebug");
 
+// xxxHonza
+//FBTrace.DBG_NET = true;
+//FBTrace.DBG_INITIALIZE = true;
+//FBTrace.DBG_NET_EVENTS = true;
+FBTrace.DBG_ERRORS = true;
+//FBTrace.DBG_ACTIVITYOBSERVER = true;
+//FBTrace.DBG_HTTPOBSERVER = true;
+
 // ********************************************************************************************* //
