@@ -2563,6 +2563,17 @@ Firebug.Migrator =
 
 }
 
+// xxxHonza:
+Firebug.chrome =
+{
+    $: function(id)
+    {
+        return top.document.getElementById(id);
+    }
+}
+
+Firebug.netFilterCategory = "all";
+
 return Firebug;
 
 // ********************************************************************************************* //

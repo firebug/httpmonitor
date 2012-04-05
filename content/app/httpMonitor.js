@@ -6,8 +6,11 @@ define([
     "chrome/window",
     "chrome/menu",
     "net/netMonitor",
+    "lib/array",
+    "lib/css",
+    "lib/locale",
 ],
-function(FBTrace, TabWatcher, Win, Menu, NetMonitor) {
+function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale) {
 
 // ********************************************************************************************* //
 // Constants
@@ -32,6 +35,8 @@ var HttpMonitor =
         this.updateLabel();
 
         this.tabWatcher = new TabWatcher(this.getPanelDocument());
+
+        this.internationalizeUI(win.document);
 
         // Initialize NetMonitor module.
         NetMonitor.initialize();
@@ -117,6 +122,35 @@ var HttpMonitor =
     {
         var browser = this.win.document.getElementById("content");
         return browser.contentDocument;
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Localization
+
+    /**
+     * Substitute strings in the UI, with fall back to en-US
+     */
+    internationalizeUI: function(doc)
+    {
+        if (!doc)
+            return;
+
+        if (FBTrace.DBG_INITIALIZE)
+            FBTrace.sysout("Firebug.internationalizeUI");
+
+        var elements = doc.getElementsByClassName("fbInternational");
+        elements = Arr.cloneArray(elements);
+        var attributes = ["label", "tooltiptext", "aria-label"];
+        for (var i=0; i<elements.length; i++)
+        {
+            var element = elements[i];
+            Css.removeClass(elements[i], "fbInternational");
+            for (var j=0; j<attributes.length; j++)
+            {
+                if (element.hasAttribute(attributes[j]))
+                    Locale.internationalize(element, attributes[j]);
+            }
+        }
     },
 }
 

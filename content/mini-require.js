@@ -12,13 +12,8 @@ var require, define;
 
 var Cu = Components.utils;
 
-var scope = {};
-
-Cu.import("resource://gre/modules/Services.jsm", scope);
-Cu.import("resource://httpmonitor/modules/fbtrace.js", scope);
-
-var Services = scope.Services;
-var FBTrace = scope.FBTrace;
+Cu.import("resource://gre/modules/Services.jsm");
+var FBTrace = Cu.import("resource://httpmonitor/modules/fbtrace.js").FBTrace;
 
 // ********************************************************************************************* //
 // Module Loader implementation

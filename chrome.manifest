@@ -1,2 +1,3 @@
 content httpmonitor content/
 skin    httpmonitor classic/1.0 skin/classic/
+locale  httpmonitor en-US       locale/en-US/

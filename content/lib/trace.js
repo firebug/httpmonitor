@@ -5,9 +5,7 @@ define([], function() {
 //********************************************************************************************* //
 // Constants
 
-var scope = {};
-Components.utils.import("resource://httpmonitor/modules/fbtrace.js", scope);
-return scope.FBTrace;
+return Components.utils.import("resource://httpmonitor/modules/fbtrace.js").FBTrace;
 
 // ********************************************************************************************* //
 });
