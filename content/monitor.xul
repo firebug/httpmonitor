@@ -16,6 +16,8 @@
     <commandset id="mainCommandSet">
         <command id="cmd_startMonitor" oncommand="HttpMonitor.startMonitor()"/>
         <command id="cmd_stopMonitor" oncommand="HttpMonitor.stopMonitor();"/>
+
+        <command id="cmd_clearNet" oncommand="Firebug.NetMonitor.clear(Firebug.currentContext)"/>
     </commandset>
 
     <!-- Toolbar -->

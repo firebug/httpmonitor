@@ -37,6 +37,9 @@ TabWatcher.prototype =
         this.context = new TabContext(tab, this.persistedState);
         this.context.create(this.panelDoc);
 
+        // xxxHonza, hack
+        Firebug.currentContext = this.context;
+
         NetMonitor.initContext(this.context);
         NetMonitor.loadedContext(this.context);
         NetMonitor.showContext(this.context);

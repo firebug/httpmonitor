@@ -1,6 +1,7 @@
 /* See license.txt for terms of usage */
 
 define([
+    "lib/trace",
     "firebug",
     "lib/locale",
     "lib/events",
@@ -11,7 +12,7 @@ define([
     "lib/string",
     "lib/xml"
 ],
-function(Firebug, Locale, Events, Url, Firefox, Xpcom, Http, Str, Xml) {
+function(FBTrace, Firebug, Locale, Events, Url, Firefox, Xpcom, Http, Str, Xml) {
 
 // ********************************************************************************************* //
 // Constants

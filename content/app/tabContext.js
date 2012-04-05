@@ -103,11 +103,7 @@ TabContext.prototype =
         }
 
         // Destroy all panels in this context.
-        for (var panelName in this.panelMap)
-        {
-            var panelType = Firebug.getPanelType(panelName);
-            this.destroyPanel(panelType, state);
-        }
+        this.destroyNetPanel(state)
 
         if (FBTrace.DBG_INITIALIZE)
             FBTrace.sysout("tabContext.destroy " + this.getName() + " set state ", state);
