@@ -20,3 +20,6 @@
 # Manually installed node packages should be ignored
 /node_modules/
 /.externalToolBuilders
+
+# Extensions
+httpmonitor@getfirebug.com
