@@ -1,6 +1,7 @@
 /* See license.txt for terms of usage */
 
 define([
+    "lib/trace",
     "lib/object",
     "firebug",
     "chrome/firefox",
@@ -27,7 +28,7 @@ define([
     "net/fontViewer",
     "net/netMonitor"
 ],
-function(Obj, Firebug, Firefox, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Search, Str,
+function(FBTrace, Obj, Firebug, Firefox, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Search, Str,
     Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http) {
 
 with (Domplate) {

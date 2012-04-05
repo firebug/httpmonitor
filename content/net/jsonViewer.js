@@ -1,6 +1,7 @@
 /* See license.txt for terms of usage */
 
 define([
+    "lib/trace",
     "lib/object",
     "firebug",
     "lib/domplate",
@@ -15,7 +16,7 @@ define([
     "lib/array",
     "lib/system",
 ],
-function(Obj, Firebug, Domplate, Locale, Events, Css, Dom, Http, Str, Json,
+function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Http, Str, Json,
     ToggleBranch, Arr, System) {
 
 // ********************************************************************************************* //
