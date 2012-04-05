@@ -1,6 +1,7 @@
 /* See license.txt for terms of usage */
 
 define([
+    "lib/trace",
     "lib/object",
     "firebug",
     "chrome/firefox",
@@ -28,7 +29,7 @@ define([
     "net/netMonitor",
     "net/netReps"
 ],
-function(Obj, Firebug, Firefox, Domplate, Xpcom, Locale,
+function(FBTrace, Obj, Firebug, Firefox, Domplate, Xpcom, Locale,
     Events, Options, Url, Http, Css, Dom, Win, Search, Str,
     Arr, System, Menu, NetUtils, NetProgress) {
 
@@ -85,7 +86,8 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         Events.addEventListener(this.panelNode, "contextmenu", this.onContextMenu, false);
 
         this.onResizer = Obj.bind(this.onResize, this);
-        this.resizeEventTarget = Firebug.chrome.$('fbContentBox');
+        this.resizeEventTarget = Firebug.chrome.$('content');
+
         Events.addEventListener(this.resizeEventTarget, "resize", this.onResizer, true);
 
         Firebug.ActivablePanel.initializeNode.apply(this, arguments);
@@ -1391,17 +1393,18 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         if (!hrefLabel)
             return;
 
-        if (!Firebug.currentContext)
+        // xxxHonza
+        /*if (!Firebug.currentContext)
         {
             if (FBTrace.DBG_ERRORS)
                 FBTrace.sysout("net.updateHRefLabelWidth; Firebug.currentContext == NULL");
             return;
-        }
+        }*/
 
         var maxWidth = netHrefCol.clientWidth;
 
         // This call must precede all getCSSStyleRules calls  FIXME not needed after 3.6
-        Firebug.CSSModule.cleanupSheets(hrefLabel.ownerDocument, this.context);
+        //Firebug.CSSModule.cleanupSheets(hrefLabel.ownerDocument, this.context);
         var rules = Dom.domUtils.getCSSStyleRules(hrefLabel);
         for (var i = 0; i < rules.Count(); ++i)
         {
@@ -1625,7 +1628,7 @@ Firebug.NetMonitor.BrowserCache =
 
 Firebug.registerPanel(NetPanel);
 
-return Firebug.NetMonitor;
+return NetPanel;
 
 // ********************************************************************************************* //
 }});

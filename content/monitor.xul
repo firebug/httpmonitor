@@ -28,7 +28,7 @@
 
             <toolbarseparator/>
 
-            <hbox id="fbNetButtons" class="noTabStop">
+            <hbox id="fbNetButtons" collapsed="true" class="noTabStop">
                 <toolbarseparator class="fbPanelSpecificButtonsSeparator"/>
                 <toolbarbutton id="fbNetClear" label="firebug.Clear"
                     class="toolbar-text-button fbInternational"

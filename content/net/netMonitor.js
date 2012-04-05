@@ -368,15 +368,16 @@ var NetHttpObserver =
             if (FBTrace.DBG_NET_EVENTS)
             {
                 FBTrace.sysout("net.events.observe " + (topic ? topic.toUpperCase() : topic) +
-                    ", " + ((subject instanceof Ci.nsIRequest) ? Http.safeGetRequestName(subject) : "") +
-                    ", Browser: " + Firebug.chrome.window.document.title);
+                    ", " + ((subject instanceof Ci.nsIRequest) ? Http.safeGetRequestName(subject) : ""));
             }
 
             if (!(subject instanceof Ci.nsIHttpChannel))
                 return;
 
             var win = Http.getWindowForRequest(subject);
-            var context = Firebug.connection.getContextByWindow(win);
+            // xxxHonza
+            //var context = Firebug.connection.getContextByWindow(win);
+            var context = HttpMonitor.tabWatcher.getContextByWindow(win);
 
             // The context doesn't have to exist yet. In such cases a temp Net context is
             // created within onModifyRequest.
@@ -620,7 +621,8 @@ function unmonitorContext(context)
 
 function updateStartButton(enabled)
 {
-    if (FBTrace.DBG_NET)
+    // xxxHonza
+/*    if (FBTrace.DBG_NET)
         FBTrace.sysout("net.updateStartButton; update start button, enabled: " + enabled);
 
     var firebugStatus = Firefox.getElementById("firebugStatus");
@@ -635,7 +637,7 @@ function updateStartButton(enabled)
     if (Firebug.StartButton)
         Firebug.StartButton.resetTooltip();
     else
-        FBTrace.sysout("net.updateStartButton; ERROR No Firebug.StartButton ?");
+        FBTrace.sysout("net.updateStartButton; ERROR No Firebug.StartButton ?");*/
 }
 
 function createNetProgress(context)

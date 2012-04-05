@@ -1,6 +1,7 @@
 /* See license.txt for terms of usage */
 
 define([
+    "lib/trace",
     "lib/object",
     "firebug",
     "lib/locale",
@@ -14,7 +15,7 @@ define([
     "lib/system",
     "net/netUtils"
 ],
-function(Obj, Firebug, Locale, Events, Url, Http, Css, Win, Str,
+function(FBTrace, Obj, Firebug, Locale, Events, Url, Http, Css, Win, Str,
     Arr, System, NetUtils) {
 
 // ********************************************************************************************* //

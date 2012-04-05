@@ -160,7 +160,9 @@ var NetHttpActivityObserver =
                 return;
         }
 
-        var context = Firebug.connection.getContextByWindow(win);
+        //var context = Firebug.connection.getContextByWindow(win);
+        // xxxHonza
+        var context = HttpMonitor.tabWatcher.context;
         var tabId = Win.getWindowProxyIdForWindow(win);
         if (!(tabId && win))
             return;

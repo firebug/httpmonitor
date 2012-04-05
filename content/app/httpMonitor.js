@@ -9,8 +9,9 @@ define([
     "lib/array",
     "lib/css",
     "lib/locale",
+    "lib/events",
 ],
-function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale) {
+function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events) {
 
 // ********************************************************************************************* //
 // Constants
@@ -38,9 +39,9 @@ var HttpMonitor =
 
         this.internationalizeUI(win.document);
 
-        // Initialize NetMonitor module.
-        NetMonitor.initialize();
-        NetMonitor.initializeUI();
+        // Initialize module.
+        Events.dispatch(Firebug.modules, "initialize", []);
+        Events.dispatch(Firebug.modules, "initializeUI", []);
     },
 
     destroy: function()
@@ -114,8 +115,17 @@ var HttpMonitor =
         if (!this.currentTab)
             return;
 
-        // Start watching the new tab (the previsous one, if any, is unwatched automatically).
-        this.tabWatcher.watchTab(tab);
+        try
+        {
+            // Start watching the new tab (the previsous one, if any, is unwatched automatically).
+            this.tabWatcher.watchTab(tab);
+        }
+        catch (e)
+        {
+            FBTrace.sysout("httpMonitor.onSelectTab; EXCEPTION " + e, e);
+        }
+
+        FBTrace.sysout("httpMonitor.onSelectTab; " + this.tabWatcher.context.getName());
     },
 
     getPanelDocument: function()

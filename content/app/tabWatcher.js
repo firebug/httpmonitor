@@ -3,8 +3,9 @@
 define([
     "lib/trace",
     "app/tabContext",
+    "net/netMonitor",
 ],
-function(FBTrace, TabContext) {
+function(FBTrace, TabContext, NetMonitor) {
 
 // ********************************************************************************************* //
 // Constants
@@ -33,8 +34,8 @@ TabWatcher.prototype =
 
         // Start HTTP activity of the selected tab/window. The context object represents
         // a container for all data collected by the Net panel.
-        var win = tab.linkedBrowser._contentWindow;
-        this.context = new TabContext(win, this.win, this.panelDoc, this.persistedState);
+        this.context = new TabContext(tab, this.persistedState);
+        this.context.create(this.panelDoc);
 
         NetMonitor.initContext(this.context);
         NetMonitor.loadedContext(this.context);
@@ -48,6 +49,14 @@ TabWatcher.prototype =
         this.context.destroy();
         this.context = null;
     },
+
+    getContextByWindow: function(win)
+    {
+        if (!this.context)
+            return null;
+
+        return this.context.window == win ? this.context : null;
+    }
 }
 
 // ********************************************************************************************* //

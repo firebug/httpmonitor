@@ -8,26 +8,15 @@ define([
     "lib/trace",
     "lib/css",
     "lib/object",
-    "lib/domplate"
+    "lib/domplate",
+    "lib/options",
+    "lib/events",
+    "lib/dom"
 ],
-function(FBTrace, Css, Obj, Domplate) {
+function(FBTrace, Css, Obj, Domplate, Options, Events, Dom) {
 
 // ********************************************************************************************* //
 // Constants
-
-var Options =
-{
-    addListener: function() {},
-    removeListener: function() {},
-    register: function() {},
-    shutdown: function() {},
-    getPref: function() {},
-    setPref: function() {},
-    clearPref: function() {},
-    set: function() {},
-    get: function() {},
-    resetAllOptions: function() {},
-} 
 
 var modules = [];
 var activeContexts = [];
@@ -2238,12 +2227,14 @@ Firebug.ActivableModule = Obj.extend(Firebug.Module,
 
     isEnabled: function()
     {
-        return this.hasObservers();
+        return true;
+        //return this.hasObservers();
     },
 
     isAlwaysEnabled: function()
     {
-        return this.hasObservers();
+        return true;
+        //return this.hasObservers();
     }
 });
 
@@ -2569,7 +2560,10 @@ Firebug.chrome =
     $: function(id)
     {
         return top.document.getElementById(id);
-    }
+    },
+
+    setGlobalAttribute: function() {},
+    getGlobalAttribute: function() {},
 }
 
 Firebug.netFilterCategory = "all";

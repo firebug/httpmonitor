@@ -20,13 +20,11 @@ const nsIPrefService = Ci.nsIPrefService;
 const prefService = PrefService.getService(nsIPrefService);
 const prefs = PrefService.getService(nsIPrefBranch2);
 
-const getPref = Components.utils.import("resource://firebug/loader.js", {}).FirebugLoader.getPref; 
-
 const prefNames =  // XXXjjb TODO distribute to modules
 [
     // Global
     "defaultPanelName", "throttleMessages", "textSize", "showInfoTips",
-    "commandEditor", "textWrapWidth", "framePosition", "showErrorCount",
+    "commandEditor", "textWrapWidth", "openInWindow", "showErrorCount",
     "activateSameOrigin", "allPagesActivation", "hiddenPanels",
     "panelTabMinWidth", "sourceLinkLabelWidth", "currentVersion",
     "useDefaultLocale", "toolbarCustomizationDone", "addonBarOpened",
@@ -45,7 +43,7 @@ const prefNames =  // XXXjjb TODO distribute to modules
 
     // HTML
     "showFullTextNodes", "showCommentNodes",
-    "showTextNodesWithWhitespace", "entityDisplay",
+    "showTextNodesWithWhitespace", "showTextNodesWithEntities",
     "highlightMutations", "expandMutations", "scrollToMutations", "shadeBoxModel",
     "showQuickInfoBox", "displayedAttributeValueLimit", "multiHighlightLimit",
 
@@ -58,12 +56,11 @@ const prefNames =  // XXXjjb TODO distribute to modules
     "cssEditMode",
 
     // Script
-    "decompileEvals", "replaceTabs", "maxScriptLineLength",
+    "decompileEvals", "replaceTabs",
 
     // DOM
     "showUserProps", "showUserFuncs", "showDOMProps", "showDOMFuncs", "showDOMConstants",
     "ObjectShortIteratorMax", "showEnumerableProperties", "showOwnProperties",
-    "showInlineEventHandlers",
 
     // Layout
     "showRulers",
@@ -82,7 +79,7 @@ const prefNames =  // XXXjjb TODO distribute to modules
 
     "showStackTrace", // Console
     "filterSystemURLs", // Stack
-    "breakOnErrors",  "trackThrowCatch" // Script
+    "showAllSourceFiles", "breakOnErrors",  "trackThrowCatch" // Script
 ];
 
 var optionUpdateMap = {};
@@ -114,6 +111,7 @@ var Options =
 
     shutdown: function()
     {
+        prefService.savePrefFile(null);
         prefs.removeObserver(this.prefDomain, this, false);
     },
 
@@ -237,7 +235,26 @@ var Options =
         return Options.getPref(this.prefDomain, name);
     },
 
-    getPref: getPref,
+    getPref: function(prefDomain, name)
+    {
+        var prefName = prefDomain + "." + name;
+
+        var type = prefs.getPrefType(prefName);
+
+        var value;
+        if (type == nsIPrefBranch.PREF_STRING)
+            value = prefs.getCharPref(prefName);
+        else if (type == nsIPrefBranch.PREF_INT)
+            value = prefs.getIntPref(prefName);
+        else if (type == nsIPrefBranch.PREF_BOOL)
+            value = prefs.getBoolPref(prefName);
+
+        if (FBTrace.DBG_OPTIONS)
+            FBTrace.sysout("options.getPref "+prefName+" has type "+
+                this.getPreferenceTypeName(type)+" and value "+value);
+
+        return value;
+    },
 
     set: function(name, value)
     {
@@ -256,9 +273,29 @@ var Options =
     {
         var prefName = prefDomain + "." + name;
 
+        FBTrace.sysout("options.setPref; " + prefName);
+
         var type = this.getPreferenceTypeByExample((prefType ? prefType : typeof(value)));
         if (!this.setPreference(prefName, value, type, prefs))
             return;
+
+        setTimeout(function delaySavePrefs()
+        {
+            try
+            {
+                if (FBTrace.DBG_OPTIONS)
+                    FBTrace.sysout("options.delaySavePrefs type="+type+" name="+prefName+
+                        " value="+value);
+
+                prefs.savePrefFile(null);
+            }
+            catch (e)
+            {
+                if (FBTrace.DBG_ERRORS)
+                    FBTrace.sysout("options.delaySavePrefs; EXCEPTION type="+type+
+                        " name="+prefName+ " value="+value+": " + e, e);
+            }
+        });
 
         if (FBTrace.DBG_OPTIONS)
             FBTrace.sysout("options.setPref type="+type+" name="+prefName+" value="+value);
@@ -364,29 +401,31 @@ var Options =
     /**
      * Resets all Firebug options to default state. Note that every option
      * starting with "extensions.firebug" is considered as a Firebug option.
-     *
-     * Options starting with DBG_ are intended for Firebug Tracing Console (FBTrace)
-     * and ignored (their state is not changed).
      */
     resetAllOptions: function()
     {
         var preferences = prefs.getChildList("extensions.firebug", {});
         for (var i = 0; i < preferences.length; i++)
         {
-            if (preferences[i].indexOf("DBG_") == -1)
+            if (preferences[i].indexOf("DBG_") == -1 &&
+                preferences[i].indexOf("filterSystemURLs") == -1)
             {
                 if (FBTrace.DBG_OPTIONS)
-                    FBTrace.sysout("Clearing option: " + i + ") " + preferences[i]);
-
+                    FBTrace.sysout("Clearing option: "+i+") "+preferences[i]);
                 if (prefs.prefHasUserValue(preferences[i]))  // avoid exception
                     prefs.clearUserPref(preferences[i]);
             }
             else
             {
                 if (FBTrace.DBG_OPTIONS)
-                    FBTrace.sysout("Skipped clearing option: " + i + ") " + preferences[i]);
+                    FBTrace.sysout("Skipped clearing option: "+i+") "+preferences[i]);
             }
         }
+
+        Firebug.TabWatcher.iterateContexts( function clearBPs(context)
+        {
+            Firebug.Debugger.clearAllBreakpoints(context);
+        });
     },
 };
 

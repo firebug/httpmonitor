@@ -5,8 +5,10 @@ define([
     "net/netPanel",
     "chrome/window",
     "lib/url",
+    "js/tabCache",
+    "lib/object",
 ],
-function(FBTrace, NetPanel, Win, Url) {
+function(FBTrace, NetPanel, Win, Url, TabCache, Obj) {
 
 // ********************************************************************************************* //
 // Constants
@@ -14,16 +16,18 @@ function(FBTrace, NetPanel, Win, Url) {
 // ********************************************************************************************* //
 // Implementation
 
-function TabContext(win, browser, panelDoc, persistedState)
+function TabContext(tab, persistedState)
 {
-    this.window = win;
-    this.browsere = browser;
-    this.panelDoc = panelDoc;
+    this.uid = Obj.getUniqueId();
+
+    this.tab = tab;
+    this.window = tab.linkedBrowser.contentWindow;
+    this.browser = tab.linkedBrowser;
     this.persistedState = persistedState;
 
     this.windows = [];
     this.name = Url.normalizeURL(this.getWindowLocation().toString());
-    this.sourceCache = new SourceCache(this);
+    this.sourceCache = new TabCache(this);
 }
 
 TabContext.prototype = 
@@ -120,13 +124,14 @@ TabContext.prototype =
         if (this.netPanel)
             return this.netPanel;
 
-        return this.createNetPanel();
+        return null;
     },
 
-    createNetPanel: function()
+    createNetPanel: function(doc)
     {
         var panel = new NetPanel();
-        panel.initialize(this, this.panelDoc);
+        panel.initialize(this, doc);
+        panel.show(this.persistedState);
         return panel;
     },
 
@@ -210,6 +215,71 @@ TabContext.prototype =
         if (this.intervals)
             delete this.intervals[timeout];
     },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Event Listeners
+
+    addEventListener: function(parent, eventId, listener, capturing)
+    {
+        if (!this.listeners)
+            this.listeners = [];
+
+        for (var i=0; i<this.listeners.length; i++)
+        {
+            var l = this.listeners[i];
+            if (l.parent == parent && l.eventId == eventId && l.listener == listener &&
+                l.capturing == capturing)
+            {
+                // Listener already registered!
+                return;
+            }
+        }
+
+        parent.addEventListener(eventId, listener, capturing);
+
+        this.listeners.push({
+            parent: parent,
+            eventId: eventId,
+            listener: listener,
+            capturing: capturing,
+        });
+    },
+
+    removeEventListener: function(parent, eventId, listener, capturing)
+    {
+        parent.removeEventListener(eventId, listener, capturing);
+
+        if (!this.listeners)
+            this.listeners = [];
+
+        for (var i=0; i<this.listeners.length; i++)
+        {
+            var l = this.listeners[i];
+            if (l.parent == parent && l.eventId == eventId && l.listener == listener &&
+                l.capturing == capturing)
+            {
+                this.listeners.splice(i, 1);
+                break;
+            }
+        }
+    },
+
+    /**
+     * Executed by the framework when the context is about to be destroyed.
+     */
+    unregisterAllListeners: function()
+    {
+        if (!this.listeners)
+            return;
+
+        for (var i=0; i<this.listeners.length; i++)
+        {
+            var l = this.listeners[i];
+            l.parent.removeEventListener(l.eventId, l.listener, l.capturing);
+        }
+
+        this.listeners = null;
+    }
 }
 
 // ********************************************************************************************* //
