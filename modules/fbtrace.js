@@ -6,23 +6,29 @@
 var EXPORTED_SYMBOLS = ["FBTrace"];
 
 // ********************************************************************************************* //
-// Service implementation
+// Firebug Trace - FBTrace
+
+var scope = {};
 
 try
 {
-    var scope = {};
     Components.utils["import"]("resource://fbtrace/firebug-trace-service.js", scope);
-    var FBTrace = scope.traceConsoleService.getTracer("extensions.firebug");
 }
 catch (err)
 {
-    var FBTrace =
+    scope.traceConsoleService =
     {
-        sysout: function(message)
+        getTracer: function(prefDomain)
         {
-            dump(message + "\n");
+            var TraceAPI = ["dump", "sysout", "setScope", "matchesNode", "time", "timeEnd"];
+            var TraceObj = {};
+            for (var i=0; i<TraceAPI.length; i++)
+                TraceObj[TraceAPI[i]] = function() {};
+            return TraceObj;
         }
     };
 }
+
+var FBTrace = scope.traceConsoleService.getTracer("extensions.firebug");
 
 // ********************************************************************************************* //
