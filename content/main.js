@@ -10,26 +10,46 @@ config.baseUrl = "resource://httpmonitor/content";
  * Load application
  */
 require(config, [
+    "lib/trace",
     "app/httpMonitor",
-    "lib/trace"
+    "firebug"
 ],
-function(HttpMonitor, FBTrace) {
+function(FBTrace, HttpMonitor, Firebug) {
 
 // ********************************************************************************************* //
 
 // This is the only application global (within monitor.xul window)
 top.HttpMonitor = HttpMonitor;
 
+/**
+ * Maintain application life-cycle.
+ */
 function initialize()
 {
     window.removeEventListener("load", initialize, false);
-    HttpMonitor.initialize(this);
+
+    try
+    {
+        HttpMonitor.initialize(this);
+    }
+    catch (e)
+    {
+        FBTrace.sysout("main.initialize; EXCEPTION " + e, e);
+    }
 }
 
 function shutdown()
 {
     window.removeEventListener("unload", shutdown, false);
-    HttpMonitor.shutdown();
+
+    try
+    {
+        HttpMonitor.shutdown();
+    }
+    catch (e)
+    {
+        FBTrace.sysout("main.shutdown; EXCEPTION " + e, e);
+    }
 }
 
 // Register window listeners so, we can manage application life-time.

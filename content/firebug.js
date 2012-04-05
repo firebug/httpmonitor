@@ -5,11 +5,42 @@
  * So, be careful before you create a new dependency.
  */
 define([
+    "lib/trace",
+    "lib/css",
+    "lib/object",
+    "lib/domplate"
 ],
-function() {
+function(FBTrace, Css, Obj, Domplate) {
 
 // ********************************************************************************************* //
 // Constants
+
+var Options =
+{
+    addListener: function() {},
+    removeListener: function() {},
+    register: function() {},
+    shutdown: function() {},
+    getPref: function() {},
+    setPref: function() {},
+    clearPref: function() {},
+    set: function() {},
+    get: function() {},
+    resetAllOptions: function() {},
+} 
+
+var modules = [];
+var activeContexts = [];
+var activableModules = [];
+var panelTypes = [];
+var earlyRegPanelTypes = []; // See Firebug.registerPanelType for more info
+var reps = [];
+var defaultRep = null;
+var defaultFuncRep = null;
+var menuItemControllers = [];
+var panelTypeMap = {};
+
+// ********************************************************************************************* //
 
 /**
  * @class Represents the main Firebug application object. An instance of this object is
@@ -1494,7 +1525,7 @@ Firebug.Panel = Obj.extend(new Firebug.Listener(),
 
         // Update panel's tab in case the break-on-next (BON) is active.
         var shouldBreak = this.shouldBreakOnNext();
-        Firebug.Breakpoint.updatePanelTab(this, shouldBreak);
+        //Firebug.Breakpoint.updatePanelTab(this, shouldBreak);
 
         if (FBTrace.DBG_INITIALIZE)
             FBTrace.sysout("firebug.initialize panelNode for " + this.name);

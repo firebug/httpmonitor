@@ -5,8 +5,9 @@ define([
     "app/tabWatcher",
     "chrome/window",
     "chrome/menu",
+    "net/netMonitor",
 ],
-function(FBTrace, TabWatcher, Win, Menu) {
+function(FBTrace, TabWatcher, Win, Menu, NetMonitor) {
 
 // ********************************************************************************************* //
 // Constants
@@ -17,6 +18,9 @@ const Ci = Components.interfaces;
 // ********************************************************************************************* //
 // Implementation
 
+/**
+ * HttpMonitor represents the main application object.
+ */
 var HttpMonitor = 
 {
     initialize: function(win)
@@ -26,10 +30,17 @@ var HttpMonitor =
 
         // Update current tab label.
         this.updateLabel();
+
+        this.tabWatcher = new TabWatcher(this.getPanelDocument());
+
+        // Initialize NetMonitor module.
+        NetMonitor.initialize();
+        NetMonitor.initializeUI();
     },
 
     destroy: function()
     {
+        NetMonitor.shutdown();
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -37,7 +48,7 @@ var HttpMonitor =
 
     onContextShowing: function()
     {
-        
+        // xxxHonza: Net panel context menu.
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -54,7 +65,7 @@ var HttpMonitor =
             });
         });
 
-        // Populate the menu with entries.
+        // Populate the popup menu with entries (list of tab titles).
         for (var i=0; i<tabs.length; ++i)
         {
             var tab = tabs[i];
@@ -68,7 +79,7 @@ var HttpMonitor =
             Menu.createMenuItem(popup, item);
         }
 
-        // Show the menu.
+        // Yep, show the menu.
         return true;
     },
 
@@ -89,14 +100,24 @@ var HttpMonitor =
 
     onSelectTab: function(tab)
     {
+        if (this.currentTab == tab)
+            return;
+
         this.currentTab = tab;
         this.updateLabel();
+
+        if (!this.currentTab)
+            return;
+
+        // Start watching the new tab (the previsous one, if any, is unwatched automatically).
+        this.tabWatcher.watchTab(tab);
     },
 
-    getCurrentWindow: function()
+    getPanelDocument: function()
     {
-        return this.currentTab ? this.currentTab.linkedBrowser._contentWindow : null;
-    }
+        var browser = this.win.document.getElementById("content");
+        return browser.contentDocument;
+    },
 }
 
 // ********************************************************************************************* //

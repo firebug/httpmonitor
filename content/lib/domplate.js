@@ -1105,7 +1105,8 @@ function defineTags()
     for (var i = 0; i < arguments.length; ++i)
     {
         var tagName = arguments[i];
-        var fn = new Function("var newTag = new Domplate.DomplateTag('"+tagName+"'); return newTag.merge(arguments);");
+        var fn = new Function("var newTag = new Domplate.DomplateTag('"+tagName+
+            "'); return newTag.merge(arguments);");
 
         var fnName = tagName.toUpperCase();
         Domplate[fnName] = fn;
@@ -1113,10 +1114,15 @@ function defineTags()
 }
 
 defineTags(
-    "a", "button", "br", "canvas", "col", "colgroup", "div", "fieldset", "form", "h1", "h2", "h3", "hr",
-     "img", "input", "label", "legend", "li", "ol", "optgroup", "option", "p", "pre", "select",
-    "span", "strong", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "tr", "tt", "ul", "code",
-    "iframe", "canvas"
+    "a", "button", "br", "canvas", "col", "colgroup", "div", "fieldset", "form", "h1", "h2",
+    "h3", "hr", "img", "input", "label", "legend", "li", "ol", "optgroup", "option", "p",
+    "pre", "select", "b", "span", "strong", "table", "tbody", "td", "textarea", "tfoot", "th",
+    "thead", "tr", "tt", "ul", "iframe", "code", "style",
+
+    // HTML5
+    "article", "aside", "audio", "bb", "canvas", "command", "datagrid", "datalist", "details",
+    "dialog", "embed", "eventsource", "figure", "footer", "keygen", "mark", "meter", "nav",
+    "output", "progress", "ruby", "rp", "rt", "section", "source", "time", "video"
 );
 
 }).apply(Domplate);

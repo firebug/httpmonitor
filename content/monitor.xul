@@ -35,6 +35,7 @@
 
     <!-- The rest of the UI is HTML/Domplate -->
     <vbox flex="1">
-        <browser flex="1" src="chrome://httpmonitor/content/monitor.html" disablehistory="true" />
+        <browser id="content" flex="1" src="chrome://httpmonitor/content/monitor.html"
+            disablehistory="true" />
     </vbox>
 </window>

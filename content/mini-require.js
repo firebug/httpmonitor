@@ -12,7 +12,13 @@ var require, define;
 
 var Cu = Components.utils;
 
-Cu.import("resource://gre/modules/Services.jsm");
+var scope = {};
+
+Cu.import("resource://gre/modules/Services.jsm", scope);
+Cu.import("resource://httpmonitor/modules/fbtrace.js", scope);
+
+var Services = scope.Services;
+var FBTrace = scope.FBTrace;
 
 // ********************************************************************************************* //
 // Module Loader implementation
@@ -111,7 +117,7 @@ var Loader =
         {
             var module = this.currentModule[this.currentModule.length - 1];
             FBTrace.sysout("FAILED to load: " + fullName + " -> " + url);
-            FBTrace.sysout("EXCEPTION: " + err);
+            FBTrace.sysout("EXCEPTION: " + err, err);
         }
     },
 

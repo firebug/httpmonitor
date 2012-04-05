@@ -199,6 +199,9 @@ Firebug.JSONViewerModel.Preview = domplate(
 
     render: function(body, file, context)
     {
+        // xxxHonza:
+        return;
+
         if (!file.jsonObject)
             return;
 
@@ -215,7 +218,7 @@ Firebug.JSONViewerModel.Preview = domplate(
 
 // ********************************************************************************************* //
 
-function JSONTreePlate()
+/*function JSONTreePlate()
 {
     // Used by Firebug.DOMPanel.DirTable domplate.
     this.toggles = new ToggleBranch.ToggleBranch();
@@ -267,7 +270,7 @@ JSONTreePlate.prototype = Obj.extend(Firebug.DOMBasePanel.prototype,
 
         return members;
     }
-});
+});*/
 
 // ********************************************************************************************* //
 // Registration

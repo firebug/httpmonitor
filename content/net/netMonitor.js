@@ -1,6 +1,7 @@
 /* See license.txt for terms of usage */
 
 define([
+    "lib/trace",
     "lib/object",
     "firebug",
     "chrome/firefox",
@@ -13,11 +14,10 @@ define([
     "net/netProgress",
     "lib/http",
     "net/netUtils",
-    "net/netDebugger",
     "lib/events",
 ],
-function(Obj, Firebug, Firefox, Options, Win, Str, Persist, NetHttpActivityObserver,
-    HttpRequestObserver, NetProgress, Http, NetUtils, NetDebugger, Events) {
+function(FBTrace, Obj, Firebug, Firefox, Options, Win, Str, Persist, NetHttpActivityObserver,
+    HttpRequestObserver, NetProgress, Http, NetUtils, Events) {
 
 // ********************************************************************************************* //
 // Constants
@@ -58,14 +58,15 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
     {
         Firebug.ActivableModule.initialize.apply(this, arguments);
 
+        // xxxHonza
         /*this.traceNetListener = new TraceListener("net.", "DBG_NET", true);
         this.traceActivityListener = new TraceListener("activityObserver.",
             "DBG_ACTIVITYOBSERVER", true);
 
         TraceModule.addListener(this.traceNetListener);
-        TraceModule.addListener(this.traceActivityListener);*/
+        TraceModule.addListener(this.traceActivityListener);
 
-        Firebug.connection.addListener(this.DebuggerListener);
+        Firebug.connection.addListener(this.DebuggerListener);*/
 
         NetHttpObserver.registerObserver();
     },
@@ -77,7 +78,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
         // Initialize max limit for logged requests.
         Firebug.NetMonitor.updateMaxLimit();
 
-        // Synchronize UI buttons with the current filter.
+        // Synchronize buttons with the current filter.
         this.syncFilterButtons(Firebug.chrome);
 
         if (FBTrace.DBG_NET)
@@ -88,10 +89,11 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
     {
         Firebug.ActivableModule.shutdown.apply(this, arguments);
 
+        // xxxHonza
         /*TraceModule.removeListener(this.traceNetListener);
-        TraceModule.removeListener(this.traceActivityListener);*/
+        TraceModule.removeListener(this.traceActivityListener);
 
-        Firebug.connection.removeListener(this.DebuggerListener);
+        Firebug.connection.removeListener(this.DebuggerListener);*/
 
         NetHttpObserver.unregisterObserver();
     },
@@ -640,7 +642,8 @@ function createNetProgress(context)
 {
     var netProgress = new NetProgress(context);
     netProgress.cacheListener = new NetCacheListener(netProgress);
-    netProgress.breakpoints = new NetDebugger.NetBreakpointGroup();
+    // xxxHonza
+    //netProgress.breakpoints = new NetDebugger.NetBreakpointGroup();
     return netProgress;
 }
 
