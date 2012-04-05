@@ -437,14 +437,16 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         }
 
         items.push("-");
-        items.push(
+        
+        // xxxHonza
+        /*items.push(
             {
                 label: "net.label.Resend",
                 tooltiptext: "net.tip.Resend",
                 id: "fbNetResend",
                 command: Obj.bindFixed(Firebug.Spy.XHR.resend, Firebug.Spy.XHR, file, this.context)
             }
-        );
+        );*/
 
         return items;
     },
@@ -752,7 +754,14 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         if (this.panelNode.offsetHeight)
             this.wasScrolledToBottom = Dom.isScrolledToBottom(this.panelNode);
 
-        this.layout();
+        try
+        {
+            this.layout();
+        }
+        catch (e)
+        {
+            FBTrace.sysout("netPanel.updateLayout; EXCEPTION " + e, e);
+        }
 
         if (this.wasScrolledToBottom)
             Dom.scrollToBottom(this.panelNode);
