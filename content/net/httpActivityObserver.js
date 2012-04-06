@@ -166,7 +166,7 @@ var NetHttpActivityObserver =
         var tabId = Win.getWindowProxyIdForWindow(win);
         if (!(tabId && win))
         {
-            FBTrace.sysout("no tab");
+            FBTrace.sysout("Chrome request: " + Http.safeGetRequestName(httpChannel));
             return;
         }
 

@@ -12,8 +12,9 @@ define([
     "lib/events",
     "lib/dom",
     "lib/options",
+    "lib/string",
 ],
-function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options) {
+function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options, Str) {
 
 // ********************************************************************************************* //
 // Constants
@@ -215,8 +216,12 @@ var HttpMonitor =
         var button = this.win.document.getElementById("currentTab");
         button.setAttribute("label", "Select Browser Tab ");
 
-        if (this.currentTab)
-            button.setAttribute("label", this.currentTab.label + " ");
+        if (!this.currentTab)
+            return;
+
+        var label = Str.cropString(this.currentTab.label, 40);
+        button.setAttribute("label", label + " ");
+        button.setAttribute("tooltiptext", this.currentTab.label);
     },
 
     onSelectTab: function(tab)

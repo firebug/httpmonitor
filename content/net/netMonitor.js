@@ -155,9 +155,9 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
         if (context.netProgress)
         {
             // Load existing breakpoints
-            var persistedPanelState = Persist.getPersistedState(context, panelName);
-            if (persistedPanelState.breakpoints)
-                context.netProgress.breakpoints = persistedPanelState.breakpoints;
+            //var persistedPanelState = Persist.getPersistedState(context, panelName);
+            //if (persistedPanelState.breakpoints)
+            //    context.netProgress.breakpoints = persistedPanelState.breakpoints;
         }
     },
 
