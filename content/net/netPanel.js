@@ -411,7 +411,8 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
 
         if (file.isXHR)
         {
-            var bp = this.context.netProgress.breakpoints.findBreakpoint(file.getFileURL());
+            // xxxHonza: no break on XHR
+            /*var bp = this.context.netProgress.breakpoints.findBreakpoint(file.getFileURL());
 
             items.push(
                 "-",
@@ -433,11 +434,11 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
                         command: Obj.bindFixed(this.editBreakpointCondition, this, file)
                     }
                 );
-            }
+            }*/
         }
 
-        items.push("-");
-        
+        //items.push("-");
+
         // xxxHonza
         /*items.push(
             {

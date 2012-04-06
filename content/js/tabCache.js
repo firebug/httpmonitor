@@ -98,6 +98,12 @@ Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
 
         /*this.traceListener = new TraceListener("tabCache.", "DBG_CACHE", false);
         TraceModule.addListener(this.traceListener);*/
+
+        if (!this.observing)
+        {
+            HttpRequestObserver.addObserver(this, "firebug-http-event", false);
+            this.observing = true;
+        }
     },
 
     initializeUI: function(owner)
@@ -125,7 +131,24 @@ Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
             contentTypes[p] = 1;
     },
 
-    onObserverChange: function(observer)
+    shutdown: function()
+    {
+        if (FBTrace.DBG_CACHE)
+            FBTrace.sysout("tabCache.shutdown; Cache model destroyed.");
+
+        /*TraceModule.removeListener(this.traceListener);*/
+
+        if (this.observing)
+            HttpRequestObserver.removeObserver(this, "firebug-http-event");
+    },
+
+    initContext: function(context)
+    {
+        if (FBTrace.DBG_CACHE)
+            FBTrace.sysout("tabCache.initContext for: " + context.getName());
+    },
+
+    /*onObserverChange: function(observer)
     {
         if (FBTrace.DBG_CACHE)
             FBTrace.sysout("tabCache.onObserverChange; hasObservers: " + this.hasObservers());
@@ -157,24 +180,7 @@ Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
             HttpRequestObserver.removeObserver(this, "firebug-http-event");
             this.observing = false;
         }
-    },
-
-    shutdown: function()
-    {
-        if (FBTrace.DBG_CACHE)
-            FBTrace.sysout("tabCache.shutdown; Cache model destroyed.");
-
-        /*TraceModule.removeListener(this.traceListener);*/
-
-        if (this.observing)
-            HttpRequestObserver.removeObserver(this, "firebug-http-event");
-    },
-
-    initContext: function(context)
-    {
-        if (FBTrace.DBG_CACHE)
-            FBTrace.sysout("tabCache.initContext for: " + context.getName());
-    },
+    },*/
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // nsIObserver
@@ -225,7 +231,7 @@ Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
 
     registerStreamListener: function(request, win, forceRegister)
     {
-        if (Firebug.getSuspended() && !forceRegister)
+        /*if (Firebug.getSuspended() && !forceRegister)
         {
             if (FBTrace.DBG_CACHE)
                 FBTrace.sysout("tabCache.registerStreamListener; DO NOT TRACK, " +
@@ -234,7 +240,7 @@ Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
         }
 
         if (!this.hasObservers())
-            return;
+            return;*/
 
         try
         {

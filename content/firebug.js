@@ -266,13 +266,14 @@ window.Firebug =
     // TODO XULWindow
     getSuspended: function()
     {
-        return Firebug.StartButton.getSuspended();
+        return false;
+        //return Firebug.StartButton.getSuspended();
     },
 
     // TODO XULWindow
     setSuspended: function(value)
     {
-        Firebug.StartButton.setSuspended(value);
+        //Firebug.StartButton.setSuspended(value);
     },
 
     // TODO XULWindow IN detached "Activate Firebug for the current website"

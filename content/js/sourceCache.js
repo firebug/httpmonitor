@@ -1,6 +1,7 @@
 /* See license.txt for terms of usage */
 
 define([
+    "lib/trace",
     "lib/object",
     "firebug",
     "lib/xpcom",
@@ -8,7 +9,7 @@ define([
     "lib/http",
     "lib/string"
 ],
-function(Obj, Firebug, Xpcom, Url, Http, Str) {
+function(FBTrace, Obj, Firebug, Xpcom, Url, Http, Str) {
 
 // ********************************************************************************************* //
 // Constants
