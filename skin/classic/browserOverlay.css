@@ -1,3 +1,8 @@
 /* See license.txt for terms of usage */
 
-@import "resource://ccdump/skin/classic/browserOverlay.css";
+.toolbar-text-button,
+.toolbar-text-menubutton {
+    padding: 3px 6px;
+    color: #000000;
+}
+

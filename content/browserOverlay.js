@@ -7,6 +7,9 @@ var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cu = Components.utils;
 
+// xxxHonza: elements need to be removed on uninstall.
+var nodesToRemove = [];
+
 // ********************************************************************************************* //
 // Helper Functions
 
@@ -144,6 +147,13 @@ function $toolbarButton(id, attrs, children, defaultPos)
     return toolbar.insertItem(id, beforeEl);
 }
 
+function $stylesheet(href)
+{
+    var s = document.createProcessingInstruction("xml-stylesheet", 'href="' + href + '"');
+    document.insertBefore(s, document.documentElement);
+    nodesToRemove.push(s);
+}
+
 // ********************************************************************************************* //
 // Overlay Browser UI
 
@@ -191,6 +201,11 @@ $menupopupOverlay($("toolsPopup"), [
 // Commands
 
 $command("cmd_httpMonitorToggle", "HttpMonitorOverlay.toggle()");
+
+// ********************************************************************************************* //
+// Styles
+
+$stylesheet("chrome://httpmonitor/skin/browserOverlay.css");
 
 // ********************************************************************************************* //
 // Extension Object
