@@ -2567,8 +2567,6 @@ Firebug.chrome =
     getGlobalAttribute: function() {},
 }
 
-Firebug.netFilterCategory = "all";
-
 return Firebug;
 
 // ********************************************************************************************* //

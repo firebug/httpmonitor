@@ -285,7 +285,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
 
     syncFilterButtons: function(chrome)
     {
-        var id = "fbNetFilter-" + Firebug.netFilterCategory;
+        var id = "fbNetFilter-" + Options.get("netFilterCategory");
         var button = chrome.$(id);
         if (!button)
         {

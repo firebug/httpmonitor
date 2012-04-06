@@ -191,7 +191,7 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
             return;
 
         if (!this.filterCategory)
-            this.setFilter(Firebug.netFilterCategory);
+            this.setFilter(Options.get("netFilterCategory"));
 
         this.layout();
 
@@ -1158,7 +1158,7 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
     {
         var cachedSize = 0, totalSize = 0;
 
-        var category = Firebug.netFilterCategory;
+        var category = Options.get("netFilterCategory");
         if (category == "all")
             category = null;
 

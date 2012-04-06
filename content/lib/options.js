@@ -11,6 +11,7 @@ function factoryOptions(Events, FBTrace) {
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const Cu = Components.utils;
 
 const nsIPrefBranch = Ci.nsIPrefBranch;
 const nsIPrefBranch2 = Ci.nsIPrefBranch2;
@@ -20,69 +21,20 @@ const nsIPrefService = Ci.nsIPrefService;
 const prefService = PrefService.getService(nsIPrefService);
 const prefs = PrefService.getService(nsIPrefBranch2);
 
-const prefNames =  // XXXjjb TODO distribute to modules
-[
-    // Global
-    "defaultPanelName", "throttleMessages", "textSize", "showInfoTips",
-    "commandEditor", "textWrapWidth", "openInWindow", "showErrorCount",
-    "activateSameOrigin", "allPagesActivation", "hiddenPanels",
-    "panelTabMinWidth", "sourceLinkLabelWidth", "currentVersion",
-    "useDefaultLocale", "toolbarCustomizationDone", "addonBarOpened",
-    "showBreakNotification", "showStatusIcon", "stringCropLength",
-    "showFirstRunPage",
-
-    // Search
-    "searchCaseSensitive", "searchGlobal", "searchUseRegularExpression",
-    "netSearchHeaders", "netSearchParameters", "netSearchResponseBody",
-
-    // Console
-    "showJSErrors", "showJSWarnings", "showCSSErrors", "showXMLErrors",
-    "showChromeErrors", "showChromeMessages", "showExternalErrors",
-    "showXMLHttpRequests", "showNetworkErrors", "tabularLogMaxHeight",
-    "consoleFilterTypes", "alwaysShowCommandLine",
-
-    // HTML
-    "showFullTextNodes", "showCommentNodes",
-    "showTextNodesWithWhitespace", "showTextNodesWithEntities",
-    "highlightMutations", "expandMutations", "scrollToMutations", "shadeBoxModel",
-    "showQuickInfoBox", "displayedAttributeValueLimit", "multiHighlightLimit",
-
-    // CSS
-    "onlyShowAppliedStyles",
-    "showUserAgentCSS",
-    "expandShorthandProps",
-    "computedStylesDisplay",
-    "showMozillaSpecificStyles",
-    "cssEditMode",
-
-    // Script
-    "decompileEvals", "replaceTabs",
-
-    // DOM
-    "showUserProps", "showUserFuncs", "showDOMProps", "showDOMFuncs", "showDOMConstants",
-    "ObjectShortIteratorMax", "showEnumerableProperties", "showOwnProperties",
-
-    // Layout
-    "showRulers",
-
-    // Net
-    "netFilterCategory", "netDisplayedResponseLimit",
-    "netDisplayedPostBodyLimit", "netPhaseInterval", "sizePrecision",
-    "netParamNameLimit", "netShowPaintEvents", "netShowBFCacheResponses",
-    "netHtmlPreviewHeight",
-
-    // JSON Preview
-    "sortJsonPreview",
-
-    // Stack
-    "omitObjectPathStack",
-
-    "showStackTrace", // Console
-    "filterSystemURLs", // Stack
-    "showAllSourceFiles", "breakOnErrors",  "trackThrowCatch" // Script
-];
+Cu.import("resource://gre/modules/Services.jsm");
 
 var optionUpdateMap = {};
+
+// ********************************************************************************************* //
+
+var prefTypeMap = (function()
+{
+    var map = {}, br = Ci.nsIPrefBranch;
+    map["string"] = map[br.PREF_STRING] = "CharPref";
+    map["boolean"] = map[br.PREF_BOOL] = "BoolPref";
+    map["number"] = map[br.PREF_INT] = "IntPref";
+    return map;
+})();
 
 // ********************************************************************************************* //
 
@@ -158,7 +110,6 @@ var Options =
         try
         {
             optionUpdateMap[name] = 1;
-            Firebug[name] = value;
 
             Events.dispatch(this.listeners, "updateOption", [name, value]);
         }
@@ -205,29 +156,13 @@ var Options =
 
     initializePrefs: function()
     {
-        for (var i = 0; i < prefNames.length; ++i)
-            Firebug[prefNames[i]] = this.getPref(this.prefDomain, prefNames[i]);
-
         prefs.addObserver(this.prefDomain, this, false);
-
-        var basePrefNames = prefNames.length;
-
-        for (var i = basePrefNames; i < prefNames.length; ++i)
-            Firebug[prefNames[i]] = this.getPref(this.prefDomain, prefNames[i]);
-
-        if (FBTrace.DBG_OPTIONS)
-        {
-             for (var i = 0; i < prefNames.length; ++i)
-             {
-                FBTrace.sysout("options.initialize option "+this.prefDomain+"."+prefNames[i]+"="+
-                    Firebug[prefNames[i]]+"\n");
-             }
-        }
     },
 
     togglePref: function(name)
     {
-        this.setPref(Options.prefDomain, name, !Firebug[name]);
+        var value = this.getPref(this.prefDomain, name);
+        this.setPref(this.prefDomain, name, !value);
     },
 
     get: function(name)
@@ -360,6 +295,44 @@ var Options =
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Default Prefs
+
+    registerDefaultPrefs: function(prefMap, domain)
+    {
+        prefMap = prefMap || this.defaultPrefs;
+        domain = domain || this.prefDomain;
+
+        var pb = Services.prefs.getDefaultBranch(domain);
+
+        for (var name in prefMap)
+        {
+            var value = prefMap[name];
+            var type = prefTypeMap[typeof value];
+
+            try
+            {
+                pb["set" + type](name, value);
+            }
+            catch(e)
+            {
+                // due to some error in older version of firebug user ended up with wrong type 
+                if (e.result == 0x8000ffff)
+                {
+                    try
+                    {
+                        pb.clearUserPref(name);
+                        pb["set" + type](name, value);
+                    }
+                    catch(e)
+                    {
+                        Cu.reportError("firebug can't set default value for " + name);
+                    }
+                }
+            }
+        }
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Firebug UI text zoom
 
     changeTextSize: function(amt)
@@ -392,38 +365,6 @@ var Options =
             this.negativeZoomFactors[Math.abs(value)];
 
         return zoom;
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-    /**
-     * Resets all Firebug options to default state. Note that every option
-     * starting with "extensions.firebug" is considered as a Firebug option.
-     */
-    resetAllOptions: function()
-    {
-        var preferences = prefs.getChildList("extensions.firebug", {});
-        for (var i = 0; i < preferences.length; i++)
-        {
-            if (preferences[i].indexOf("DBG_") == -1 &&
-                preferences[i].indexOf("filterSystemURLs") == -1)
-            {
-                if (FBTrace.DBG_OPTIONS)
-                    FBTrace.sysout("Clearing option: "+i+") "+preferences[i]);
-                if (prefs.prefHasUserValue(preferences[i]))  // avoid exception
-                    prefs.clearUserPref(preferences[i]);
-            }
-            else
-            {
-                if (FBTrace.DBG_OPTIONS)
-                    FBTrace.sysout("Skipped clearing option: "+i+") "+preferences[i]);
-            }
-        }
-
-        Firebug.TabWatcher.iterateContexts( function clearBPs(context)
-        {
-            Firebug.Debugger.clearAllBreakpoints(context);
-        });
     },
 };
 
