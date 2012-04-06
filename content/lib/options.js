@@ -302,7 +302,7 @@ var Options =
         prefMap = prefMap || this.defaultPrefs;
         domain = domain || this.prefDomain;
 
-        var pb = Services.prefs.getDefaultBranch(domain);
+        var pb = Services.prefs.getDefaultBranch(domain + ".");
 
         for (var name in prefMap)
         {

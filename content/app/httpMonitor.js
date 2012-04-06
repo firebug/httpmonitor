@@ -245,8 +245,13 @@ var HttpMonitor =
 
     getPanelDocument: function()
     {
-        var browser = this.win.document.getElementById("content");
+        var browser = this.getPanelBrowser();
         return browser.contentDocument;
+    },
+
+    getPanelBrowser: function()
+    {
+        return this.win.document.getElementById("content");
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

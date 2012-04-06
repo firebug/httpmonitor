@@ -12,6 +12,7 @@ config.baseUrl = "resource://httpmonitor/content";
 require(config, [
     "lib/trace",
     "app/httpMonitor",
+    "chrome/infotip",
     "firebug"
 ],
 function(FBTrace, HttpMonitor, Firebug) {
