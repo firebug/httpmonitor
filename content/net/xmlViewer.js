@@ -75,6 +75,9 @@ Firebug.XMLViewerModel = Obj.extend(Firebug.Module,
 
     isXML: function(contentType)
     {
+        // xxxHonza
+        return false;
+
         if (!contentType)
             return false;
 

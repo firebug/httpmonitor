@@ -2564,8 +2564,23 @@ Firebug.chrome =
         return top.document.getElementById(id);
     },
 
-    setGlobalAttribute: function() {},
-    getGlobalAttribute: function() {},
+    setGlobalAttribute: function(id, name, value)
+    {
+        var elt = this.$(id);
+        if (elt)
+        {
+            if (value == null)
+                elt.removeAttribute(name);
+            else
+                elt.setAttribute(name, value);
+        }
+    },
+
+    getGlobalAttribute: function(id, name)
+    {
+        var elt = this.$(id);
+        return elt.getAttribute(name);
+    },
 }
 
 return Firebug;

@@ -19,6 +19,7 @@
         <command id="cmd_stopMonitor" oncommand="HttpMonitor.stopMonitor();"/>
 
         <command id="cmd_clearNet" oncommand="Firebug.NetMonitor.clear(Firebug.currentContext)"/>
+        <command id="cmd_togglePersistNet" oncommand="Firebug.NetMonitor.togglePersist(Firebug.currentContext)"/>
     </commandset>
 
     <!-- Toolbar -->

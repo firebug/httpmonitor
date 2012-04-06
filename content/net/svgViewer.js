@@ -68,6 +68,9 @@ Firebug.SVGViewerModel = Obj.extend(Firebug.Module,
 
     isSVG: function(contentType)
     {
+        // xxxHonza
+        return false;
+
         if (!contentType)
             return false;
 

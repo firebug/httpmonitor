@@ -114,6 +114,9 @@ Firebug.JSONViewerModel = Obj.extend(Firebug.Module,
 
     isJSON: function(contentType, data)
     {
+        // xxxHonza
+        return false;
+
         // Workaround for JSON responses without proper content type
         // Let's consider all responses starting with "{" as JSON. In the worst
         // case there will be an exception when parsing. This means that no-JSON

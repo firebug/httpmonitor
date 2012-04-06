@@ -458,6 +458,12 @@ var NetHttpObserver =
                     FBTrace.sysout("net.onModifyRequest; Temp Context created (" +
                         getTempContextCount() + "), " + tabId);
             }
+
+            // New page loaded, clear UI if 'Persist' isn't active.
+            if (!Firebug.chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
+            {
+                Firebug.NetMonitor.clear(context);
+            }
         }
 
         var networkContext = Firebug.NetMonitor.contexts[tabId];
