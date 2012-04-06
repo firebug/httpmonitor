@@ -285,7 +285,16 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
 
     syncFilterButtons: function(chrome)
     {
-        var button = chrome.$("fbNetFilter-" + Firebug.netFilterCategory);
+        var id = "fbNetFilter-" + Firebug.netFilterCategory;
+        var button = chrome.$(id);
+        if (!button)
+        {
+            if (FBTrace.DBG_ERRORS)
+                FBTrace.sysout("netMonitor.syncFilterButtons; ERROR no button? " + id);
+
+            return;
+        }
+
         button.checked = true;
     },
 
@@ -381,7 +390,7 @@ var NetHttpObserver =
             var context = HttpMonitor.tabWatcher.getContextByWindow(win);
             if (!context)
             {
-                FBTrace.sysout("DO no watch this request");
+                FBTrace.sysout("Do no watch this request " + Http.safeGetRequestName(subject));
                 return;
             }
 

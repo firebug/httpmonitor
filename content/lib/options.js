@@ -106,7 +106,7 @@ var Options =
         if (FBTrace.DBG_INITIALIZE)
             FBTrace.sysout("options.initialize with prefDomain " + this.prefDomain);
 
-        this.initializePrefs();
+        //this.initializePrefs();
     },
 
     shutdown: function()

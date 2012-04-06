@@ -10,8 +10,10 @@ define([
     "lib/css",
     "lib/locale",
     "lib/events",
+    "lib/dom",
+    "lib/options",
 ],
-function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events) {
+function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options) {
 
 // ********************************************************************************************* //
 // Constants
@@ -39,7 +41,10 @@ var HttpMonitor =
 
         this.internationalizeUI(win.document);
 
-        // Initialize module.
+        // Initialize options and pass in the pref domain for this application.
+        Options.initialize("extensions.httpmonitor");
+
+        // Initialize modules.
         Events.dispatch(Firebug.modules, "initialize", []);
         Events.dispatch(Firebug.modules, "initializeUI", []);
     },
@@ -52,9 +57,80 @@ var HttpMonitor =
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Context Menu
 
-    onContextShowing: function()
+    onContextShowing: function(event)
     {
-        // xxxHonza: Net panel context menu.
+        var popup = event.target;
+        if (popup.id != "monitorContextMenu")
+            return;
+
+        var context = this.tabWatcher.context;
+        var target = this.win.document.popupNode;
+        var panel = context.getPanel("net");
+
+        Dom.eraseNode(popup);
+
+        var object;
+        if (target && target.ownerDocument == document)
+            object = Firebug.getRepObject(target);
+        else if (target && panel)
+            object = panel.getPopupObject(target);
+        else if (target)
+            object = Firebug.getRepObject(target);
+
+        var rep = Firebug.getRep(object, context);
+        var realObject = rep ? rep.getRealObject(object, context) : null;
+        var realRep = realObject ? Firebug.getRep(realObject, context) : null;
+
+        if (FBTrace.DBG_OPTIONS)
+            FBTrace.sysout("chrome.onContextShowing object:"+object+" rep: "+rep+
+                " realObject: "+realObject+" realRep:"+realRep);
+
+        if (realObject && realRep)
+        {
+            // 1. Add the custom menu items from the realRep
+            var menu = realRep.getContextMenuItems(realObject, target, context);
+            if (menu)
+            {
+                for (var i = 0; i < menu.length; ++i)
+                    Menu.createMenuItem(popup, menu[i]);
+            }
+        }
+
+        if (object && rep && rep != realRep)
+        {
+            // 1. Add the custom menu items from the original rep
+            var items = rep.getContextMenuItems(object, target, context);
+            if (items)
+            {
+                for (var i = 0; i < items.length; ++i)
+                    Menu.createMenuItem(popup, items[i]);
+            }
+        }
+
+        // 1. Add the custom menu items from the panel
+        if (panel)
+        {
+            var items = panel.getContextMenuItems(realObject, target);
+            if (items)
+            {
+                for (var i = 0; i < items.length; ++i)
+                    Menu.createMenuItem(popup, items[i]);
+            }
+        }
+
+        // 3. Add menu items from uiListeners
+        var items = [];
+        Events.dispatch(Firebug.uiListeners, "onContextMenu", [items, object, target,
+            context, panel, popup]);
+
+        if (items)
+        {
+            for (var i = 0; i < items.length; ++i)
+                Menu.createMenuItem(popup, items[i]);
+        }
+
+        if (!popup.firstChild)
+            return false;
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

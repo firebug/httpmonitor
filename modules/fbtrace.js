@@ -38,5 +38,6 @@ var FBTrace = scope.traceConsoleService.getTracer("extensions.firebug");
 FBTrace.DBG_ERRORS = true;
 //FBTrace.DBG_ACTIVITYOBSERVER = true;
 //FBTrace.DBG_HTTPOBSERVER = true;
+//FBTrace.DBG_OPTIONS = true;
 
 // ********************************************************************************************* //
