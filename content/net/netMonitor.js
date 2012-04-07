@@ -41,11 +41,11 @@ var contentLoad = NetProgress.prototype.contentLoad;
 
 /**
  * @module Represents a module object for the Net panel. This object is derived
- * from <code>Firebug.ActivableModule</code> in order to support activation (enable/disable).
+ * from <code>Firebug.Module</code> in order to support activation (enable/disable).
  * This allows to avoid (performance) expensive features if the functionality is not necessary
  * for the user.
  */
-Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
+Firebug.NetMonitor = Obj.extend(Firebug.Module,
 {
     dispatchName: "netMonitor",
     maxQueueRequests: 500,
@@ -56,7 +56,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
 
     initialize: function()
     {
-        Firebug.ActivableModule.initialize.apply(this, arguments);
+        Firebug.Module.initialize.apply(this, arguments);
 
         // xxxHonza
         /*this.traceNetListener = new TraceListener("net.", "DBG_NET", true);
@@ -73,21 +73,18 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
 
     initializeUI: function()
     {
-        Firebug.ActivableModule.initializeUI.apply(this, arguments);
+        Firebug.Module.initializeUI.apply(this, arguments);
 
         // Initialize max limit for logged requests.
         Firebug.NetMonitor.updateMaxLimit();
 
         // Synchronize buttons with the current filter.
         this.syncFilterButtons(Firebug.chrome);
-
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.NetMonitor.initializeUI; enabled: " + this.isAlwaysEnabled());
     },
 
     shutdown: function()
     {
-        Firebug.ActivableModule.shutdown.apply(this, arguments);
+        Firebug.Module.shutdown.apply(this, arguments);
 
         // xxxHonza
         /*TraceModule.removeListener(this.traceNetListener);
@@ -100,7 +97,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
 
     initContext: function(context, persistedState)
     {
-        Firebug.ActivableModule.initContext.apply(this, arguments);
+        Firebug.Module.initContext.apply(this, arguments);
 
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.initContext for: " + context.getName());
@@ -149,8 +146,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
             context.addEventListener(win, "DOMContentLoaded", onContentLoadHandler, true);
         }
 
-        if (Firebug.NetMonitor.isAlwaysEnabled())
-            monitorContext(context);
+        monitorContext(context);
 
         if (context.netProgress)
         {
@@ -163,7 +159,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
 
     showContext: function(browser, context)
     {
-        Firebug.ActivableModule.showContext.apply(this, arguments);
+        Firebug.Module.showContext.apply(this, arguments);
 
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.showContext; " + (context ? context.getName() : "NULL") +
@@ -195,7 +191,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
 
     destroyContext: function(context, persistedState)
     {
-        Firebug.ActivableModule.destroyContext.apply(this, arguments);
+        Firebug.Module.destroyContext.apply(this, arguments);
 
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.destroyContext for: " +
@@ -208,52 +204,8 @@ Firebug.NetMonitor = Obj.extend(Firebug.ActivableModule,
             persistedPanelState.breakpoints = context.netProgress.breakpoints;
         }
 
-        if (Firebug.NetMonitor.isAlwaysEnabled())
-            unmonitorContext(context);
+        unmonitorContext(context);
     },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Activable Module
-
-    /*onObserverChange: function(observer)
-    {
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.onObserverChange; hasObservers: " + this.hasObservers() +
-                ", Firebug suspended: " + Firebug.getSuspended());
-
-        if (!Firebug.getSuspended())  // then Firebug is in action
-            this.onResumeFirebug();   // and we need to test to see if we need to addObserver
-    },
-
-    onResumeFirebug: function()
-    {
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.onResumeFirebug; enabled: " + Firebug.NetMonitor.isAlwaysEnabled());
-
-        // Resume only if NetPanel is enabled and so, observing NetMonitor module.
-        if (Firebug.NetMonitor.isAlwaysEnabled())
-        {
-            NetHttpActivityObserver.registerObserver();
-            Firebug.connection.eachContext(monitorContext);
-        }
-        else
-        {
-            // If the Net panel is not enabled, we needto make sure the unmonitorContext
-            // is executed and so, the start button (aka firebug status bar icons) is
-            // properly updated.
-            NetHttpActivityObserver.unregisterObserver();
-            Firebug.connection.eachContext(unmonitorContext);
-        }
-    },
-
-    onSuspendFirebug: function()
-    {
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.onSuspendFirebug; enabled: " + Firebug.NetMonitor.isAlwaysEnabled());
-
-        NetHttpActivityObserver.unregisterObserver();
-        Firebug.connection.eachContext(unmonitorContext);
-    },*/
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // User Actions
@@ -370,9 +322,6 @@ var NetHttpObserver =
     /* nsIObserve */
     observe: function(subject, topic, data)
     {
-        if (!Firebug.NetMonitor.isAlwaysEnabled())
-            return;
-
         try
         {
             if (FBTrace.DBG_NET_EVENTS)
@@ -385,12 +334,20 @@ var NetHttpObserver =
                 return;
 
             var win = Http.getWindowForRequest(subject);
+            if (!win)
+            {
+                FBTrace.sysout("This request doesn't have a window " +
+                    Http.safeGetRequestName(subject));
+                return;
+            }
+
             // xxxHonza
             //var context = Firebug.connection.getContextByWindow(win);
             var context = HttpMonitor.tabWatcher.getContextByWindow(win);
             if (!context || context.window != win)
             {
-                FBTrace.sysout("Do no watch this request " + Http.safeGetRequestName(subject));
+                FBTrace.sysout("This request doesn't come from selected tab  " +
+                    Http.safeGetRequestName(subject));
                 return;
             }
 
@@ -763,7 +720,7 @@ function getTempContextCount()
 // deprecated
 Firebug.NetMonitor.Utils = NetUtils;
 
-Firebug.registerActivableModule(Firebug.NetMonitor);
+Firebug.registerModule(Firebug.NetMonitor);
 
 return Firebug.NetMonitor;
 

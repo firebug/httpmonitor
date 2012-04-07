@@ -85,13 +85,16 @@ var HttpMonitor =
         Options.registerDefaultPrefs(defaultPrefs);
 
         // Initialize modules.
-        Events.dispatch(Firebug.modules, "initialize", []);
-        Events.dispatch(Firebug.modules, "initializeUI", []);
+        Events.dispatch(Firebug.modules, "initialize");
+        Events.dispatch(Firebug.modules, "initializeUI");
     },
 
     destroy: function()
     {
-        NetMonitor.shutdown();
+        Events.dispatch(modules, "disable");
+        Events.dispatch(modules, "shutdown");
+
+        Options.shutdown();
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

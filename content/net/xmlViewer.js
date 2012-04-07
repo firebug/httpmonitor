@@ -44,13 +44,13 @@ Firebug.XMLViewerModel = Obj.extend(Firebug.Module,
 
     initialize: function()
     {
-        Firebug.ActivableModule.initialize.apply(this, arguments);
+        Firebug.Module.initialize.apply(this, arguments);
         Firebug.NetMonitor.NetInfoBody.addListener(this);
     },
 
     shutdown: function()
     {
-        Firebug.ActivableModule.shutdown.apply(this, arguments);
+        Firebug.Module.shutdown.apply(this, arguments);
         Firebug.NetMonitor.NetInfoBody.removeListener(this);
     },
 

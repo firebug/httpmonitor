@@ -155,10 +155,8 @@ Firebug.InfoTip = Obj.extend(Firebug.Module,
         this.hideInfoTip(infoTip);
     },
 
-    shutdown: function()
+    disable: function()
     {
-        Firebug.Module.shutdown.apply(this, arguments);
-
         // XXXjoe For each browser, call uninitializeBrowser
     },
 
@@ -172,12 +170,12 @@ Firebug.InfoTip = Obj.extend(Firebug.Module,
             this.hideInfoTip(infoTip);
         }
 
-    },*/
+    },
 
     showSidePanel: function(browser, panel)
     {
         this.showPanel(browser, panel);
-    },
+    },*/
 
     initializeBrowser: function(browser)
     {

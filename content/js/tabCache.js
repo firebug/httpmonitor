@@ -3,6 +3,7 @@
 define([
     "lib/trace",
     "lib/object",
+    "lib/options",
     "app/firebug",
     "lib/xpcom",
     "net/requestObserver",
@@ -16,7 +17,7 @@ define([
     "net/jsonViewer",
     "js/sourceCache"
 ],
-function(FBTrace, Obj, Firebug, Xpcom, HttpRequestObserver, HttpResponseObserver, Locale, Events,
+function(FBTrace, Obj, Options, Firebug, Xpcom, HttpRequestObserver, HttpResponseObserver, Locale, Events,
     Url, Http, Str, Win, JSONViewerModel) {
 
 // ********************************************************************************************* //
@@ -86,7 +87,7 @@ var contentTypes =
  * observer so, HTTP communication can be intercepted and all incoming data stored within
  * a cache.
  */
-Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
+Firebug.TabCacheModel = Obj.extend(Firebug.Module,
 {
     dispatchName: "tabCache",
     contentTypes: contentTypes,
@@ -94,7 +95,7 @@ Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
 
     initialize: function()
     {
-        Firebug.ActivableModule.initialize.apply(this, arguments);
+        Firebug.Module.initialize.apply(this, arguments);
 
         /*this.traceListener = new TraceListener("tabCache.", "DBG_CACHE", false);
         TraceModule.addListener(this.traceListener);*/
@@ -108,16 +109,16 @@ Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
 
     initializeUI: function(owner)
     {
-        Firebug.ActivableModule.initializeUI.apply(this, arguments);
+        Firebug.Module.initializeUI.apply(this, arguments);
 
         if (FBTrace.DBG_CACHE)
             FBTrace.sysout("tabCache.initializeUI;");
 
         // Read maximum size limit for cached response from preferences.
-        responseSizeLimit = Firebug.Options.get("cache.responseLimit");
+        responseSizeLimit = Options.get("cache.responseLimit");
 
         // Read additional text MIME types from preferences.
-        var mimeTypes = Firebug.Options.get("cache.mimeTypes");
+        var mimeTypes = Options.get("cache.mimeTypes");
         if (mimeTypes)
         {
             var list = mimeTypes.split(" ");
@@ -147,40 +148,6 @@ Firebug.TabCacheModel = Obj.extend(Firebug.ActivableModule,
         if (FBTrace.DBG_CACHE)
             FBTrace.sysout("tabCache.initContext for: " + context.getName());
     },
-
-    /*onObserverChange: function(observer)
-    {
-        if (FBTrace.DBG_CACHE)
-            FBTrace.sysout("tabCache.onObserverChange; hasObservers: " + this.hasObservers());
-
-        // If Firebug is in action, we need to test to see if we need to addObserver
-        if (!Firebug.getSuspended())
-            this.onResumeFirebug();
-    },
-
-    onResumeFirebug: function()
-    {
-        if (FBTrace.DBG_CACHE)
-            FBTrace.sysout("tabCache.onResumeFirebug; hasObsevers: " + this.hasObservers());
-
-        if (this.hasObservers() && !this.observing)
-        {
-            HttpRequestObserver.addObserver(this, "firebug-http-event", false);
-            this.observing = true;
-        }
-    },
-
-    onSuspendFirebug: function()
-    {
-        if (FBTrace.DBG_CACHE)
-            FBTrace.sysout("tabCache.onSuspendFirebug; hasObsevers: " + this.hasObservers());
-
-        if (this.observing)
-        {
-            HttpRequestObserver.removeObserver(this, "firebug-http-event");
-            this.observing = false;
-        }
-    },*/
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // nsIObserver
@@ -634,7 +601,7 @@ ChannelListenerProxy.prototype =
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerActivableModule(Firebug.TabCacheModel);
+Firebug.registerModule(Firebug.TabCacheModel);
 
 return Firebug.TabCache;
 

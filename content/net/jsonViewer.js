@@ -15,9 +15,10 @@ define([
     "dom/toggleBranch",
     "lib/array",
     "lib/system",
+    "lib/options",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Http, Str, Json,
-    ToggleBranch, Arr, System) {
+    ToggleBranch, Arr, System, Options) {
 
 // ********************************************************************************************* //
 
@@ -185,7 +186,7 @@ Firebug.JSONViewerModel.Preview = domplate(
         Events.cancelEvent(event);
 
         Css.toggleClass(sortLink, "sorted");
-        Firebug.Options.set("sortJsonPreview", !Firebug.sortJsonPreview);
+        Options.set("sortJsonPreview", !Firebug.sortJsonPreview);
 
         var preview = Dom.getAncestorByClass(sortLink, "jsonPreview");
         var body = Dom.getAncestorByClass(sortLink, "netInfoJSONText");

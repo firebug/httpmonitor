@@ -50,12 +50,12 @@ var NetRequestEntry = Firebug.NetMonitor.NetRequestEntry;
 
 /**
  * @panel Represents a Firebug panel that displayes info about HTTP activity associated with
- * the current page. This class is derived from <code>Firebug.ActivablePanel</code> in order
+ * the current page. This class is derived from <code>Firebug.Panel</code> in order
  * to support activation (enable/disable). This allows to avoid (performance) expensive
  * features if the functionality is not necessary for the user.
  */
 function NetPanel() {}
-NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
+NetPanel.prototype = Obj.extend(Firebug.Panel,
 /** lends NetPanel */
 {
     name: panelName,
@@ -73,12 +73,12 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         this.queue = [];
         this.onContextMenu = Obj.bind(this.onContextMenu, this);
 
-        Firebug.ActivablePanel.initialize.apply(this, arguments);
+        Firebug.Panel.initialize.apply(this, arguments);
     },
 
     destroy: function(state)
     {
-        Firebug.ActivablePanel.destroy.apply(this, arguments);
+        Firebug.Panel.destroy.apply(this, arguments);
     },
 
     initializeNode : function()
@@ -90,7 +90,7 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
 
         Events.addEventListener(this.resizeEventTarget, "resize", this.onResizer, true);
 
-        Firebug.ActivablePanel.initializeNode.apply(this, arguments);
+        Firebug.Panel.initializeNode.apply(this, arguments);
     },
 
     destroyNode : function()
@@ -98,7 +98,7 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         Events.removeEventListener(this.panelNode, "contextmenu", this.onContextMenu, false);
         Events.removeEventListener(this.resizeEventTarget, "resize", this.onResizer, true);
 
-        Firebug.ActivablePanel.destroyNode.apply(this, arguments);
+        Firebug.Panel.destroyNode.apply(this, arguments);
     },
 
     loadPersistedContent: function(state)
@@ -169,7 +169,7 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
 
     savePersistedContent: function(state)
     {
-        Firebug.ActivablePanel.savePersistedContent.apply(this, arguments);
+        Firebug.Panel.savePersistedContent.apply(this, arguments);
 
         state.pageTitle = NetUtils.getPageTitle(this.context);
     },
@@ -179,16 +179,9 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.netPanel.show; " + this.context.getName(), state);
 
-        var enabled = Firebug.NetMonitor.isAlwaysEnabled();
-        this.showToolbarButtons("fbNetButtons", enabled);
+        this.showToolbarButtons("fbNetButtons", true);
 
-        if (enabled)
-            Firebug.chrome.setGlobalAttribute("cmd_togglePersistNet", "checked", this.persistContent);
-        else
-            this.table = null;
-
-        if (!enabled)
-            return;
+        Firebug.chrome.setGlobalAttribute("cmd_togglePersistNet", "checked", this.persistContent);
 
         if (!this.filterCategory)
             this.setFilter(Options.get("netFilterCategory"));
@@ -276,7 +269,7 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         if (header)
             return Firebug.NetMonitor.NetRequestTable;
 
-        return Firebug.ActivablePanel.getPopupObject.apply(this, arguments);
+        return Firebug.Panel.getPopupObject.apply(this, arguments);
     },
 
     supportsObject: function(object, type)
@@ -561,29 +554,6 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
         return this.conditionEditor;
     },
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // Activable Panel
-
-    /**
-     * Support for panel activation.
-     */
-    onActivationChanged: function(enable)
-    {
-        if (FBTrace.DBG_NET || FBTrace.DBG_ACTIVATION)
-            FBTrace.sysout("net.NetPanel.onActivationChanged; enable: " + enable);
-
-        if (enable)
-        {
-            Firebug.NetMonitor.addObserver(this);
-            Firebug.TabCacheModel.addObserver(this);
-        }
-        else
-        {
-            Firebug.NetMonitor.removeObserver(this);
-            Firebug.TabCacheModel.removeObserver(this);
-        }
-    },
-
     breakOnNext: function(breaking)
     {
         this.context.breakOnXHR = breaking;
@@ -776,8 +746,7 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
 
     layout: function()
     {
-        if (!this.queue.length || !this.context.netProgress ||
-            !Firebug.NetMonitor.isAlwaysEnabled())
+        if (!this.queue.length || !this.context.netProgress)
             return;
 
         this.initLayout();
@@ -1303,9 +1272,6 @@ NetPanel.prototype = Obj.extend(Firebug.ActivablePanel,
 
     insertActivationMessage: function()
     {
-        if (!Firebug.NetMonitor.isAlwaysEnabled())
-            return;
-
         // Make sure the basic structure of the table panel is there.
         this.initLayout();
 
