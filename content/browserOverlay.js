@@ -1,5 +1,12 @@
 /* See license.txt for terms of usage */
 
+/**
+ * This file represents a dynamic browser overlay. It's executed in every browser.xul
+ * scope to append basic UI for opening the HTTP Monitor console window.
+ * There is a new menu: Web Developer -> HTTP Monitor
+ */
+(function() {
+
 // ********************************************************************************************* //
 // Constants
 
@@ -210,7 +217,11 @@ $stylesheet("chrome://httpmonitor/skin/browserOverlay.css");
 // ********************************************************************************************* //
 // Extension Object
 
-var HttpMonitorOverlay =
+/**
+ * This is the only global in browser.xul scope. It's global only to be reachable from
+ * the <command> element. It should be changed so, the global isn't needed.
+ */ 
+top.HttpMonitorOverlay =
 {
     toggle: function()
     {
@@ -245,3 +256,4 @@ var HttpMonitorOverlay =
 }
 
 // ********************************************************************************************* //
+})();
