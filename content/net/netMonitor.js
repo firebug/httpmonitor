@@ -388,7 +388,7 @@ var NetHttpObserver =
             // xxxHonza
             //var context = Firebug.connection.getContextByWindow(win);
             var context = HttpMonitor.tabWatcher.getContextByWindow(win);
-            if (!context)
+            if (!context || context.window != win)
             {
                 FBTrace.sysout("Do no watch this request " + Http.safeGetRequestName(subject));
                 return;
