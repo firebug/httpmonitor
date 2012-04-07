@@ -3,7 +3,7 @@
 define([
     "lib/trace",
     "lib/object",
-    "firebug",
+    "app/firebug",
     "lib/xpcom",
     "net/requestObserver",
     "net/responseObserver",

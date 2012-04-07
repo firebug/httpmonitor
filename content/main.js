@@ -13,7 +13,7 @@ require(config, [
     "lib/trace",
     "app/httpMonitor",
     "chrome/infotip",
-    "firebug"
+    "app/firebug"
 ],
 function(FBTrace, HttpMonitor, Firebug) {
 

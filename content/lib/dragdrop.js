@@ -2,7 +2,7 @@
 
 define([
     "lib/object",
-    "firebug",
+    "app/firebug",
     "lib/events",
 ],
 function(Obj, Firebug, Events) {

@@ -3,7 +3,7 @@
 define([
     "lib/trace",
     "lib/object",
-    "firebug",
+    "app/firebug",
     "lib/domplate",
     "lib/locale",
     "lib/events",

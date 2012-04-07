@@ -3,7 +3,7 @@
 define([
     "lib/trace",
     "lib/object",
-    "firebug",
+    "app/firebug",
     "chrome/firefox",
     "lib/options",
     "chrome/window",

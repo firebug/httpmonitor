@@ -40,7 +40,7 @@ window.Firebug =
 {
     version: "1.10",
 
-    dispatchName: "Firebug",
+    dispatchName: "app/firebug",
     modules: modules,
     panelTypes: panelTypes,
     earlyRegPanelTypes: earlyRegPanelTypes,
@@ -857,7 +857,7 @@ window.Firebug =
 
         Firebug.chrome.syncPositionPref("detached");
 
-        return Firefox.openWindow("Firebug",
+        return Firefox.openWindow("app/firebug",
             "chrome://firebug/content/firefox/firebug.xul",
             "", {});
     },
@@ -887,7 +887,7 @@ window.Firebug =
                 getService(Ci.nsIPromptService);
 
             // Do not reset options if the user changed its mind.
-            if (!promptService.confirm(null, Locale.$STR("Firebug"),
+            if (!promptService.confirm(null, Locale.$STR("app/firebug"),
                 Locale.$STR("confirmation.Reset_All_Firebug_Options")))
             {
                 return;
@@ -1256,7 +1256,7 @@ window.Firebug =
     onGetTestList: function(testLists)
     {
         testLists.push({
-            extension: "Firebug",
+            extension: "app/firebug",
             testListURL: "http://getfirebug.com/tests/content/testlists/firebug1.10.html"
         });
     }
