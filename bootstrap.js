@@ -61,7 +61,7 @@ function loadBrowserOverlay(win)
     try
     {
         Services.scriptloader.loadSubScript(
-            "resource://httpmonitor/content/browserOverlay.js",
+            "resource://httpmonitor/content/app/browserOverlay.js",
             win);
     }
     catch (e)

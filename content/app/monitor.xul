@@ -94,7 +94,7 @@
 
     <!-- The rest of the UI is HTML/Domplate -->
     <vbox flex="1">
-        <browser id="content" flex="1" src="chrome://httpmonitor/content/monitor.html"
+        <browser id="content" flex="1" src="monitor.html"
             disablehistory="true" contextmenu="monitorContextMenu" type="content"/>
     </vbox>
 </window>

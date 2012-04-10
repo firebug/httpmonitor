@@ -240,7 +240,7 @@ top.HttpMonitorOverlay =
         {
             var args = {};
             win = openDialog(
-                "chrome://httpmonitor/content/monitor.xul",
+                "chrome://httpmonitor/content/app/monitor.xul",
                 "HTTPMonitor",
                 "chrome,resizable,scrollbars=auto,minimizable,dialog=no",
                 args);
