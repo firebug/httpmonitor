@@ -18,11 +18,20 @@
     <commandset id="mainCommandSet">
         <command id="cmd_clearNet" oncommand="Firebug.NetMonitor.clear(Firebug.currentContext)"/>
         <command id="cmd_togglePersistNet" oncommand="Firebug.NetMonitor.togglePersist(Firebug.currentContext)"/>
+        <command id="cmd_httpMonitorConnect" oncommand="Firebug.NetMonitor.connect()"/>
+        <command id="cmd_cmd_httpMonitorDisconnect" oncommand="Firebug.NetMonitor.disconnet()"/>
     </commandset>
 
     <!-- Toolbar -->
     <toolbox id="monitorToolbox">
         <toolbar id="monitorToolbar" align="center">
+            <toolbarbutton id="fbRemoteMenu" label="Connect" type="menu">
+                <menupopup onpopupshowing="return HttpMonitor.onConnectionMenuShowing(this);">
+                    <menuitem id="fbRemoteConnect" command="cmd_httpMonitorConnect" label="Connect" />
+                    <menuitem id="fbRemoteDisconnect" command="cmd_httpMonitorDisconnect" label="Disconnect" />
+                </menupopup>
+            </toolbarbutton>
+
             <toolbarbutton id="currentTab" type="menu">
                 <menupopup onpopupshowing="return HttpMonitor.onTabListMenuShowing(this);"
                     onpopuphidden="HttpMonitor.onTabListMenuHidden(this)"/>
