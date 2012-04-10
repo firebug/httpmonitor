@@ -24,7 +24,7 @@ function(FBTrace, HttpMonitor, Firebug) {
 top.HttpMonitor = HttpMonitor;
 
 /**
- * Maintain application life-cycle.
+ * Maintain application life-cycle. {@HttpMonitor} object represents the application.
  */
 function initialize()
 {

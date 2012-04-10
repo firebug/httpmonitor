@@ -64,7 +64,7 @@ var defaultPrefs =
 // Implementation
 
 /**
- * HttpMonitor object represents the main application.
+ * HttpMonitor object represents the entir application.
  */
 var HttpMonitor = 
 {
@@ -84,7 +84,9 @@ var HttpMonitor =
         Options.initialize("extensions.httpmonitor");
         Options.registerDefaultPrefs(defaultPrefs);
 
-        // Initialize modules.
+        // Initialize modules. Modules represent independent application
+        // components that are registered during apppliation load and
+        // their life cycle is maintained here.
         Events.dispatch(Firebug.modules, "initialize");
         Events.dispatch(Firebug.modules, "initializeUI");
     },
@@ -100,6 +102,10 @@ var HttpMonitor =
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Context Menu
 
+    /**
+     * Dynamically construct a context mene if the user clicks anywhere within the content
+     * area (content of the application window/panel)
+     */
     onContextShowing: function(event)
     {
         var popup = event.target;
@@ -179,6 +185,10 @@ var HttpMonitor =
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // List of tabs
 
+    /**
+     * The user wants to pick an existing tab so, let's create a list of all existing
+     * tabs (from all existing browser windows)
+     */
     onTabListMenuShowing: function(popup)
     {
         var tabs = [];
@@ -210,6 +220,8 @@ var HttpMonitor =
 
     onTabListMenuHidden: function(popup)
     {
+        // As soon as the list of tabs (a popup menu) is closed let's remove all menu items
+        // to destroy references to tab objects.
         while (popup.childNodes.length > 0)
             popup.removeChild(popup.lastChild);
     },
@@ -257,6 +269,9 @@ var HttpMonitor =
         return browser.contentDocument;
     },
 
+    /**
+     * Returns reference to the <browser> element that represents the main application UI.
+     */
     getPanelBrowser: function()
     {
         return this.win.document.getElementById("content");
