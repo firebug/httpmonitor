@@ -13,8 +13,10 @@ define([
     "lib/dom",
     "lib/options",
     "lib/string",
+    "remote/module"
 ],
-function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options, Str) {
+function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options, Str,
+    RemoteModule) {
 
 // ********************************************************************************************* //
 // Constants
@@ -180,6 +182,24 @@ var HttpMonitor =
 
         if (!popup.firstChild)
             return false;
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Connection
+
+    connect: function()
+    {
+        RemoteModule.connect();
+    },
+
+    disconnect: function()
+    {
+        RemoteModule.disconnect();
+    },
+
+    onConnectionMenuShowing: function(event)
+    {
+        return true;
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
