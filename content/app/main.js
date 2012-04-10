@@ -46,7 +46,7 @@ function shutdown()
 
     try
     {
-        HttpMonitor.shutdown();
+        HttpMonitor.destroy();
     }
     catch (e)
     {
