@@ -14,10 +14,8 @@
     <script type="application/x-javascript" src="mini-require.js"/>
     <script type="application/x-javascript" src="main.js"/>
 
+    <!-- Commands -->
     <commandset id="mainCommandSet">
-        <command id="cmd_startMonitor" oncommand="HttpMonitor.startMonitor()"/>
-        <command id="cmd_stopMonitor" oncommand="HttpMonitor.stopMonitor();"/>
-
         <command id="cmd_clearNet" oncommand="Firebug.NetMonitor.clear(Firebug.currentContext)"/>
         <command id="cmd_togglePersistNet" oncommand="Firebug.NetMonitor.togglePersist(Firebug.currentContext)"/>
     </commandset>
