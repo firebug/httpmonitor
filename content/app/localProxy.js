@@ -11,8 +11,9 @@ function(FBTrace, Obj, HttpMonitorProxy, Win) {
 // ********************************************************************************************* //
 // Implementation
 
-function LocalProxy()
+function LocalProxy(tabWatcher)
 {
+    this.tabWatcher = tabWatcher;
 }
 
 LocalProxy.prototype = Obj.extend(HttpMonitorProxy,
@@ -33,6 +34,7 @@ LocalProxy.prototype = Obj.extend(HttpMonitorProxy,
         {
             var tab = tabs[i];
             result.push({
+                id: tab.linkedPanel,
                 label: tab.label
             });
         }
@@ -40,12 +42,36 @@ LocalProxy.prototype = Obj.extend(HttpMonitorProxy,
         callback(result);
     },
 
-    getCurrentTab: function(callback)
+    getCurrentTab: function()
     {
+        return this.currentTab;
     },
 
-    attach: function(tabId, callback)
+    attach: function(tab, callback)
     {
+        if (this.currentTab == tab)
+            return;
+
+        this.currentTab = tab;
+
+        if (!this.currentTab)
+            return;
+
+        try
+        {
+            // Start watching the new tab (the previsous one, if any,
+            // is unwatched automatically).
+            var tab = this.tabWatcher.getTabById(tab.id);
+            if (!tab)
+                return;
+
+            this.tabWatcher.watchTab(tab);
+        }
+        catch (e)
+        {
+            if (FBTrace.DBG_ERRORS)
+                FBTrace.sysout("httpMonitor.onSelectTab; EXCEPTION " + e, e);
+        }
     },
 
     detach: function(tabId, callback)

@@ -53,7 +53,7 @@ var TabListMenu = Obj.extend(Firebug.Module,
                     nol10n: true,
                     label: tab.label,
                     type: "radio",
-                    checked: self.currentTab == tab,
+                    checked: self.currentTab == tab.id,
                     command: self.selectTab.bind(self, tab)
                 };
                 Menu.createMenuItem(popup, item);

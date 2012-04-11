@@ -4,8 +4,9 @@ define([
     "lib/trace",
     "app/tabContext",
     "net/netMonitor",
+    "chrome/window",
 ],
-function(FBTrace, TabContext, NetMonitor) {
+function(FBTrace, TabContext, NetMonitor, Win) {
 
 // ********************************************************************************************* //
 // Constants
@@ -57,6 +58,24 @@ TabWatcher.prototype =
     {
         return this.context;
         //return (this.context && this.context.window == win) ? this.context : null;
+    },
+
+    getTabById: function(tabId)
+    {
+        var result;
+        Win.iterateBrowserWindows("navigator:browser", function(win)
+        {
+            return Win.iterateBrowserTabs(win, function(tab)
+            {
+                if (tab.linkedPanel == tabId)
+                {
+                    result = tab;
+                    return true;
+                }
+            });
+        });
+
+        return result;
     }
 }
 
