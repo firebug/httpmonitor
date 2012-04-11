@@ -14,58 +14,22 @@ define([
     "lib/options",
     "lib/string",
     "remote/module",
-    "remote/menu"
+    "remote/tabMenu",
+    "app/DefaultPrefs",
+    "app/tabListMenu",
+    "remote/connectionMenu",
+    "app/localProxy",
+    "remote/proxy",
 ],
 function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options, Str,
-    RemoteModule, RemoteMenu) {
+    RemoteModule, RemoteTabMenu, DefaultPrefs, TabListMenu, ConnectionMenu,
+    LocalProxy, RemoteProxy) {
 
 // ********************************************************************************************* //
 // Constants
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-
-// ********************************************************************************************* //
-// Default Preferences
-
-/**
- * HTTP Monitor extension is restartless and so, we need to register default preference
- * manually (defaults/prefeneces dir doesn't work in this case)
- */
-var defaultPrefs =
-{
-    "textSize": 0,
-    "showInfoTips": true,
-    "toolbarCustomizationDone": false,
-
-// Console
-    "showNetworkErrors": true,
-
-// Net
-    "netFilterCategory": "all",
-    "net.logLimit": 500,
-    "net.enableSites": false,
-    "netDisplayedResponseLimit": 102400,
-    "netDisplayedPostBodyLimit": 10240,
-    "net.hiddenColumns": "netProtocolCol netLocalAddressCol",
-    "netPhaseInterval": 1000,
-    "sizePrecision": 1,
-    "netParamNameLimit": 25,
-    "netShowPaintEvents": false,
-    "netShowBFCacheResponses": true,
-    "netHtmlPreviewHeight": 100,
-
-// JSON Preview
-    "sortJsonPreview": false,
-
-// Cache
-    "cache.mimeTypes": "",
-    "cache.responseLimit": 5242880,
-
-// Remoting
-    "serverHost": "legoas",
-    "serverPort": 2929,
-}
 
 // ********************************************************************************************* //
 // Implementation
@@ -80,8 +44,15 @@ var HttpMonitor =
         // The parent XUL window.
         this.win = win;
 
-        // Update current tab label.
-        this.updateLabel();
+        // Default proxy
+        this.proxy = new LocalProxy();
+
+        // Used from XUL
+        this.TabListMenu = TabListMenu;
+        this.ConnectionMenu = ConnectionMenu;
+
+        // Listen for connection events (onConnect, onDisconnect)
+        this.ConnectionMenu.addListener(this);
 
         this.tabWatcher = new TabWatcher(this.getPanelDocument());
 
@@ -89,7 +60,7 @@ var HttpMonitor =
 
         // Initialize options and pass in the pref domain for this application.
         Options.initialize("extensions.httpmonitor");
-        Options.registerDefaultPrefs(defaultPrefs);
+        Options.registerDefaultPrefs(DefaultPrefs);
 
         // Initialize modules. Modules represent independent application
         // components that are registered during apppliation load and
@@ -104,6 +75,19 @@ var HttpMonitor =
         Events.dispatch(modules, "shutdown");
 
         Options.shutdown();
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Connection Hooks
+
+    onConnect: function()
+    {
+        this.proxy = new RemoteProxy(this.ConnectionMenu.connection);
+    },
+
+    onDisconnect: function()
+    {
+        this.proxy = new LocalProxy();
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -187,81 +171,6 @@ var HttpMonitor =
 
         if (!popup.firstChild)
             return false;
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Connection
-
-    connect: function()
-    {
-        RemoteModule.connect();
-    },
-
-    disconnect: function()
-    {
-        RemoteModule.disconnect();
-    },
-
-    onConnectionMenuShowing: function(popup)
-    {
-        return RemoteMenu.onMenuShowing(popup);
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // List of tabs
-
-    /**
-     * The user wants to pick an existing tab so, let's create a list of all existing
-     * tabs (from all existing browser windows)
-     */
-    onTabListMenuShowing: function(popup)
-    {
-        var tabs = [];
-        Win.iterateBrowserWindows("navigator:browser", function(win)
-        {
-            Win.iterateBrowserTabs(win, function(tab)
-            {
-                tabs.push(tab);
-            });
-        });
-
-        // Populate the popup menu with entries (list of tab titles).
-        for (var i=0; i<tabs.length; ++i)
-        {
-            var tab = tabs[i];
-            var item = {
-                nol10n: true,
-                label: tab.label,
-                type: "radio",
-                checked: this.currentTab == tab,
-                command: this.onSelectTab.bind(this, tab)
-            };
-            Menu.createMenuItem(popup, item);
-        }
-
-        // Yep, show the menu.
-        return true;
-    },
-
-    onTabListMenuHidden: function(popup)
-    {
-        // As soon as the list of tabs (a popup menu) is closed let's remove all menu items
-        // to destroy references to tab objects.
-        while (popup.childNodes.length > 0)
-            popup.removeChild(popup.lastChild);
-    },
-
-    updateLabel: function()
-    {
-        var button = this.win.document.getElementById("currentTab");
-        button.setAttribute("label", "Select Browser Tab ");
-
-        if (!this.currentTab)
-            return;
-
-        var label = Str.cropString(this.currentTab.label, 40);
-        button.setAttribute("label", label + " ");
-        button.setAttribute("tooltiptext", this.currentTab.label);
     },
 
     onSelectTab: function(tab)

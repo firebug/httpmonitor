@@ -16,8 +16,8 @@ function(FBTrace, Firebug, Obj, RemoteModule, Menu, Str) {
 /**
  * @module
  */
-var RemoteMenu = Obj.extend(Firebug.Module,
-/** @lends RemoteMenu */
+var RemoteTabMenu = Obj.extend(Firebug.Module,
+/** @lends RemoteTabMenu */
 {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Initialization
@@ -27,7 +27,7 @@ var RemoteMenu = Obj.extend(Firebug.Module,
         Firebug.Module.initialize.apply(this, arguments);
 
         RemoteModule.addListener(this);
-        this.updateUI();
+        //this.updateUI();
     },
 
     shutdown: function()
@@ -42,7 +42,7 @@ var RemoteMenu = Obj.extend(Firebug.Module,
 
     updateUI: function()
     {
-        var menu = Firebug.chrome.$("fbRemoteMenu");
+        var menu = Firebug.chrome.$("httpMonitorRemoteTabMenu");
         var isConnected = RemoteModule.isConnected();
 
         var label = "Connect Me!";
@@ -134,9 +134,9 @@ var RemoteMenu = Obj.extend(Firebug.Module,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(RemoteMenu);
+Firebug.registerModule(RemoteTabMenu);
 
-return RemoteMenu;
+return RemoteTabMenu;
 
 // ********************************************************************************************* //
 });

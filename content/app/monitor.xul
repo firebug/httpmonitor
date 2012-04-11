@@ -18,27 +18,31 @@
     <commandset id="mainCommandSet">
         <command id="cmd_clearNet" oncommand="Firebug.NetMonitor.clear(Firebug.currentContext)"/>
         <command id="cmd_togglePersistNet" oncommand="Firebug.NetMonitor.togglePersist(Firebug.currentContext)"/>
-        <command id="cmd_httpMonitorConnect" oncommand="HttpMonitor.connect()"/>
-        <command id="cmd_httpMonitorDisconnect" oncommand="HttpMonitor.disconnect()"/>
+        <command id="cmd_httpMonitorConnect" oncommand="HttpMonitor.ConnectionMenu.connect()"/>
+        <command id="cmd_httpMonitorDisconnect" oncommand="HttpMonitor.ConnectionMenu.disconnect()"/>
     </commandset>
 
     <!-- Toolbar -->
     <toolbox id="monitorToolbox">
         <toolbar id="monitorToolbar" align="center">
-            <toolbarbutton id="fbRemoteMenu" label="Connect" type="menu">
-                <menupopup onpopupshowing="return HttpMonitor.onConnectionMenuShowing(this);">
+
+            <!-- Connect/disconnect menu -->
+            <toolbarbutton id="httpMonitorConnectionMenu" type="menu">
+                <menupopup onpopupshowing="return HttpMonitor.ConnectionMenu.onShowing(this);">
                     <menuitem id="fbRemoteConnect" command="cmd_httpMonitorConnect" label="Connect" />
                     <menuitem id="fbRemoteDisconnect" command="cmd_httpMonitorDisconnect" label="Disconnect" />
                 </menupopup>
             </toolbarbutton>
 
-            <toolbarbutton id="currentTab" type="menu">
-                <menupopup onpopupshowing="return HttpMonitor.onTabListMenuShowing(this);"
-                    onpopuphidden="HttpMonitor.onTabListMenuHidden(this)"/>
+            <!-- Tab list menu -->
+            <toolbarbutton id="httpMonitorTabListMenu" type="menu">
+                <menupopup onpopupshowing="return HttpMonitor.TabListMenu.onShowing(this);"
+                    onpopuphidden="HttpMonitor.TabListMenu.onHidden(this)"/>
             </toolbarbutton>
 
             <toolbarseparator/>
 
+            <!-- Net panel buttons -->
             <hbox id="fbNetButtons" collapsed="true" class="noTabStop">
                 <toolbarseparator class="fbPanelSpecificButtonsSeparator"/>
                 <toolbarbutton id="fbNetClear" label="firebug.Clear"
@@ -96,7 +100,7 @@
         </toolbar>
     </toolbox>
 
-    <!-- Context Menu -->
+    <!-- Context menu -->
     <popupset id="mainPopupSet">
         <menupopup id="monitorContextMenu" onpopupshowing="return HttpMonitor.onContextShowing(event);" />
     </popupset>
