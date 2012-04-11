@@ -13,10 +13,11 @@ define([
     "lib/dom",
     "lib/options",
     "lib/string",
-    "remote/module"
+    "remote/module",
+    "remote/menu"
 ],
 function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options, Str,
-    RemoteModule) {
+    RemoteModule, RemoteMenu) {
 
 // ********************************************************************************************* //
 // Constants
@@ -60,6 +61,10 @@ var defaultPrefs =
 // Cache
     "cache.mimeTypes": "",
     "cache.responseLimit": 5242880,
+
+// Remoting
+    "serverHost": "legoas",
+    "serverPort": 2929,
 }
 
 // ********************************************************************************************* //
@@ -197,9 +202,9 @@ var HttpMonitor =
         RemoteModule.disconnect();
     },
 
-    onConnectionMenuShowing: function(event)
+    onConnectionMenuShowing: function(popup)
     {
-        return true;
+        return RemoteMenu.onMenuShowing(popup);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

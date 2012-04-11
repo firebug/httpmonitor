@@ -18,8 +18,8 @@
     <commandset id="mainCommandSet">
         <command id="cmd_clearNet" oncommand="Firebug.NetMonitor.clear(Firebug.currentContext)"/>
         <command id="cmd_togglePersistNet" oncommand="Firebug.NetMonitor.togglePersist(Firebug.currentContext)"/>
-        <command id="cmd_httpMonitorConnect" oncommand="Firebug.NetMonitor.connect()"/>
-        <command id="cmd_cmd_httpMonitorDisconnect" oncommand="Firebug.NetMonitor.disconnet()"/>
+        <command id="cmd_httpMonitorConnect" oncommand="HttpMonitor.connect()"/>
+        <command id="cmd_httpMonitorDisconnect" oncommand="HttpMonitor.disconnect()"/>
     </commandset>
 
     <!-- Toolbar -->

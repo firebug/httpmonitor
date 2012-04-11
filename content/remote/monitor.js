@@ -14,7 +14,7 @@ function(FBTrace, Firebug, Obj, RemoteModule) {
 /**
  * @module
  */
-var Monitor = extend(Firebug.Module,
+var Monitor = Obj.extend(Firebug.Module,
 /** @lends Monitor */
 {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -80,7 +80,7 @@ var Monitor = extend(Firebug.Module,
     onTabSelected: function(tabActor)
     {
         var self = this;
-        var callback = FBL.bind(this.onNetworkEvent, this);
+        var callback = Obj.bind(this.onNetworkEvent, this);
 
         // A tab has been selected so, subscribe to the Net monitor actor. The callback
         // will receive events about any HTTP traffic within the target tab.
@@ -110,7 +110,11 @@ var Monitor = extend(Firebug.Module,
 
         var context = Firebug.currentContext;
         if (!context)
+        {
+            if (FBTrace.DBG_REMOTENETMONITOR)
+                FBTrace.sysout("remotenet; No context!");
             return;
+        }
 
         var netPanel = context.getPanel("net", true);
         if (!netPanel)

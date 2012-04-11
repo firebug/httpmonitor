@@ -4,9 +4,11 @@ define([
     "lib/trace",
     "app/firebug",
     "lib/object",
-    "remote/module"
+    "remote/module",
+    "chrome/menu",
+    "lib/string",
 ],
-function(FBTrace, Firebug, Obj, RemoteModule) {
+function(FBTrace, Firebug, Obj, RemoteModule, Menu, Str) {
 
 // ********************************************************************************************* //
 // Module
@@ -45,11 +47,11 @@ var RemoteMenu = Obj.extend(Firebug.Module,
 
         var label = "Connect Me!";
         if (isConnected)
-            label = "Select Remote URL";
+            label = "Select Remote Tab";
 
         var tab = RemoteModule.getCurrentTab();
         if (tab)
-            label = FBL.cropString(tab.title, 100);
+            label = Str.cropString(tab.title, 100);
 
         menu.setAttribute("label", label + " ");
         menu.setAttribute("tooltiptext", tab ? tab.url : "Remote tab not selected");
@@ -65,8 +67,8 @@ var RemoteMenu = Obj.extend(Firebug.Module,
     onMenuShowing: function(popup)
     {
         var isConnected = RemoteModule.isConnected();
-        Firebug.chrome.$("cmd_fbConnect").setAttribute("disabled", isConnected ? "true" : "false");
-        Firebug.chrome.$("cmd_fbDisconnect").setAttribute("disabled", isConnected ? "false" : "true");
+        Firebug.chrome.$("cmd_httpMonitorConnect").setAttribute("disabled", isConnected ? "true" : "false");
+        Firebug.chrome.$("cmd_httpMonitorDisconnect").setAttribute("disabled", isConnected ? "false" : "true");
 
         // Remove previous fetched tabs.
         while (popup.childNodes.length > 2)
@@ -79,13 +81,14 @@ var RemoteMenu = Obj.extend(Firebug.Module,
         var self = this;
         RemoteModule.getTabList(function(packet)
         {
-            if (popup.state != "open")
+            if (popup.state != "showing")
                 return;
 
-            FBL.createMenuSeparator(popup);
+            Menu.createMenuSeparator(popup);
 
             var currentTabActor = RemoteModule.getCurrentTabActor();
             var tabs = packet.tabs;
+
             for (var i=0; i<tabs.length; ++i)
             {
                 var tab = tabs[i];
@@ -93,9 +96,9 @@ var RemoteMenu = Obj.extend(Firebug.Module,
                     label: tab.title ? tab.title : tab.url,
                     type: "radio",
                     checked: currentTabActor == tab.actor,
-                    command: FBL.bindFixed(self.selectTab, self, tab)
+                    command: Obj.bindFixed(self.selectTab, self, tab)
                 };
-                FBL.createMenuItem(popup, item);
+                Menu.createMenuItem(popup, item);
             }
         });
     },
@@ -119,7 +122,7 @@ var RemoteMenu = Obj.extend(Firebug.Module,
     selectTab: function(tab)
     {
         // Attach to the selected tab (actor)
-        ConnectionModule.selectTab(tab);
+        RemoteModule.selectTab(tab);
     },
 
     onTabSelected: function(tabActor)
