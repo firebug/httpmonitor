@@ -5,9 +5,10 @@ define([
     "app/firebug",
     "lib/object",
     "lib/events",
+    "lib/options",
     "remote/connection"
 ],
-function(FBTrace, Firebug, Obj, Events, Connection) {
+function(FBTrace, Firebug, Obj, Events, Options, Connection) {
 
 // ********************************************************************************************* //
 // Module
@@ -58,11 +59,15 @@ var RemoteModule = Obj.extend(Firebug.Module,
     connect: function()
     {
         if (this.isConnected())
+        {
+            if (FBTrace.DBG_REMOTEBUG)
+                FBTrace.sysout("remotebug; Already connected!");
             return;
+        }
 
         // Connect remote server
-        var host = Firebug.getPref(Firebug.prefDomain, "remotebug.serverHost");
-        var port = Firebug.getPref(Firebug.prefDomain, "remotebug.serverPort");
+        var host = Options.get("serverHost");
+        var port = Options.get("serverPort");
 
         if (FBTrace.DBG_REMOTEBUG)
             FBTrace.sysout("remotebug; Connecting to " + host + ":" + port + " ...");

@@ -14,7 +14,8 @@ require(config, [
     "lib/trace",
     "app/httpMonitor",
     "chrome/infotip",
-    "app/firebug"
+    "app/firebug",
+    "remote/monitor",
 ],
 function(FBTrace, HttpMonitor, Firebug) {
 
