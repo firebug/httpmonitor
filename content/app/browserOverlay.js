@@ -169,12 +169,9 @@ $menupopupOverlay($("menuWebDeveloperPopup"), [
     $menuitem({
         id: "menu_httpMonitor",
         command: "cmd_httpMonitorToggle",
-        insertbefore: "webConsole",
+        insertafter: "webConsole",
         label: "HTTP Monitor",
         "class": "menu-iconic"
-    }),
-    $menuseparator({
-        insertbefore: "webConsole"
     })
 ]);
 
@@ -182,14 +179,11 @@ $menupopupOverlay($("menuWebDeveloperPopup"), [
 $menupopupOverlay($("appmenu_webDeveloper_popup"), [
     $menuitem({
         id: "appmenu_httpMonitor",
-        insertbefore: "appmenu_webConsole",
+        insertafter: "appmenu_webConsole",
         command: "cmd_httpMonitorToggle",
         label: "HTTP Monitor",
         iconic: "true",
         "class": "fbInternational"
-    }),
-    $menuseparator({
-        insertbefore: "appmenu_webConsole"
     })
 ]);
 
@@ -197,7 +191,7 @@ $menupopupOverlay($("appmenu_webDeveloper_popup"), [
 $menupopupOverlay($("toolsPopup"), [
     $menuitem({
         id: "menu_httpMonitor",
-        insertbefore: "appmenu_webConsole",
+        insertafter: "appmenu_webConsole",
         command: "cmd_httpMonitoToggle",
         label: "HTTP Monitor",
         "class": "menuitem-iconic"
