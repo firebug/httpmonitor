@@ -35,17 +35,17 @@ var RemoteModule = Obj.extend(Firebug.Module,
         var onDisconnect = Obj.bind(this.onDisconnect, this);
 
         // Create connection.
-        this.connection = new Connection(onConnect, onDisconnect);
+        //this.connection = new Connection(onConnect, onDisconnect);
 
         // Connect by default
-        this.connect();
+        //this.connect();
     },
 
     shutdown: function()
     {
         Firebug.Module.shutdown.apply(this, arguments);
 
-        this.disconnect();
+        //this.disconnect();
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -54,6 +54,11 @@ var RemoteModule = Obj.extend(Firebug.Module,
     isConnected: function()
     {
         return (this.connection && this.connection.isConnected());
+    },
+
+    getConnection: function()
+    {
+        return this.connection;
     },
 
     connect: function()
@@ -145,6 +150,8 @@ var RemoteModule = Obj.extend(Firebug.Module,
 
             self.currentTab = tab;
 
+            self.onTabSelected(tab.actor);
+
             Events.dispatch(self.fbListeners, "onTabSelected", [tab.actor]);
         });
     },
@@ -157,6 +164,94 @@ var RemoteModule = Obj.extend(Firebug.Module,
     getCurrentTabActor: function()
     {
         return this.currentTab ? this.currentTab.actor : null;
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Remote Protocol API
+
+    getNetActor: function(tabActor, callback)
+    {
+        var conn = this.getConnection();
+        conn.sendPacket(tabActor, "networkMonitorActor", true, callback);
+    },
+
+    subscribe: function(netActor, callback)
+    {
+        if (this.currentSubscription)
+            this.unsubscribe(this.currentSubscription);
+
+        var conn = this.getConnection();
+        conn.sendPacket(netActor, "subscribe", false, callback);
+        this.currentSubscription = netActor;
+    },
+
+    unsubscribe: function(netActor)
+    {
+        var conn = this.getConnection();
+        conn.removeCallback(netActor);
+        conn.sendPacket(netActor, "unsubscribe", true, function(packet)
+        {
+            if (FBTrace.DBG_REMOTENETMONITOR)
+                FBTrace.sysout("remotenet; Unsubscribed from: " + packet.from);
+            return;
+        });
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // RemoteBug.Module Listener
+
+    /**
+     * Executed by RemoteBug.Module if a remote tab is selected.
+     * @param {Object} tab The selcted tab descriptor
+     */
+    onTabSelected: function(tabActor)
+    {
+        var self = this;
+        var callback = Obj.bind(this.onNetworkEvent, this);
+
+        // A tab has been selected so, subscribe to the Net monitor actor. The callback
+        // will receive events about any HTTP traffic within the target tab.
+        this.getNetActor(tabActor, function(packet)
+        {
+            self.subscribe(packet.actor, callback);
+        });
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // NetActor Events
+
+    onNetworkEvent: function(packet)
+    {
+        if (packet.subscribe)
+        {
+            if (FBTrace.DBG_REMOTENETMONITOR)
+                FBTrace.sysout("remotenet; Subscribed to: " + packet.from);
+            return;
+        }
+
+        if (packet.type != "notify")
+            return;
+
+        if (FBTrace.DBG_REMOTENETMONITOR)
+            FBTrace.sysout("remotenet; HTTP activity received from: " + packet.from, packet);
+
+        var context = Firebug.currentContext;
+        if (!context)
+        {
+            if (FBTrace.DBG_REMOTENETMONITOR)
+                FBTrace.sysout("remotenet; No context!");
+            return;
+        }
+
+        var netPanel = context.getPanel("net", true);
+        if (!netPanel)
+            return;
+
+        for (var i=0; i<packet.files.length; i++)
+        {
+            var file = packet.files[i];
+            netPanel.updateFile(file);
+        }
     }
 });
 

@@ -2,44 +2,55 @@
 
 define([
     "lib/trace",
-    "app/firebug",
-    "lib/object",
-    "remote/module",
 ],
-function(FBTrace, Firebug, Obj, RemoteModule) {
+function(FBTrace) {
 
 // ********************************************************************************************* //
-// Module
+// Implementation
 
-/**
- * @module
- */
-var Monitor = Obj.extend(Firebug.Module,
-/** @lends Monitor */
+function Protocol(connection, listener)
+{
+    this.connection = connection;
+    this.listener = listener;
+}
+
+Protocol.prototype =
 {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Initialization
+    // Protocol API
 
-    initialize: function()
+    getTabList: function(callback)
     {
-        Firebug.Module.initialize.apply(this, arguments);
-
-        RemoteModule.addListener(this);
+        this.connection.sendPacket("root", "listTabs", true, callback);
     },
 
-    shutdown: function()
+    selectTab: function(tab)
     {
-        Firebug.Module.shutdown.apply(this, arguments);
+        if (FBTrace.DBG_REMOTEBUG)
+            FBTrace.sysout("remotebug; Selected remote tab: " + tab.title, tab);
 
-        RemoteModule.removeListener(this);
+        var self = this;
+        this.connection.sendPacket(tab.actor, "attach", true, function(packet)
+        {
+            if (FBTrace.DBG_REMOTEBUG)
+                FBTrace.sysout("remotebug; Remote tab selected: " + packet.from, packet);
+
+            self.currentTab = tab;
+
+            self.onTabSelected(tab.actor);
+
+            Events.dispatch(self.fbListeners, "onTabSelected", [tab.actor]);
+        });
     },
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Remote Protocol API
-
-    getConnection: function()
+    getCurrentTab: function()
     {
-        return RemoteModule.connection;
+        return this.currentTab;
+    },
+
+    getCurrentTabActor: function()
+    {
+        return this.currentTab ? this.currentTab.actor : null;
     },
 
     getNetActor: function(tabActor, callback)
@@ -71,7 +82,7 @@ var Monitor = Obj.extend(Firebug.Module,
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // RemoteBug.Module Listener
+    // Hooks
 
     /**
      * Executed by RemoteBug.Module if a remote tab is selected.
@@ -90,9 +101,6 @@ var Monitor = Obj.extend(Firebug.Module,
         });
     },
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // NetActor Events
-
     onNetworkEvent: function(packet)
     {
         if (packet.subscribe)
@@ -108,30 +116,14 @@ var Monitor = Obj.extend(Firebug.Module,
         if (FBTrace.DBG_REMOTENETMONITOR)
             FBTrace.sysout("remotenet; HTTP activity received from: " + packet.from, packet);
 
-        var context = Firebug.currentContext;
-        if (!context)
-        {
-            if (FBTrace.DBG_REMOTENETMONITOR)
-                FBTrace.sysout("remotenet; No context!");
-            return;
-        }
-
-        var netPanel = context.getPanel("net", true);
-        if (!netPanel)
-            return;
-
-        for (var i=0; i<packet.files.length; i++)
-        {
-            var file = packet.files[i];
-            netPanel.updateFile(file);
-        }
+        this.listener.onNetworkEvent(packet);
     }
-});
+};
 
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(Monitor);
+return Protocol;
 
 // ********************************************************************************************* //
 });
