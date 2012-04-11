@@ -31,6 +31,7 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
             {
                 var tab = tabs[i];
                 result.push({
+                    id: tab.actor,
                     label: tab.title ? tab.title : tab.url,
                 })
             }

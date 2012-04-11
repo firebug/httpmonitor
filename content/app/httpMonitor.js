@@ -44,9 +44,6 @@ var HttpMonitor =
         // The parent XUL window.
         this.win = win;
 
-        // Default proxy
-        this.proxy = new LocalProxy();
-
         // Used from XUL
         this.TabListMenu = TabListMenu;
         this.ConnectionMenu = ConnectionMenu;
@@ -56,6 +53,10 @@ var HttpMonitor =
 
         this.tabWatcher = new TabWatcher(this.getPanelDocument());
 
+        // Default proxy
+        this.proxy = new LocalProxy(this.tabWatcher);
+
+        // Localize all strings in the application UI.
         this.internationalizeUI(win.document);
 
         // Initialize options and pass in the pref domain for this application.
@@ -87,7 +88,7 @@ var HttpMonitor =
 
     onDisconnect: function()
     {
-        this.proxy = new LocalProxy();
+        this.proxy = new LocalProxy(this.tabWatcher);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -173,30 +174,6 @@ var HttpMonitor =
             return false;
     },
 
-    onSelectTab: function(tab)
-    {
-        if (this.currentTab == tab)
-            return;
-
-        this.currentTab = tab;
-        this.updateLabel();
-
-        if (!this.currentTab)
-            return;
-
-        try
-        {
-            // Start watching the new tab (the previsous one, if any, is unwatched automatically).
-            this.tabWatcher.watchTab(tab);
-        }
-        catch (e)
-        {
-            FBTrace.sysout("httpMonitor.onSelectTab; EXCEPTION " + e, e);
-        }
-
-        FBTrace.sysout("httpMonitor.onSelectTab; " + this.tabWatcher.context.getName());
-    },
-
     getPanelDocument: function()
     {
         var browser = this.getPanelBrowser();
@@ -227,6 +204,7 @@ var HttpMonitor =
 
         var elements = doc.getElementsByClassName("fbInternational");
         elements = Arr.cloneArray(elements);
+
         var attributes = ["label", "tooltiptext", "aria-label"];
         for (var i=0; i<elements.length; i++)
         {
