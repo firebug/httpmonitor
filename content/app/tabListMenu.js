@@ -86,7 +86,7 @@ var TabListMenu = Obj.extend(Firebug.Module,
         var label = "Select Tab";
         var tab = proxy.getCurrentTab();
         if (tab)
-            label = Str.cropString(tab.title, 100);
+            label = Str.cropString(tab.label, 100);
 
         menu.setAttribute("label", label + " ");
     },
@@ -105,30 +105,41 @@ var TabListMenu = Obj.extend(Firebug.Module,
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // HTTP Monitor Proxy Listener
-
-    onTabSelected: function(tabActor)
-    {
-        this.updateUI();
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Commands
 
     selectTab: function(tab)
     {
+        var self = this;
+
         // Attach to the selected tab (actor)
         var proxy = this.getProxy();
-        proxy.attach(tab);
+        proxy.attach(tab, function()
+        {
+            self.updateUI();
+
+            // xxxHonza: hack, we should never need the real tab object.
+            var firefoxLocalTab = self.getTabWatcher().getTabById(tab.id);
+            tab = firefoxLocalTab ? firefoxLocalTab : tab;
+
+            // Start watching the new tab (the previsous one, if any,
+            // is unwatched automatically).
+            self.getTabWatcher().watchTab(tab);
+        });
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Proxy
+    // Globals
 
     getProxy: function()
     {
         //xxxHonza: Could we get the proxy without using the app singleton?
         return top.HttpMonitor.proxy;
+    },
+
+    getTabWatcher: function()
+    {
+        //xxxHonza: Could we get the proxy without using the app singleton?
+        return top.HttpMonitor.tabWatcher;
     }
 });
 

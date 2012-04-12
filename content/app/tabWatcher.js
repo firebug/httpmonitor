@@ -35,8 +35,15 @@ TabWatcher.prototype =
 
         // Start HTTP activity of the selected tab/window. The context object represents
         // a container for all data collected by the Net panel.
-        this.context = new TabContext(tab, this.persistedState);
-        this.context.create(this.panelDoc);
+        try
+        {
+            this.context = new TabContext(tab, this.persistedState);
+            this.context.create(this.panelDoc);
+        }
+        catch (e)
+        {
+            FBTrace.sysout("watchTab EXCEPTION " + e, e);
+        }
 
         // xxxHonza, hack
         Firebug.currentContext = this.context;
@@ -74,6 +81,8 @@ TabWatcher.prototype =
                 }
             });
         });
+
+        FBTrace.sysout("getTabById " + tabId + " -> " + result);
 
         return result;
     }

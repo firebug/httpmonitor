@@ -563,12 +563,12 @@ Firebug.Panel = Obj.extend(new Firebug.Listener(),
 
     initialize: function(context, doc)
     {
-        if (!context.browser)
+        /*if (!context.browser)
         {
             if (FBTrace.DBG_ERRORS)
                 FBTrace.sysout("attempt to create panel with dud context!");
             return false;
-        }
+        }*/
 
         this.context = context;
         this.document = doc;
