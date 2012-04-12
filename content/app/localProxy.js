@@ -11,9 +11,8 @@ function(FBTrace, Obj, HttpMonitorProxy, Win) {
 // ********************************************************************************************* //
 // Implementation
 
-function LocalProxy(tabWatcher)
+function LocalProxy()
 {
-    this.tabWatcher = tabWatcher;
 }
 
 LocalProxy.prototype = Obj.extend(HttpMonitorProxy,
@@ -54,24 +53,7 @@ LocalProxy.prototype = Obj.extend(HttpMonitorProxy,
 
         this.currentTab = tab;
 
-        if (!this.currentTab)
-            return;
-
-        try
-        {
-            // Start watching the new tab (the previsous one, if any,
-            // is unwatched automatically).
-            var tab = this.tabWatcher.getTabById(tab.id);
-            if (!tab)
-                return;
-
-            this.tabWatcher.watchTab(tab);
-        }
-        catch (e)
-        {
-            if (FBTrace.DBG_ERRORS)
-                FBTrace.sysout("httpMonitor.onSelectTab; EXCEPTION " + e, e);
-        }
+        callback();
     },
 
     detach: function(tabId, callback)

@@ -42,11 +42,12 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
 
     getCurrentTab: function()
     {
-        this.protocol.currentTab;
+        return this.protocol.currentTab;
     },
 
-    attach: function(tabId, callback)
+    attach: function(tab, callback)
     {
+        this.protocol.selectTab(tab, callback);
     },
 
     detach: function(tabId, callback)
@@ -66,7 +67,7 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
             return;
         }
 
-        /*var netPanel = context.getPanel("net", true);
+        var netPanel = context.getPanel("net", true);
         if (!netPanel)
             return;
 
@@ -74,7 +75,7 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
         {
             var file = packet.files[i];
             netPanel.updateFile(file);
-        }*/
+        }
     }
 });
 

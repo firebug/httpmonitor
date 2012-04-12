@@ -168,8 +168,8 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
 
     loadedContext: function(context)
     {
-        var tabId = Win.getWindowProxyIdForWindow(context.browser.contentWindow);
-        delete this.contexts[tabId];
+        //var tabId = Win.getWindowProxyIdForWindow(context.browser.contentWindow);
+        //delete this.contexts[tabId];
 
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.loadedContext; temp contexts (" + getTempContextCount() + ")");
@@ -347,7 +347,7 @@ var NetHttpObserver =
             if (!context || context.window != win)
             {
                 FBTrace.sysout("This request doesn't come from selected tab  " +
-                    Http.safeGetRequestName(subject));
+                    Http.safeGetRequestName(subject), context);
                 return;
             }
 

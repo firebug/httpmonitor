@@ -21,8 +21,8 @@ function TabContext(tab, persistedState)
     this.uid = Obj.getUniqueId();
 
     this.tab = tab;
-    this.window = tab.linkedBrowser.contentWindow;
-    this.browser = tab.linkedBrowser;
+    this.window = tab.linkedBrowser ? tab.linkedBrowser.contentWindow : null;
+    this.browser = tab.linkedBrowser ? tab.linkedBrowser : null;
     this.persistedState = persistedState;
 
     this.windows = [];
@@ -34,7 +34,7 @@ TabContext.prototype =
 {
     getWindowLocation: function()
     {
-        return Win.safeGetWindowLocation(this.window);
+        return this.getTitle();
     },
 
     getTitle: function()
@@ -42,28 +42,12 @@ TabContext.prototype =
         if (this.window && this.window.document)
             return this.window.document.title;
         else
-            return "";
+            return this.tab.label;
     },
 
     getName: function()
     {
-        if (!this.name || this.name === "about:blank")
-        {
-            var url = this.getWindowLocation().toString();
-            if (Url.isDataURL(url))
-            {
-                var props = Url.splitDataURL(url);
-                if (props.fileName)
-                    this.name = "data url from "+props.fileName;
-            }
-            else
-            {
-                this.name = Url.normalizeURL(url);
-                if (this.name === "about:blank" && this.window.frameElement)
-                    this.name += " in "+Css.getElementCSSSelector(this.window.frameElement);
-            }
-        }
-        return this.name;
+        return this.getTitle();
     },
 
     create: function(doc)

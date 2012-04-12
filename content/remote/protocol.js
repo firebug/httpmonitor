@@ -2,8 +2,9 @@
 
 define([
     "lib/trace",
+    "lib/object",
 ],
-function(FBTrace) {
+function(FBTrace, Obj) {
 
 // ********************************************************************************************* //
 // Implementation
@@ -24,22 +25,24 @@ Protocol.prototype =
         this.connection.sendPacket("root", "listTabs", true, callback);
     },
 
-    selectTab: function(tab)
+    selectTab: function(tab, callback)
     {
         if (FBTrace.DBG_REMOTEBUG)
-            FBTrace.sysout("remotebug; Selected remote tab: " + tab.title, tab);
+            FBTrace.sysout("remotebug; Selected remote tab: " + tab.id, tab);
 
         var self = this;
-        this.connection.sendPacket(tab.actor, "attach", true, function(packet)
+        this.connection.sendPacket(tab.id, "attach", true, function(packet)
         {
             if (FBTrace.DBG_REMOTEBUG)
                 FBTrace.sysout("remotebug; Remote tab selected: " + packet.from, packet);
 
             self.currentTab = tab;
 
-            self.onTabSelected(tab.actor);
+            self.onTabSelected(tab.id);
 
-            Events.dispatch(self.fbListeners, "onTabSelected", [tab.actor]);
+            callback();
+
+            //Events.dispatch(self.fbListeners, "onTabSelected", [tab.id]);
         });
     },
 
@@ -55,8 +58,7 @@ Protocol.prototype =
 
     getNetActor: function(tabActor, callback)
     {
-        var conn = this.getConnection();
-        conn.sendPacket(tabActor, "networkMonitorActor", true, callback);
+        this.connection.sendPacket(tabActor, "networkMonitorActor", true, callback);
     },
 
     subscribe: function(netActor, callback)
@@ -64,16 +66,14 @@ Protocol.prototype =
         if (this.currentSubscription)
             this.unsubscribe(this.currentSubscription);
 
-        var conn = this.getConnection();
-        conn.sendPacket(netActor, "subscribe", false, callback);
+        this.connection.sendPacket(netActor, "subscribe", false, callback);
         this.currentSubscription = netActor;
     },
 
     unsubscribe: function(netActor)
     {
-        var conn = this.getConnection();
-        conn.removeCallback(netActor);
-        conn.sendPacket(netActor, "unsubscribe", true, function(packet)
+        this.connection.removeCallback(netActor);
+        this.connection.sendPacket(netActor, "unsubscribe", true, function(packet)
         {
             if (FBTrace.DBG_REMOTENETMONITOR)
                 FBTrace.sysout("remotenet; Unsubscribed from: " + packet.from);

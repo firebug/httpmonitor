@@ -52,9 +52,7 @@ var HttpMonitor =
         this.ConnectionMenu.addListener(this);
 
         this.tabWatcher = new TabWatcher(this.getPanelDocument());
-
-        // Default proxy
-        this.proxy = new LocalProxy(this.tabWatcher);
+        this.proxy = new LocalProxy();
 
         // Localize all strings in the application UI.
         this.internationalizeUI(win.document);
@@ -88,7 +86,7 @@ var HttpMonitor =
 
     onDisconnect: function()
     {
-        this.proxy = new LocalProxy(this.tabWatcher);
+        this.proxy = new LocalProxy();
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
