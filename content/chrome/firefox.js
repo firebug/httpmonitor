@@ -1,6 +1,9 @@
 /* See license.txt for terms of usage */
 
-define([], function() {
+define([
+    "lib/trace",
+],
+function(FBTrace) {
 
 // ********************************************************************************************* //
 // Constants
@@ -15,11 +18,10 @@ var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMe
 
 function getBrowserDocument()
 {
-    if (HttpMonitor.tabWatcher.context.browser)
+    if (typeof (HttpMonitor) != "undefined" && HttpMonitor.tabWatcher.context.browser)
         return HttpMonitor.tabWatcher.context.browser.ownerDocument;
 
     // Context for remote monitoring doesn't have a browser
-    
 
     //return Firebug.chrome.inDetachedScope ? Firebug.chrome.originalBrowser.ownerDocument : top.document;
 }
@@ -31,7 +33,9 @@ var Firefox =
 {
     getElementById: function(id)
     {
-        return getBrowserDocument().getElementById(id);
+        var doc = getBrowserDocument();
+        if (doc)
+            return doc.getElementById(id);
     },
 
     $: function(id)
@@ -41,7 +45,7 @@ var Firefox =
 
     getTabBrowser: function()
     {
-        if (window.gBrowser)
+        if (typeof(window) != "undefined" && window.gBrowser)
             return window.gBrowser;
 
         var tabBrowser = Firefox.getElementById("content");

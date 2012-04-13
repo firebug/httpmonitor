@@ -34,7 +34,7 @@ var panelTypeMap = {};
  * @class Represents the main Firebug application object. An instance of this object is
  * created for each browser window (browser.xul).
  */
-window.Firebug =
+Firebug =
 {
     modules: modules,
     panelTypes: panelTypes,

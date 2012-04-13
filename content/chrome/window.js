@@ -48,8 +48,19 @@ Win.getTabForWindow = function(aWindow)
     {
         if (FBTrace.DBG_WINDOWS)
             FBTrace.sysout("getTabForWindow FAIL aWindow: "+aWindow+" tabBrowser: "+tabBrowser, tabBrowser);
-        return null;
+
+        var mainWindow = aWindow.QueryInterface(Components.interfaces.nsIInterfaceRequestor)  
+           .getInterface(Components.interfaces.nsIWebNavigation)  
+           .QueryInterface(Components.interfaces.nsIDocShellTreeItem)  
+           .rootTreeItem  
+           .QueryInterface(Components.interfaces.nsIInterfaceRequestor)  
+           .getInterface(Components.interfaces.nsIDOMWindow);  
+
+        tabBrowser = mainWindow.gBrowser;
     }
+
+    if (!tabBrowser)
+        return;
 
     try
     {

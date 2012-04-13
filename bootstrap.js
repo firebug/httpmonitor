@@ -25,6 +25,10 @@ function startup(data, reason)
 
     resource.setSubstitution("httpmonitor", data.resourceURI);
 
+    // Load server. It'll be launched only if "extensions.httpmonitor.serverMode"
+    // preference is set to true.
+    loadServer();
+
     // Load Monitor into all existing browser windows.
     var enumerator = Services.wm.getEnumerator("navigator:browser");
     while (enumerator.hasMoreElements())
@@ -73,6 +77,21 @@ function loadBrowserOverlay(win)
 function unloadBrowserOverlay(win)
 {
     // xxxHonza: TODO
+}
+
+// ********************************************************************************************* //
+// Server
+
+function loadServer()
+{
+    try
+    {
+        Services.scriptloader.loadSubScript("resource://httpmonitor/content/server/main.js");
+    }
+    catch (e)
+    {
+        Cu.reportError(e);
+    }
 }
 
 // ********************************************************************************************* //

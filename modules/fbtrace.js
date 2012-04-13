@@ -8,11 +8,12 @@ var EXPORTED_SYMBOLS = [];
 // ********************************************************************************************* //
 // Firebug Trace - FBTrace
 
+var Cu = Components.utils;
 var scope = {};
 
 try
 {
-    Components.utils["import"]("resource://fbtrace/firebug-trace-service.js", scope);
+    Cu.import("resource://fbtrace/firebug-trace-service.js", scope);
 }
 catch (err)
 {
@@ -24,10 +25,36 @@ catch (err)
             var TraceObj = {};
             for (var i=0; i<TraceAPI.length; i++)
                 TraceObj[TraceAPI[i]] = function() {};
+
+            TraceObj.sysout = function(msg)
+            {
+                try
+                {
+                    Cu.import("resource://fbtrace/firebug-trace-service.js", scope);
+                    var FBTrace = scope.traceConsoleService.getTracer("extensions.firebug");
+                    FBTrace.sysout.apply(FBTrace, arguments);
+                }
+                catch (err)
+                {
+                    Cu.reportError(getStackDump());
+                    Cu.reportError(msg);
+                }
+
+            }
+
             return TraceObj;
         }
     };
 }
+
+function getStackDump()
+{
+    var lines = [];
+    for (var frame = Components.stack; frame; frame = frame.caller)
+        lines.push(frame.filename + " (" + frame.lineNumber + ")");
+
+    return lines.join("\n");
+};
 
 var FBTrace = scope.traceConsoleService.getTracer("extensions.firebug");
 
