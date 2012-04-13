@@ -64,11 +64,11 @@
 }
 
 .memberRow[breakpoint="true"] .memberRowHeader {
-    background-image: url(chrome://firebug/skin/breakpoint.png);
+    background-image: url(chrome://httpmonitor/skin/breakpoint.png);
 }
 
 .memberRow[breakpoint="true"][disabledBreakpoint="true"] .memberRowHeader {
-    background-image: url(chrome://firebug/skin/breakpointDisabled.png);
+    background-image: url(chrome://httpmonitor/skin/breakpointDisabled.png);
 }
 
 .memberRow[breakable="true"]:hover .memberRowHeader {

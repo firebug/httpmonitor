@@ -2,3 +2,6 @@ content httpmonitor     content/
 skin    httpmonitor     classic/1.0 skin/classic/
 skin    httpmonitor-os  classic/1.0 skin/classic/win/
 locale  httpmonitor     en-US       locale/en-US/
+
+# Support for Mac
+override chrome://httpmonitor-os/skin/panel.css    chrome://httpmonitor/skin/mac/panel.css os=Darwin

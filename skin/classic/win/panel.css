@@ -13,7 +13,7 @@
 .objectBox-stackFrame.hasTwisty,
 .netPageRow > .netCol > .netPageTitle,
 .cssComputedHeader > .twisty {
-    background-image: url(chrome://firebug/skin/win/twistyClosed.png);
+    background-image: url(chrome://httpmonitor/skin/win/twistyClosed.png);
     background-repeat: no-repeat;
     background-position: 2px 2px;
     min-height: 12px;
@@ -30,7 +30,7 @@
 .netPageRow.opened > .netCol > .netPageTitle,
 .objectBox-stackFrame.hasTwisty.opened,
 .computedStylesGroup.opened > .cssComputedHeader > .twisty {
-    background-image: url(chrome://firebug/skin/win/twistyOpen.png);
+    background-image: url(chrome://httpmonitor/skin/win/twistyOpen.png);
 }
 
 .twisty {
@@ -47,7 +47,7 @@
 .closeButton {
     width: 16px;
     height: 16px;
-    background: url(chrome://firebug/skin/win/close.png) no-repeat 0 0;
+    background: url(chrome://httpmonitor/skin/win/close.png) no-repeat 0 0;
 }
 
 .closeButton:hover {
