@@ -85,8 +85,6 @@ TabWatcher.prototype =
             });
         });
 
-        FBTrace.sysout("getTabById " + tabId + " -> " + result);
-
         return result;
     }
 }

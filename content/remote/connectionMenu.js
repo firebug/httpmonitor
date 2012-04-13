@@ -7,8 +7,9 @@ define([
     "lib/options",
     "lib/events",
     "remote/connection",
+    "lib/dom",
 ],
-function(FBTrace, Firebug, Obj, Options, Events, Connection) {
+function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom) {
 
 // ********************************************************************************************* //
 // Globals
@@ -80,6 +81,18 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
             return;
         }
 
+        // Do not connect if host or port is not specified.
+        if (!host || !port)
+        {
+            if (FBTrace.DBG_REMOTEBUG)
+            {
+                FBTrace.sysout("remotebug; You need to specify host and port. Check: " +
+                    "extensions.httpmonitor.serverHost and " +
+                    "extensions.httpmonitor.serverPort");
+            }
+            return;
+        }
+
         if (FBTrace.DBG_REMOTEBUG)
             FBTrace.sysout("remotebug; Connecting to " + host + ":" + port + " ...");
 
@@ -146,6 +159,10 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
             label = host + ":" + port + " ";
 
         menu.setAttribute("label", label + " ");
+
+        // xxxHonza: Hide the remoting feature behind a pref for now.
+        if (!host || !port)
+            Dom.collapse(menu, true);
     },
 
     onShowing: function(popup)
