@@ -163,15 +163,15 @@ var NetHttpActivityObserver =
         //var context = Firebug.connection.getContextByWindow(win);
         // xxxHonza
         var context = HttpMonitor.tabWatcher.context;
-        var tabId = Win.getWindowProxyIdForWindow(win);
-        if (!(tabId && win))
+        //var tabId = Win.getWindowProxyIdForWindow(win);
+        if (!win)
         {
             FBTrace.sysout("Chrome request: " + Http.safeGetRequestName(httpChannel));
             return;
         }
 
-        var networkContext = Firebug.NetMonitor.contexts[tabId];
-        if (!networkContext)
+        //var networkContext = Firebug.NetMonitor.contexts[tabId];
+        //if (!networkContext)
             networkContext = context ? context.netProgress : null;
 
         if (!networkContext)

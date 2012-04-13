@@ -32,6 +32,12 @@ function TabContext(tab, persistedState)
 
 TabContext.prototype = 
 {
+    getCurrentTabId: function()
+    {
+        // xxxHonza: tab.id should be always used.
+        return this.tab.linkedBrowser ? this.tab.linkedBrowser : tab.id;
+    },
+
     getWindowLocation: function()
     {
         return this.getTitle();
@@ -129,6 +135,7 @@ TabContext.prototype =
         try
         {
             // Destroy the panel and allow it to persist extra info to the state object
+            panel.hide(this.persistedState);
             panel.destroy(panelState);
         }
         catch (exc)

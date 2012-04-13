@@ -13,7 +13,6 @@ define([
     "lib/dom",
     "lib/options",
     "lib/string",
-    "remote/module",
     "remote/tabMenu",
     "app/DefaultPrefs",
     "app/tabListMenu",
@@ -22,7 +21,7 @@ define([
     "remote/proxy",
 ],
 function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options, Str,
-    RemoteModule, RemoteTabMenu, DefaultPrefs, TabListMenu, ConnectionMenu,
+    RemoteTabMenu, DefaultPrefs, TabListMenu, ConnectionMenu,
     LocalProxy, RemoteProxy) {
 
 // ********************************************************************************************* //
@@ -82,11 +81,19 @@ var HttpMonitor =
     onConnect: function()
     {
         this.proxy = new RemoteProxy(this.ConnectionMenu.connection);
+
+        this.tabWatcher.unwatchTab();
+
+        TabListMenu.updateUI();
     },
 
     onDisconnect: function()
     {
         this.proxy = new LocalProxy();
+
+        this.tabWatcher.unwatchTab();
+
+        TabListMenu.updateUI();
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

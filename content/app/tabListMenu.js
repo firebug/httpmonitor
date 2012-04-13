@@ -4,12 +4,11 @@ define([
     "lib/trace",
     "app/firebug",
     "lib/object",
-    "remote/module",
     "chrome/menu",
     "lib/string",
     "app/httpMonitorProxy",
 ],
-function(FBTrace, Firebug, Obj, RemoteModule, Menu, Str, HttpMonitorProxy) {
+function(FBTrace, Firebug, Obj, Menu, Str, HttpMonitorProxy) {
 
 // ********************************************************************************************* //
 // Module
@@ -79,7 +78,6 @@ var TabListMenu = Obj.extend(Firebug.Module,
     updateUI: function()
     {
         var menu = Firebug.chrome.$("httpMonitorTabListMenu");
-        var isConnected = RemoteModule.isConnected();
 
         var proxy = this.getProxy();
 
