@@ -42,8 +42,8 @@ var DefaultPrefs =
     "cache.responseLimit": 5242880,
 
 // Remoting
-    "serverHost": "",
-    "serverPort": 0,
+    "serverHost": "legoas",
+    "serverPort": 2929,
 }
 
 // ********************************************************************************************* //
