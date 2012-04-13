@@ -15,8 +15,12 @@ var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMe
 
 function getBrowserDocument()
 {
-    // TODO: this function is called very frequently, worth optimizing
-    return HttpMonitor.tabWatcher.context.browser.ownerDocument;
+    if (HttpMonitor.tabWatcher.context.browser)
+        return HttpMonitor.tabWatcher.context.browser.ownerDocument;
+
+    // Context for remote monitoring doesn't have a browser
+    
+
     //return Firebug.chrome.inDetachedScope ? Firebug.chrome.originalBrowser.ownerDocument : top.document;
 }
 

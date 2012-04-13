@@ -31,7 +31,7 @@ TabWatcher.prototype =
     {
         // Destroy the old context.
         if (this.context)
-            this.unwatchTab(tab);
+            this.unwatchTab();
 
         // Start HTTP activity of the selected tab/window. The context object represents
         // a container for all data collected by the Net panel.
@@ -53,8 +53,11 @@ TabWatcher.prototype =
         NetMonitor.showContext(this.context);
     },
 
-    unwatchTab: function(tab)
+    unwatchTab: function()
     {
+        if (!this.context)
+            return;
+
         NetMonitor.destroyContext(this.context);
 
         this.context.destroy(this.persistedState);
