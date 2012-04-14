@@ -49,7 +49,6 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
 {
     dispatchName: "netMonitor",
     maxQueueRequests: 500,
-    contexts: new Array(),
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Module
@@ -57,16 +56,6 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
     initialize: function()
     {
         Firebug.Module.initialize.apply(this, arguments);
-
-        // xxxHonza
-        /*this.traceNetListener = new TraceListener("net.", "DBG_NET", true);
-        this.traceActivityListener = new TraceListener("activityObserver.",
-            "DBG_ACTIVITYOBSERVER", true);
-
-        TraceModule.addListener(this.traceNetListener);
-        TraceModule.addListener(this.traceActivityListener);
-
-        Firebug.connection.addListener(this.DebuggerListener);*/
 
         NetHttpObserver.registerObserver();
     },
@@ -85,12 +74,6 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
     shutdown: function()
     {
         Firebug.Module.shutdown.apply(this, arguments);
-
-        // xxxHonza
-        /*TraceModule.removeListener(this.traceNetListener);
-        TraceModule.removeListener(this.traceActivityListener);
-
-        Firebug.connection.removeListener(this.DebuggerListener);*/
 
         NetHttpObserver.unregisterObserver();
     },
@@ -147,33 +130,15 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
         }
 
         monitorContext(context);
-
-        if (context.netProgress)
-        {
-            // Load existing breakpoints
-            //var persistedPanelState = Persist.getPersistedState(context, panelName);
-            //if (persistedPanelState.breakpoints)
-            //    context.netProgress.breakpoints = persistedPanelState.breakpoints;
-        }
     },
 
     showContext: function(browser, context)
     {
         Firebug.Module.showContext.apply(this, arguments);
-
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.showContext; " + (context ? context.getName() : "NULL") +
-                ", temp contexts: " + getTempContextCount());
     },
 
     loadedContext: function(context)
     {
-        //var tabId = Win.getWindowProxyIdForWindow(context.browser.contentWindow);
-        //delete this.contexts[tabId];
-
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.loadedContext; temp contexts (" + getTempContextCount() + ")");
-
         var netProgress = context.netProgress;
         if (netProgress)
         {
@@ -286,9 +251,6 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
 // and http-on-examine-response events, which are fired before the context
 // is initialized (initContext method call). Without this observer this events
 // would be lost and the time measuring would be wrong.
-//
-// This observer stores these early requests in helper array (contexts) and maps
-// them to appropriate tab - initContext then uses the array in order to access it.
 
 var NetHttpObserver =
 {
@@ -392,30 +354,6 @@ var NetHttpObserver =
         {
             var browser = Firefox.getBrowserForWindow(win);
 
-            /*if (!Firebug.TabWatcher.shouldCreateContext(browser, name, null))
-            {
-                if (FBTrace.DBG_NET)
-                    FBTrace.sysout("net.onModifyRequest; Activation logic says don't create " +
-                        "temp context for: " + name);
-                return;
-            }*/
-
-            // Create a new network context prematurely.
-            if (!Firebug.NetMonitor.contexts[tabId])
-            {
-                //monitorContext(context);
-                //Firebug.NetMonitor.contexts[tabId] = createNetProgress(context);
-
-                // OK, we definitelly want to watch this page load, temp context is created
-                // so, make sure the activity-observer is registered and we have detailed
-                // timing info for this first document request.
-                //NetHttpActivityObserver.registerObserver();
-
-                if (FBTrace.DBG_NET)
-                    FBTrace.sysout("net.onModifyRequest; Temp Context created (" +
-                        getTempContextCount() + "), " + tabId);
-            }
-
             // New page loaded, clear UI if 'Persist' isn't active.
             if (!Firebug.chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
             {
@@ -423,9 +361,7 @@ var NetHttpObserver =
             }
         }
 
-        var networkContext = Firebug.NetMonitor.contexts[tabId];
-        if (!networkContext)
-            networkContext = context ? context.netProgress : null;
+        var networkContext = context ? context.netProgress : null;
 
         if (networkContext)
         {
@@ -443,9 +379,7 @@ var NetHttpObserver =
 
     onExamineResponse: function(request, win, tabId, context)
     {
-        var networkContext = Firebug.NetMonitor.contexts[tabId];
-        if (!networkContext)
-            networkContext = context ? context.netProgress : null;
+        var networkContext = context ? context.netProgress : null;
 
         if (!networkContext)
             return;
@@ -473,9 +407,7 @@ var NetHttpObserver =
 
     onExamineCachedResponse: function(request, win, tabId, context)
     {
-        var networkContext = Firebug.NetMonitor.contexts[tabId];
-        if (!networkContext)
-            networkContext = context ? context.netProgress : null;
+        var networkContext = context ? context.netProgress : null;
 
         if (!networkContext)
         {
@@ -495,17 +427,6 @@ var NetHttpObserver =
 
         networkContext.post(respondedCacheFile, [request, NetUtils.now(), info]);
     },
-
-    /* nsISupports */
-    QueryInterface: function(iid)
-    {
-        if (iid.equals(Ci.nsISupports) ||
-            iid.equals(Ci.nsIObserver)) {
-             return this;
-         }
-
-        throw Cr.NS_ERROR_NO_INTERFACE;
-    }
 }
 
 // ********************************************************************************************* //
@@ -518,34 +439,11 @@ function monitorContext(context)
 
     var networkContext = null;
 
-    // Use an existing context associated with the browser tab if any
-    // or create a pure new network context.
-    if (context.window)
-    {
-        var tabId = Win.getWindowProxyIdForWindow(context.window);
-        networkContext = Firebug.NetMonitor.contexts[tabId];
-    }
-
     if (FBTrace.DBG_NET)
         FBTrace.sysout("net.monitorContext; (" + networkContext + ") " +
             tabId + ", " + context.getName());
 
-    if (networkContext)
-    {
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.monitorContext; Use temporary context: " + tabId);
-
-        networkContext.context = context;
-        delete Firebug.NetMonitor.contexts[tabId];
-    }
-    else
-    {
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.monitorContext; create network monitor context object for: " +
-                tabId);
-
-        networkContext = createNetProgress(context);
-    }
+    networkContext = createNetProgress(context);
 
     // Register activity-distributor observer if available (#488270)
     NetHttpActivityObserver.registerObserver();
@@ -563,8 +461,6 @@ function monitorContext(context)
     // Display info message, but only if the panel isn't just reloaded or Persist == true.
     if (!context.persistedState)
         panel.insertActivationMessage();
-
-    updateStartButton(true);
 
     return networkContext;
 }
@@ -594,39 +490,14 @@ function unmonitorContext(context)
     // Deactivate net sub-context.
     context.netProgress.activate(null);
 
-    updateStartButton(false);
-
     // And finaly destroy the net panel sub context.
     delete context.netProgress;
-}
-
-function updateStartButton(enabled)
-{
-    // xxxHonza
-/*    if (FBTrace.DBG_NET)
-        FBTrace.sysout("net.updateStartButton; update start button, enabled: " + enabled);
-
-    var firebugStatus = Firefox.getElementById("firebugStatus");
-
-    // Update status
-    if (enabled)
-        firebugStatus.setAttribute("net", "on");
-    else
-        firebugStatus.removeAttribute("net");
-
-    // Update start button tooltip
-    if (Firebug.StartButton)
-        Firebug.StartButton.resetTooltip();
-    else
-        FBTrace.sysout("net.updateStartButton; ERROR No Firebug.StartButton ?");*/
 }
 
 function createNetProgress(context)
 {
     var netProgress = new NetProgress(context);
     netProgress.cacheListener = new NetCacheListener(netProgress);
-    // xxxHonza
-    //netProgress.breakpoints = new NetDebugger.NetBreakpointGroup();
     return netProgress;
 }
 
@@ -691,34 +562,7 @@ NetCacheListener.prototype =
 }
 
 // ********************************************************************************************* //
-// Debugger Listener
-
-Firebug.NetMonitor.DebuggerListener =
-{
-    getBreakpoints: function(context, groups)
-    {
-        if (context.netProgress && !context.netProgress.breakpoints.isEmpty())
-            groups.push(context.netProgress.breakpoints);
-    },
-};
-
-// ********************************************************************************************* //
-// Tracing support
-
-function getTempContextCount()
-{
-    var counter = 0;
-    for (var p in Firebug.NetMonitor.contexts)
-        counter++;
-    return counter;
-}
-
-// ********************************************************************************************* //
 // Registration
-
-// Keep compatibility with existing XUL based extensions
-// deprecated
-Firebug.NetMonitor.Utils = NetUtils;
 
 Firebug.registerModule(Firebug.NetMonitor);
 
