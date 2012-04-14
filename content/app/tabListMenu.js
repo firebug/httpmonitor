@@ -7,8 +7,9 @@ define([
     "chrome/menu",
     "lib/string",
     "app/httpMonitorProxy",
+    "lib/events",
 ],
-function(FBTrace, Firebug, Obj, Menu, Str, HttpMonitorProxy) {
+function(FBTrace, Firebug, Obj, Menu, Str, HttpMonitorProxy, Events) {
 
 // ********************************************************************************************* //
 // Module
@@ -82,7 +83,7 @@ var TabListMenu = Obj.extend(Firebug.Module,
         var proxy = this.getProxy();
 
         var label = "Select Tab";
-        var tab = proxy.getCurrentTab();
+        var tab = proxy.context ? proxy.context.tab : null;
         if (tab)
             label = Str.cropString(tab.label, 100);
 
@@ -107,22 +108,7 @@ var TabListMenu = Obj.extend(Firebug.Module,
 
     selectTab: function(tab)
     {
-        var self = this;
-
-        // Attach to the selected tab (actor)
-        var proxy = this.getProxy();
-        proxy.attach(tab, function()
-        {
-            self.updateUI();
-
-            // xxxHonza: hack, we should never need the real tab object.
-            var firefoxLocalTab = self.getTabWatcher().getTabById(tab.id);
-            tab = firefoxLocalTab ? firefoxLocalTab : tab;
-
-            // Start watching the new tab (the previsous one, if any,
-            // is unwatched automatically).
-            self.getTabWatcher().watchTab(tab);
-        });
+        Events.dispatch(this.fbListeners, "onSelectTab", [tab]);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -133,12 +119,6 @@ var TabListMenu = Obj.extend(Firebug.Module,
         //xxxHonza: Could we get the proxy without using the app singleton?
         return top.HttpMonitor.proxy;
     },
-
-    getTabWatcher: function()
-    {
-        //xxxHonza: Could we get the proxy without using the app singleton?
-        return top.HttpMonitor.tabWatcher;
-    }
 });
 
 // ********************************************************************************************* //

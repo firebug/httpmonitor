@@ -496,6 +496,7 @@ function unmonitorContext(context)
 
 function createNetProgress(context)
 {
+    FBTrace.sysout("create net progress")
     var netProgress = new NetProgress(context);
     netProgress.cacheListener = new NetCacheListener(netProgress);
     return netProgress;
