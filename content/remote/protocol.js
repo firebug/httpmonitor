@@ -113,9 +113,6 @@ Protocol.prototype =
         if (packet.type != "notify")
             return;
 
-        if (FBTrace.DBG_REMOTENETMONITOR)
-            FBTrace.sysout("remotenet; HTTP activity received from: " + packet.from, packet);
-
         this.listener.onNetworkEvent(packet);
     }
 };

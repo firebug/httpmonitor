@@ -238,6 +238,16 @@ Firebug =
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+    getPanelType: function(panelName)
+    {
+        if (panelTypeMap.hasOwnProperty(panelName))
+            return panelTypeMap[panelName];
+        else
+            return null;
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
     shouldIgnore: function(objectChromeView)
     {
         if (objectChromeView)

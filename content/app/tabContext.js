@@ -2,13 +2,12 @@
 
 define([
     "lib/trace",
-    "net/netPanel",
     "chrome/window",
     "lib/url",
     "js/tabCache",
     "lib/object",
 ],
-function(FBTrace, NetPanel, Win, Url, TabCache, Obj) {
+function(FBTrace, Win, Url, TabCache, Obj) {
 
 // ********************************************************************************************* //
 // Constants
@@ -115,7 +114,11 @@ TabContext.prototype =
 
     createNetPanel: function(doc)
     {
-        var panel = new NetPanel();
+        var panelType = Firebug.getPanelType("net");
+        if (!panelType)
+            return null;
+
+        var panel = new panelType();
         panel.initialize(this, doc);
         panel.show(this.persistedState);
         return panel;

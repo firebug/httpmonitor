@@ -15,8 +15,9 @@ require(config, [
     "app/httpMonitor",
     "chrome/infotip",
     "app/firebug",
+    "net/netPanel",
 ],
-function(FBTrace, HttpMonitor, Firebug) {
+function(FBTrace, HttpMonitor, Firebug, NetPanel) {
 
 // ********************************************************************************************* //
 
