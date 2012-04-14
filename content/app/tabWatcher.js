@@ -3,10 +3,10 @@
 define([
     "lib/trace",
     "app/tabContext",
-    "chrome/window",
     "net/netMonitor",
+    "chrome/window",
 ],
-function(FBTrace, TabContext, Win, NetMonitor) {
+function(FBTrace, TabContext, NetMonitor, Win) {
 
 // ********************************************************************************************* //
 // Constants
@@ -27,16 +27,11 @@ TabWatcher.prototype =
     context: null,
     persistedState: {},
 
-    watchTab: function(tab, proxy, callback)
+    watchTab: function(tab)
     {
         // Destroy the old context.
         if (this.context)
-            this.unwatchTab(proxy);
-
-        // xxxHonza: hack, we should never need the real tab object at this point
-        // it should alwasy be only a tab ID (string).
-        var firefoxLocalTab = this.getTabById(tab.id);
-        tab = firefoxLocalTab ? firefoxLocalTab : tab;
+            this.unwatchTab();
 
         // Start HTTP activity of the selected tab/window. The context object represents
         // a container for all data collected by the Net panel.
@@ -50,34 +45,22 @@ TabWatcher.prototype =
             FBTrace.sysout("watchTab EXCEPTION " + e, e);
         }
 
-        // xxxHonza, hack, the global must go away.
+        // xxxHonza, hack
         Firebug.currentContext = this.context;
 
         NetMonitor.initContext(this.context);
         NetMonitor.loadedContext(this.context);
         NetMonitor.showContext(this.context);
-
-        // Attach to the context/tab
-        proxy.attach(this.context, callback);
     },
 
-    unwatchTab: function(proxy)
+    unwatchTab: function()
     {
         if (!this.context)
             return;
 
         NetMonitor.destroyContext(this.context);
-        proxy.detach();
 
-        try
-        {
-            this.context.destroy(this.persistedState);
-        }
-        catch (e)
-        {
-            FBTrace.sysout("watchTab EXCEPTION " + e, e);
-        }
-
+        this.context.destroy(this.persistedState);
         this.context = null;
     },
 

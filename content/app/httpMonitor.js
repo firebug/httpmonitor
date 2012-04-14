@@ -47,10 +47,8 @@ var HttpMonitor =
         this.TabListMenu = TabListMenu;
         this.ConnectionMenu = ConnectionMenu;
 
-        // Listen for connection events (onConnect, onDisconnect) and tab selection
-        // events (onSelectTab)
+        // Listen for connection events (onConnect, onDisconnect)
         this.ConnectionMenu.addListener(this);
-        this.TabListMenu.addListener(this);
 
         this.tabWatcher = new TabWatcher(this.getPanelDocument());
         this.proxy = new LocalProxy();
@@ -82,31 +80,20 @@ var HttpMonitor =
 
     onConnect: function()
     {
-        this.tabWatcher.unwatchTab(this.proxy);
-
         this.proxy = new RemoteProxy(this.ConnectionMenu.connection);
+
+        this.tabWatcher.unwatchTab();
 
         TabListMenu.updateUI();
     },
 
     onDisconnect: function()
     {
-        this.tabWatcher.unwatchTab(this.proxy);
-
         this.proxy = new LocalProxy();
 
+        this.tabWatcher.unwatchTab();
+
         TabListMenu.updateUI();
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Tab Selection Hook
-
-    onSelectTab: function(tab)
-    {
-        this.tabWatcher.watchTab(tab, this.proxy, function()
-        {
-            TabListMenu.updateUI();
-        });
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

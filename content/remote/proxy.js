@@ -4,7 +4,7 @@ define([
     "lib/trace",
     "lib/object",
     "remote/protocol",
-    "app/httpMonitorProxy",
+    "app/httpMonitorProxy"
 ],
 function(FBTrace, Obj, Protocol, HttpMonitorProxy) {
 
@@ -40,16 +40,18 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
         });
     },
 
-    attach: function(context, callback)
+    getCurrentTab: function()
     {
-        this.context = context;
-        this.protocol.selectTab(context.tab, callback);
+        return this.protocol.currentTab;
     },
 
-    detach: function()
+    attach: function(tab, callback)
     {
-        if (!this.context)
-            return;
+        this.protocol.selectTab(tab, callback);
+    },
+
+    detach: function(tabId, callback)
+    {
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -57,19 +59,17 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
 
     onNetworkEvent: function(packet)
     {
-        if (!this.context)
+        var context = Firebug.currentContext;
+        if (!context)
         {
             if (FBTrace.DBG_REMOTENETMONITOR)
                 FBTrace.sysout("remotenet; No context!");
             return;
         }
 
-        var netPanel = this.context.getPanel("net", true);
+        var netPanel = context.getPanel("net", true);
         if (!netPanel)
-        {
-            FBTrace.sysout("no net panel");
             return;
-        }
 
         for (var i=0; i<packet.files.length; i++)
         {

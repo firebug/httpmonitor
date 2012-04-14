@@ -5,8 +5,6 @@
 
 var require, define;
 
-var EXPORTED_SYMBOLS = ["require", "define"];
-
 (function() {
 
 // ********************************************************************************************* //

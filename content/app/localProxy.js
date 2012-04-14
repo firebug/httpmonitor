@@ -5,9 +5,8 @@ define([
     "lib/object",
     "app/httpMonitorProxy",
     "chrome/window",
-    "net/netMonitor",
 ],
-function(FBTrace, Obj, HttpMonitorProxy, Win, NetMonitor) {
+function(FBTrace, Obj, HttpMonitorProxy, Win) {
 
 // ********************************************************************************************* //
 // Implementation
@@ -42,25 +41,23 @@ LocalProxy.prototype = Obj.extend(HttpMonitorProxy,
         callback(result);
     },
 
-    attach: function(context, callback)
+    getCurrentTab: function()
     {
-        this.context = context;
+        return this.currentTab;
+    },
 
-        //NetMonitor.initContext(this.context);
-        //NetMonitor.loadedContext(this.context);
-        //NetMonitor.showContext(this.context);
+    attach: function(tab, callback)
+    {
+        if (this.currentTab == tab)
+            return;
+
+        this.currentTab = tab;
 
         callback();
     },
 
-    detach: function()
+    detach: function(tabId, callback)
     {
-        if (!this.context)
-            return;
-
-        //NetMonitor.destroyContext(this.context);
-
-        this.context = null;
     },
 });
 
