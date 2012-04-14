@@ -437,18 +437,15 @@ function monitorContext(context)
     if (context.netProgress)
         return;
 
-    var networkContext = null;
-
     if (FBTrace.DBG_NET)
         FBTrace.sysout("net.monitorContext; (" + networkContext + ") " +
             tabId + ", " + context.getName());
 
-    networkContext = createNetProgress(context);
+    var networkContext = createNetProgress(context);
+    context.netProgress = networkContext;
 
     // Register activity-distributor observer if available (#488270)
     NetHttpActivityObserver.registerObserver();
-
-    context.netProgress = networkContext;
 
     // Add cache listener so, net panel has always fresh responses.
     // Safe to call multiple times.
@@ -457,10 +454,6 @@ function monitorContext(context)
     // Activate net panel sub-context.
     var panel = context.getPanel(panelName);
     context.netProgress.activate(panel);
-
-    // Display info message, but only if the panel isn't just reloaded or Persist == true.
-    if (!context.persistedState)
-        panel.insertActivationMessage();
 
     return networkContext;
 }
@@ -472,8 +465,7 @@ function unmonitorContext(context)
             (context ? context.netProgress : "netProgress == NULL") + ") " +
             (context ? context.getName() : "no context"));
 
-    var netProgress = context ? context.netProgress : null;
-    if (!netProgress)
+    if (!context.netProgress)
         return;
 
     // Since the print into the UI is done by timeout asynchronously,

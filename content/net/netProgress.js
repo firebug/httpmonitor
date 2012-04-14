@@ -33,34 +33,41 @@ const reIgnore = /about:|javascript:|resource:|chrome:|jar:/;
 const reResponseStatus = /HTTP\/1\.\d\s(\d+)\s(.*)/;
 
 var cacheSession = null;
-var panelName = "net";
 
 // ********************************************************************************************* //
 // Net Progress
 
 function NetProgress(context)
 {
-    if (FBTrace.DBG_NET)
-        FBTrace.sysout("net.NetProgress.constructor; " +
-            (context ? context.getName() : "NULL Context"));
-
     this.context = context;
+}
 
-    var panel = null;
-    var queue = [];
+NetProgress.prototype =
+{
+    dispatchName: "netProgress",
 
-    this.post = function(handler, args)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Event Forwarding
+
+    activate: function(handler)
     {
-        if (panel)
+        this.handler = handler;
+        if (this.handler)
+            this.flush();
+    },
+
+    post: function(method, args)
+    {
+        if (this.handler)
         {
-            var file = handler.apply(this, args);
+            var file = method.apply(this, args);
             if (file)
             {
-                panel.updateFile(file);
+                this.handler.updateFile(file);
 
                 // If the panel isn't currently visible, make sure the limit is up to date.
-                if (!panel.layoutInterval)
-                    panel.updateLogLimit(Firebug.NetMonitor.maxQueueRequests);
+                //if (!this.panel.layoutInterval)
+                //    this.panel.updateLogLimit(Firebug.NetMonitor.maxQueueRequests);
 
                 return file;
             }
@@ -68,32 +75,25 @@ function NetProgress(context)
         else
         {
             // The first page request is made before the initContext (known problem).
-            queue.push(handler, args);
+            this.queue.push(method, args);
         }
-    };
+    },
 
-    this.flush = function()
+    flush: function()
     {
-        for (var i=0; i<queue.length; i+=2)
-            this.post(queue[i], queue[i+1]);
+        for (var i=0; i<this.queue.length; i+=2)
+            this.post(this.queue[i], this.queue[i+1]);
 
-        queue = [];
-    };
+        this.queue = [];
+    },
 
-    this.activate = function(activePanel)
+    update: function(file)
     {
-        this.panel = panel = activePanel;
-        if (panel)
-            this.flush();
-    };
+        if (this.handler)
+            this.handler.updateFile(file);
+    },
 
-    this.update = function(file)
-    {
-        if (panel)
-            panel.updateFile(file);
-    };
-
-    this.clear = function()
+    clear: function()
     {
         for (var i=0; this.files && i<this.files.length; i++)
             this.files[i].clear();
@@ -105,18 +105,11 @@ function NetProgress(context)
         this.windows = [];
         this.currentPhase = null;
 
-        queue = [];
-    };
-
-    this.clear();
-}
-
-NetProgress.prototype =
-{
-    dispatchName: "netProgress",
-    panel: null,
+        this.queue = [];
+    },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Network Events
 
     startFile: function startFile(request, win)
     {
@@ -125,7 +118,7 @@ NetProgress.prototype =
         {
             // Parse URL params so, they are available for conditional breakpoints.
             file.urlParams = Url.parseURLParams(file.href);
-            this.breakOnXHR(file);
+            //xxxHonza: this.breakOnXHR(file);
         }
     },
 
@@ -185,7 +178,7 @@ NetProgress.prototype =
         }
     },
 
-    breakOnXHR: function breakOnXHR(file)
+    /*breakOnXHR: function breakOnXHR(file)
     {
         var halt = false;
         var conditionIsFalse = false;
@@ -227,7 +220,7 @@ NetProgress.prototype =
         this.context.breakOnXHR = false;
 
         Firebug.Breakpoint.breakNow(this.context.getPanel(panelName, true));
-    },
+    },*/
 
     respondedHeaderFile: function respondedHeaderFile(request, time, extraStringData)
     {
@@ -331,12 +324,12 @@ NetProgress.prototype =
             this.endLoad(file);
 
             // If there is a network error, log it into the Console panel.
-            if (Firebug.showNetworkErrors && Firebug.NetMonitor.NetRequestEntry.isError(file))
+            /*if (Firebug.showNetworkErrors && Firebug.NetMonitor.NetRequestEntry.isError(file))
             {
                 Firebug.Errors.increaseCount(this.context);
                 var message = "NetworkError: " + Firebug.NetMonitor.NetRequestEntry.getStatus(file) + " - "+file.href;
                 Firebug.Console.log(message, this.context, "error", null, true, file.getFileLink(message));
-            }
+            }*/
 
             Events.dispatch(Firebug.NetMonitor.fbListeners, "onResponse", [this.context, file]);
             return file;
