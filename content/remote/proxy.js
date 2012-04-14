@@ -40,14 +40,10 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
         });
     },
 
-    getCurrentTab: function()
+    attach: function(context, callback)
     {
-        return this.protocol.currentTab;
-    },
-
-    attach: function(tab, callback)
-    {
-        this.protocol.selectTab(tab, callback);
+        this.context = context;
+        this.protocol.selectTab(context.tab, callback);
     },
 
     detach: function(tabId, callback)
@@ -59,15 +55,14 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
 
     onNetworkEvent: function(packet)
     {
-        var context = Firebug.currentContext;
-        if (!context)
+        if (!this.context)
         {
             if (FBTrace.DBG_REMOTENETMONITOR)
                 FBTrace.sysout("remotenet; No context!");
             return;
         }
 
-        var netPanel = context.getPanel("net", true);
+        var netPanel = this.context.getPanel("net", true);
         if (!netPanel)
             return;
 

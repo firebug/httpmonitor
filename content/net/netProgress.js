@@ -40,6 +40,9 @@ var cacheSession = null;
 function NetProgress(context)
 {
     this.context = context;
+
+    // Initialization
+    this.clear();
 }
 
 NetProgress.prototype =

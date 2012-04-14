@@ -477,7 +477,7 @@ function unmonitorContext(context)
     NetHttpActivityObserver.unregisterObserver();
 
     // Remove cache listener. Safe to call multiple times.
-    netProgress.cacheListener.unregister();
+    context.netProgress.cacheListener.unregister();
 
     // Deactivate net sub-context.
     context.netProgress.activate(null);

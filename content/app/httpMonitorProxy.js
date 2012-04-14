@@ -14,10 +14,6 @@ var HttpMonitorProxy =
     {
     },
 
-    getCurrentTab: function(callback)
-    {
-    },
-
     attach: function(tabId, callback)
     {
     },
