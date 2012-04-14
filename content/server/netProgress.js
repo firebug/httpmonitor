@@ -56,7 +56,6 @@ NetworkProgress.prototype =
         if (this.flushTimer)
             return;
 
-        var onFlush = Obj.bind(this.onFlush, this);
         this.flushTimer = Timer.createInstance(Ci.nsITimer);
         this.flushTimer.initWithCallback(this, 300, Ci.nsITimer.TYPE_ONE_SHOT);
     },
