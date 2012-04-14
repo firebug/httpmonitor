@@ -3,26 +3,21 @@
 define([
     "lib/trace",
     "app/tabWatcher",
-    "chrome/window",
     "chrome/menu",
-    "net/netMonitor",
     "lib/array",
     "lib/css",
     "lib/locale",
     "lib/events",
     "lib/dom",
     "lib/options",
-    "lib/string",
-    "remote/tabMenu",
     "app/DefaultPrefs",
     "app/tabListMenu",
     "remote/connectionMenu",
     "app/localProxy",
     "remote/proxy",
 ],
-function(FBTrace, TabWatcher, Win, Menu, NetMonitor, Arr, Css, Locale, Events, Dom, Options, Str,
-    RemoteTabMenu, DefaultPrefs, TabListMenu, ConnectionMenu,
-    LocalProxy, RemoteProxy) {
+function(FBTrace, TabWatcher, Menu, Arr, Css, Locale, Events, Dom, Options,
+    DefaultPrefs, TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy) {
 
 // ********************************************************************************************* //
 // Constants

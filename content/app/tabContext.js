@@ -22,7 +22,7 @@ function TabContext(tab, persistedState)
     this.tab = tab;
     this.window = tab.linkedBrowser ? tab.linkedBrowser.contentWindow : null;
     this.browser = tab.linkedBrowser ? tab.linkedBrowser : null;
-    this.persistedState = persistedState;
+    this.persistedState = persistedState || {};
 
     this.windows = [];
     this.name = Url.normalizeURL(this.getWindowLocation().toString());

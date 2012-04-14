@@ -8,7 +8,7 @@ var config = {};
 config.baseUrl = "resource://httpmonitor/content";
 
 /**
- * Load application
+ * Load entire application. Modules specified here represent roots (except of tracing).
  */
 require(config, [
     "lib/trace",
@@ -17,7 +17,7 @@ require(config, [
     "app/firebug",
     "net/netPanel",
 ],
-function(FBTrace, HttpMonitor, Firebug, NetPanel) {
+function(FBTrace, HttpMonitor, InfoTip, Firebug, NetPanel) {
 
 // ********************************************************************************************* //
 
