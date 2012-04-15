@@ -49,7 +49,7 @@ var DefaultPrefs =
 
 // Server
     "serverMode": false,
-    "postDataTimeout": 300,
+    "postDataTimeout": 600,
 }
 
 // ********************************************************************************************* //
