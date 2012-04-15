@@ -57,6 +57,12 @@ Http.readFromStream = function(stream, charset, noClose)
 
 Http.readPostTextFromPage = function(url, context)
 {
+    if (!context.browser)
+    {
+        FBTrace.sysout("Http.readPostTextFromPage; ERROR context.browser not available")
+        return;
+    }
+
     if (url == context.browser.contentWindow.location.href)
     {
         try

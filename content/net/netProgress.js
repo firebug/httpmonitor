@@ -932,6 +932,11 @@ NetProgress.prototype =
             // If there is no phase yet, just create it.
             this.startPhase(file);
         }
+
+        // Update phase's lastFinishedFile in case of long time downloads.
+        // This forces the timeline to have proper extent.
+        if (file.phase && file.phase.endTime < file.endTime)
+            file.phase.lastFinishedFile = file;
     },
 
     startPhase: function(file)
