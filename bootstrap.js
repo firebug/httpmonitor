@@ -84,9 +84,22 @@ function unloadBrowserOverlay(win)
 
 function loadServer()
 {
+    var serverMode = false;
     try
     {
-        Services.scriptloader.loadSubScript("resource://httpmonitor/content/server/main.js");
+        var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch2);
+        serverMode = prefs.getBoolPref("extensions.httpmonitor.serverMode");
+    }
+    catch (e)
+    {
+        // The pref doesn't have to exist.
+    }
+
+    try
+    {
+        var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch2);
+        if (serverMode)
+            Services.scriptloader.loadSubScript("resource://httpmonitor/content/server/main.js");
     }
     catch (e)
     {
