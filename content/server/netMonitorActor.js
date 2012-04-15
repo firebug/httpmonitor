@@ -6,8 +6,10 @@ define([
     "lib/options",
     "server/netProgress",
     "lib/object",
+    "app/tabContext",
+    "net/netMonitor",
 ],
-function(FBTrace, Firebug, Options, NetworkProgress, Obj) {
+function(FBTrace, Firebug, Options, NetworkProgress, Obj, TabContext, NetMonitor) {
 
 // ********************************************************************************************* //
 // Globals
@@ -62,9 +64,22 @@ NetworkMonitorActor.prototype =
 
         try
         {
-            var callback = Obj.bind(this.onFlushData, this);
-            this.networkProgress = new NetworkProgress();
-            this.networkProgress.initialize(this.tab._browser._contentWindow, callback);
+            //var callback = Obj.bind(this.onFlushData, this);
+            //this.networkProgress = new NetworkProgress();
+            //this.networkProgress.initialize(this.tab._browser._contentWindow, callback);
+
+            this.context = new TabContext(this.tab);
+
+            // xxxHonza, hack, the global must go away.
+            Firebug.currentContext = this.context;
+
+            NetMonitor.initialize();
+
+            NetMonitor.initContext(this.context);
+            NetMonitor.loadedContext(this.context);
+            NetMonitor.showContext(this.context);
+
+            this.context.netProgress.activate(this);
         }
         catch (err)
         {
@@ -85,6 +100,14 @@ NetworkMonitorActor.prototype =
             this.networkProgress = null;
         }
 
+        if (this.context)
+        {
+            NetMonitor.destroyContext(this.context);
+            NetMonitor.shutdown();
+
+            this.context = null;
+        }
+
         return {"unsubscribe": this.serial};
     },
 
@@ -100,14 +123,26 @@ NetworkMonitorActor.prototype =
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Network Monitor
 
+    updateFile: function(file)
+    {
+        var request = file.request;
+        delete file.request;
+
+        var phase = file.phase
+        delete file.phase;
+
+        this.onFlushData([file]);
+
+        file.request = request;
+        file.phase = phase;
+    },
+
     onFlushData: function(data)
     {
-        FBTrace.sysout("networkMonitorActor.onFlushData;", data);
-
         var packet = {
             "type": "notify",
             "from": this.actorID,
-            "serial": this.serial,
+            //"serial": this.serial,
             "files": data
         };
 

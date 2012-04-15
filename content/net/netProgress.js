@@ -34,6 +34,9 @@ const reResponseStatus = /HTTP\/1\.\d\s(\d+)\s(.*)/;
 
 var cacheSession = null;
 
+// ID generator
+var gSerialNumber = 0;
+
 // ********************************************************************************************* //
 // Net Progress
 
@@ -127,7 +130,7 @@ NetProgress.prototype =
 
     requestedHeaderFile: function requestedHeaderFile(request, time, win, xhr, extraStringData)
     {
-        var file = this.getRequestFile(request);
+        var file = this.getRequestFile(request, win);
         if (file)
         {
             logTime(file, "requestedHeaderFile", time);
@@ -795,10 +798,16 @@ NetProgress.prototype =
         }
 
         if (noCreate)
+        {
+            FBTrace.sysout("no create", this.files);
             return null;
+        }
 
         if (!win || Win.getRootWindow(win) != this.context.window)
+        {
+            FBTrace.sysout("no window " + win, this.context);
             return;
+        }
 
         var fileDoc = this.getRequestDocument(win);
         var isDocument = request.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI && fileDoc.parent;
@@ -976,6 +985,7 @@ function NetFile(href, document)
 {
     this.href = href;
     this.document = document;
+    this.serial = ++gSerialNumber;
 }
 
 NetFile.prototype =
@@ -1138,7 +1148,7 @@ function getCacheEntry(file, netProgress)
 
     // Pause first because this is usually called from stopFile, at which point
     // the file's cache entry is locked
-    setTimeout(function()
+    netProgress.context.setTimeout(function()
     {
         try
         {

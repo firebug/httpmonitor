@@ -66,6 +66,8 @@ var HttpMonitor =
 
     destroy: function()
     {
+        this.tabWatcher.unwatchTab(this.proxy);
+
         Events.dispatch(modules, "disable");
         Events.dispatch(modules, "shutdown");
 

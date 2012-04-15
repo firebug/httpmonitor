@@ -1276,6 +1276,9 @@ Firebug.chrome =
 {
     $: function(id)
     {
+        if (typeof(top) == "undefined")
+            return;
+
         return top.document.getElementById(id);
     },
 
@@ -1294,7 +1297,8 @@ Firebug.chrome =
     getGlobalAttribute: function(id, name)
     {
         var elt = this.$(id);
-        return elt.getAttribute(name);
+        if (elt)
+            return elt.getAttribute(name);
     },
 }
 

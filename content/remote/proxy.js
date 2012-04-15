@@ -66,9 +66,27 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
         if (!netPanel)
             return;
 
+        if (!this.context.netProgress.files)
+            this.context.netProgress.files = {};
+
         for (var i=0; i<packet.files.length; i++)
         {
             var file = packet.files[i];
+
+            // xxxHonza: this.context.netProgress.getRequestFile(file.serial) should work?
+            var netFile = this.context.netProgress.files[file.serial];
+
+            if (netFile)
+            {
+                for (var p in file)
+                    netFile[p] = file[p];
+                file = netFile;
+            }
+            else
+            {
+                this.context.netProgress.files[file.serial] = file;
+            }
+
             netPanel.updateFile(file);
         }
     }

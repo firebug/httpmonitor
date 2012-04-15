@@ -22,6 +22,12 @@ function TabContext(tab, persistedState)
     this.tab = tab;
     this.window = tab.linkedBrowser ? tab.linkedBrowser.contentWindow : null;
     this.browser = tab.linkedBrowser ? tab.linkedBrowser : null;
+
+    //xxxHonza: hack, this comes from the actor tab.
+    this.window = tab._browser ? tab._browser._contentWindow : null;
+    this.browser = tab._browser ? tab._browser : null;
+
+    // xxxHonza: should be passed into create method.
     this.persistedState = persistedState || {};
 
     this.windows = [];
@@ -161,6 +167,12 @@ TabContext.prototype =
 
     setTimeout: function(fn, delay)
     {
+        if (typeof(setTimeout) == "undefined")
+        {
+            FBTrace.sysout("setTimeout is not defined")
+            return;
+        }
+
         if (setTimeout == this.setTimeout)
             throw new Error("setTimeout recursion");
 

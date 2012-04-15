@@ -51,58 +51,35 @@ var contentLoad = NetProgress.prototype.contentLoad;
 // ********************************************************************************************* //
 // Activity Observer
 
-var NetHttpActivityObserver =
+function NetHttpActivityObserver(context)
+{
+    this.context = context;
+}
+
+NetHttpActivityObserver.prototype =
 {
     registered: false,
 
     registerObserver: function()
     {
-        if (!Ci.nsIHttpActivityDistributor)
-            return;
-
         if (this.registered)
             return;
 
         var distributor = this.getActivityDistributor();
-        if (!distributor)
-            return;
-
         distributor.addObserver(this);
+
         this.registered = true;
-
-        if (FBTrace.DBG_ACTIVITYOBSERVER || FBTrace.DBG_OBSERVERS)
-        {
-            // import fbObserverService
-            Components.utils.import("resource://firebug/observer-service.js");
-            this.trackId = fbObserverService.track(Components.stack);
-            FBTrace.sysout("activityObserver.registerObserver;"+this.trackId+" this.registered: "+this.registered);
-        }
-
     },
 
     unregisterObserver: function()
     {
-        if (!Ci.nsIHttpActivityDistributor)
-            return;
-
         if (!this.registered)
             return;
 
         var distributor = this.getActivityDistributor();
-        if (!distributor)
-            return;
-
         distributor.removeObserver(this);
+
         this.registered = false;
-
-        if (FBTrace.DBG_ACTIVITYOBSERVER || FBTrace.DBG_OBSERVERS)
-        {
-            // import fbObserverService
-            Components.utils.import("resource://firebug/observer-service.js");
-            fbObserverService.untrack(this.trackId);
-            FBTrace.sysout("activityObserver.unregisterObserver;"+this.trackId+" this.registered: "+this.registered);
-        }
-
     },
 
     getActivityDistributor: function()
@@ -141,7 +118,8 @@ var NetHttpActivityObserver =
         }
         catch (exc)
         {
-            if ( (typeof(FBTrace) !== undefined) && FBTrace && FBTrace.DBG_ERRORS)  // then we are in some sane scope
+            // then we are in some sane scope
+            if ((typeof(FBTrace) !== undefined) && FBTrace && FBTrace.DBG_ERRORS)
                 FBTrace.sysout("net.observeActivity: EXCEPTION "+exc, exc);
         }
     },
@@ -162,7 +140,7 @@ var NetHttpActivityObserver =
 
         //var context = Firebug.connection.getContextByWindow(win);
         // xxxHonza
-        var context = HttpMonitor.tabWatcher.context;
+        //var context = HttpMonitor.tabWatcher.context;
         //var tabId = Win.getWindowProxyIdForWindow(win);
         if (!win)
         {
@@ -172,13 +150,7 @@ var NetHttpActivityObserver =
 
         //var networkContext = Firebug.NetMonitor.contexts[tabId];
         //if (!networkContext)
-            networkContext = context ? context.netProgress : null;
-
-        if (!networkContext)
-        {
-            FBTrace.sysout("no network context");
-            return;
-        }
+        var networkContext = this.context.netProgress;
 
         var time = new Date();
         time.setTime(timestamp/1000);
@@ -338,8 +310,8 @@ var HttpActivityObserverModule = Obj.extend(Firebug.Module,
     shutdown: function()
     {
         // destroy NetHttpActivityObserver
-        NetHttpActivityObserver.unregisterObserver();
-        NetHttpActivityObserver.registerObserver = function() {};
+        //NetHttpActivityObserver.unregisterObserver();
+        //NetHttpActivityObserver.registerObserver = function() {};
     }
 });
 

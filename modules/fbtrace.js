@@ -36,7 +36,7 @@ catch (err)
                 }
                 catch (err)
                 {
-                    Cu.reportError(getStackDump());
+                    //Cu.reportError(getStackDump());
                     Cu.reportError(msg);
                 }
 

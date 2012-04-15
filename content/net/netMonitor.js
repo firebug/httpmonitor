@@ -86,7 +86,8 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
             FBTrace.sysout("net.initContext for: " + context.getName());
 
         // XXXjjb changed test to instanceof because jetpack uses fake window objects
-        if (context.window && context.window instanceof Window)
+        // xxxHonza: Window type not available in server mode (bootstrapped context)
+        if (context.window/* && context.window instanceof Window*/)
         {
             var win = context.window;
 
@@ -305,7 +306,8 @@ var NetHttpObserver =
 
             // xxxHonza
             //var context = Firebug.connection.getContextByWindow(win);
-            var context = HttpMonitor.tabWatcher.getContextByWindow(win);
+            //var context = HttpMonitor.tabWatcher.getContextByWindow(win);
+            var context = Firebug.currentContext;
             if (!context || context.window != win)
             {
                 FBTrace.sysout("This request doesn't come from selected tab  " +
@@ -445,7 +447,8 @@ function monitorContext(context)
     context.netProgress = networkContext;
 
     // Register activity-distributor observer if available (#488270)
-    NetHttpActivityObserver.registerObserver();
+    context.httpActivityObserver = new NetHttpActivityObserver(context);
+    context.httpActivityObserver.registerObserver();
 
     // Add cache listener so, net panel has always fresh responses.
     // Safe to call multiple times.
@@ -474,7 +477,8 @@ function unmonitorContext(context)
     if (panel)
         panel.updateLayout();
 
-    NetHttpActivityObserver.unregisterObserver();
+    context.httpActivityObserver.unregisterObserver();
+    delete context.httpActivityObserver;
 
     // Remove cache listener. Safe to call multiple times.
     context.netProgress.cacheListener.unregister();
@@ -550,6 +554,30 @@ NetCacheListener.prototype =
             file.responseText = responseText;
 
         Events.dispatch(Firebug.NetMonitor.fbListeners, "onResponseBody", [context, file]);
+    }
+}
+
+// ********************************************************************************************* //
+// Browser Cache
+
+Firebug.NetMonitor.BrowserCache =
+{
+    cacheDomain: "browser.cache",
+
+    isEnabled: function()
+    {
+        var diskCache = Options.getPref(this.cacheDomain, "disk.enable");
+        var memoryCache = Options.getPref(this.cacheDomain, "memory.enable");
+        return diskCache && memoryCache;
+    },
+
+    toggle: function(state)
+    {
+        if (FBTrace.DBG_NET)
+            FBTrace.sysout("net.BrowserCache.toggle; " + state);
+
+        Options.setPref(this.cacheDomain, "disk.enable", state);
+        Options.setPref(this.cacheDomain, "memory.enable", state);
     }
 }
 
