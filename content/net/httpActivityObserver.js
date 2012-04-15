@@ -21,6 +21,7 @@ var Cr = Components.results;
 var nsIHttpActivityObserver = Ci.nsIHttpActivityObserver;
 var nsISocketTransport = Ci.nsISocketTransport;
 
+// xxxHonza: this is dangerous and always needs to be cleaned up (see HttpActivityObserverModule)
 var activeRequests = [];
 
 // ********************************************************************************************* //
@@ -140,6 +141,9 @@ HttpActivityObserver.prototype =
             if (!(win = activeRequests[index+1]))
                 return;
         }
+
+        if (this.context.window != Win.getRootWindow(win))
+            return;
 
         //var context = Firebug.connection.getContextByWindow(win);
         // xxxHonza

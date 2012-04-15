@@ -12,10 +12,10 @@ define([
     "lib/http",
     "lib/string",
     "net/jsonViewer",
-    "js/sourceCache"
+    "chrome/window"
 ],
 function(FBTrace, Obj, Options, Firebug, RequestObserver, HttpResponseObserver, Events,
-    Url, Http, Str, JSONViewerModel) {
+    Url, Http, Str, JSONViewerModel, Win) {
 
 // ********************************************************************************************* //
 // Constants
@@ -182,18 +182,14 @@ Firebug.TabCacheModel = Obj.extend(Firebug.Module,
         this.registerStreamListener(request, win);
     },
 
-    registerStreamListener: function(request, win, forceRegister)
+    registerStreamListener: function(request, win)
     {
-        /*if (Firebug.getSuspended() && !forceRegister)
-        {
-            if (FBTrace.DBG_CACHE)
-                FBTrace.sysout("tabCache.registerStreamListener; DO NOT TRACK, " +
-                    "Firebug suspended for: " + Http.safeGetRequestName(request));
+        var context = Firebug.currentContext;
+        if (!context)
             return;
-        }
 
-        if (!this.hasObservers())
-            return;*/
+        if (context.window != Win.getRootWindow(win))
+            return;
 
         try
         {
