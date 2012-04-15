@@ -28,8 +28,7 @@ try
     // Load net actor after the server is initialized.
     require(config, ["server/netMonitorActor"], function()
     {
-        FBTrace.sysout("HttpServer; NetworkMonitorActor loaded");
-        FBTrace.sysout("HttpServer; Initialized");
+        FBTrace.sysout("HttpServer; Initialized OK");
     });
 }
 catch (e)
