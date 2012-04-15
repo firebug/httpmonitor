@@ -51,12 +51,12 @@ var contentLoad = NetProgress.prototype.contentLoad;
 // ********************************************************************************************* //
 // Activity Observer
 
-function NetHttpActivityObserver(context)
+function HttpActivityObserver(context)
 {
     this.context = context;
 }
 
-NetHttpActivityObserver.prototype =
+HttpActivityObserver.prototype =
 {
     registered: false,
 
@@ -66,7 +66,7 @@ NetHttpActivityObserver.prototype =
             return;
 
         if (FBTrace.DBG_NET)
-            FBTrace.sysout("NetHttpActivityObserver; registerObserver");
+            FBTrace.sysout("HttpActivityObserver; registerObserver");
 
         var distributor = this.getActivityDistributor();
         distributor.addObserver(this);
@@ -98,12 +98,12 @@ NetHttpActivityObserver.prototype =
                 this.activityDistributor = hadClass.getService(Ci.nsIHttpActivityDistributor);
 
                 if (FBTrace.DBG_NET)
-                    FBTrace.sysout("net.NetHttpActivityObserver; Activity Observer Registered");
+                    FBTrace.sysout("net.HttpActivityObserver; Activity Observer Registered");
             }
             catch (err)
             {
                 if (FBTrace.DBG_NET || FBTrace.DBG_ERRORS)
-                    FBTrace.sysout("net.NetHttpActivityObserver; Activity Observer EXCEPTION", err);
+                    FBTrace.sysout("net.HttpActivityObserver; Activity Observer EXCEPTION", err);
             }
         }
         return this.activityDistributor;
@@ -312,9 +312,9 @@ var HttpActivityObserverModule = Obj.extend(Firebug.Module,
 
     shutdown: function()
     {
-        // destroy NetHttpActivityObserver
-        //NetHttpActivityObserver.unregisterObserver();
-        //NetHttpActivityObserver.registerObserver = function() {};
+        // destroy HttpActivityObserver
+        //HttpActivityObserver.unregisterObserver();
+        //HttpActivityObserver.registerObserver = function() {};
     }
 });
 
@@ -323,7 +323,7 @@ var HttpActivityObserverModule = Obj.extend(Firebug.Module,
 
 Firebug.registerModule(HttpActivityObserverModule);
 
-return NetHttpActivityObserver;
+return HttpActivityObserver;
 
 // ********************************************************************************************* //
 });

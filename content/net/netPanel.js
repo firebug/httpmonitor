@@ -22,6 +22,7 @@ define([
     "chrome/menu",
     "net/netUtils",
     "net/netProgress",
+    "net/browserCache",
     "net/xmlViewer",
     "net/svgViewer",
     "net/jsonViewer",
@@ -31,7 +32,7 @@ define([
 ],
 function(FBTrace, Obj, Firebug, Firefox, Domplate, Xpcom, Locale,
     Events, Options, Url, Http, Css, Dom, Win, Search, Str,
-    Arr, System, Menu, NetUtils, NetProgress) {
+    Arr, System, Menu, NetUtils, NetProgress, BrowserCache) {
 
 with (Domplate) {
 
@@ -294,7 +295,6 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
 
     disableCacheOption: function()
     {
-        var BrowserCache = Firebug.NetMonitor.BrowserCache;
         var disabled = !BrowserCache.isEnabled();
         return {
             label: "net.option.Disable_Browser_Cache",

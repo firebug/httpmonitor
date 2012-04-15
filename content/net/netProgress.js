@@ -13,10 +13,11 @@ define([
     "lib/string",
     "lib/array",
     "lib/system",
-    "net/netUtils"
+    "net/netUtils",
+    "net/browserCache"
 ],
 function(FBTrace, Obj, Firebug, Locale, Events, Url, Http, Css, Win, Str,
-    Arr, System, NetUtils) {
+    Arr, System, NetUtils, BrowserCache) {
 
 // ********************************************************************************************* //
 // Constants
@@ -1134,7 +1135,7 @@ NetPhase.prototype =
 function getCacheEntry(file, netProgress)
 {
     // Bail out if the cache is disabled.
-    if (!Firebug.NetMonitor.BrowserCache.isEnabled())
+    if (!BrowserCache.isEnabled())
         return;
 
     // Don't request the cache entry twice.

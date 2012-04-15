@@ -4,20 +4,18 @@ define([
     "lib/trace",
     "lib/object",
     "app/firebug",
-    "chrome/firefox",
     "lib/options",
-    "chrome/window",
     "lib/string",
     "lib/persist",
     "net/httpActivityObserver",
-    "net/requestObserver",
+    "net/httpRequestObserver",
     "net/netProgress",
-    "lib/http",
     "net/netUtils",
     "lib/events",
+    "net/netCacheListener",
 ],
-function(FBTrace, Obj, Firebug, Firefox, Options, Win, Str, Persist, NetHttpActivityObserver,
-    HttpRequestObserver, NetProgress, Http, NetUtils, Events) {
+function(FBTrace, Obj, Firebug, Options, Str, Persist, HttpActivityObserver,
+    HttpRequestObserver, NetProgress, NetUtils, Events, NetCacheListener) {
 
 // ********************************************************************************************* //
 // Constants
@@ -28,10 +26,6 @@ const Cr = Components.results;
 
 var panelName = "net";
 
-var startFile = NetProgress.prototype.startFile;
-var requestedFile = NetProgress.prototype.requestedFile;
-var respondedFile = NetProgress.prototype.respondedFile;
-var respondedCacheFile = NetProgress.prototype.respondedCacheFile;
 var windowPaint = NetProgress.prototype.windowPaint;
 var timeStamp = NetProgress.prototype.timeStamp;
 var windowLoad = NetProgress.prototype.windowLoad;
@@ -57,7 +51,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
     {
         Firebug.Module.initialize.apply(this, arguments);
 
-        NetHttpObserver.registerObserver();
+        HttpRequestObserver.registerObserver();
     },
 
     initializeUI: function()
@@ -75,7 +69,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
     {
         Firebug.Module.shutdown.apply(this, arguments);
 
-        NetHttpObserver.unregisterObserver();
+        HttpRequestObserver.unregisterObserver();
     },
 
     initContext: function(context, persistedState)
@@ -236,194 +230,6 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
 });
 
 // ********************************************************************************************* //
-
-// HTTP Observer
-
-// HTTP listener - based on HttpRequestObserver module
-// This observer is used for observing the first document http-on-modify-request
-// and http-on-examine-response events, which are fired before the context
-// is initialized (initContext method call). Without this observer this events
-// would be lost and the time measuring would be wrong.
-
-var NetHttpObserver =
-{
-    dispatchName: "NetHttpObserver",
-    registered: false,
-
-    registerObserver: function()
-    {
-        if (this.registered)
-            return;
-
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.NetHttpObserver.register;");
-
-        HttpRequestObserver.addObserver(this, "firebug-http-event", false);
-        this.registered = true;
-    },
-
-    unregisterObserver: function()
-    {
-        if (!this.registered)
-            return;
-
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.NetHttpObserver.unregister;");
-
-        HttpRequestObserver.removeObserver(this, "firebug-http-event");
-        this.registered = false;
-    },
-
-    /* nsIObserve */
-    observe: function(subject, topic, data)
-    {
-        try
-        {
-            if (FBTrace.DBG_NET_EVENTS)
-            {
-                FBTrace.sysout("net.events.observe " + (topic ? topic.toUpperCase() : topic) +
-                    ", " + ((subject instanceof Ci.nsIRequest) ? Http.safeGetRequestName(subject) : ""));
-            }
-
-            if (!(subject instanceof Ci.nsIHttpChannel))
-                return;
-
-            var win = Http.getWindowForRequest(subject);
-            if (!win)
-            {
-                FBTrace.sysout("This request doesn't have a window " +
-                    Http.safeGetRequestName(subject));
-                return;
-            }
-
-            // xxxHonza
-            //var context = Firebug.connection.getContextByWindow(win);
-            //var context = HttpMonitor.tabWatcher.getContextByWindow(win);
-            var context = Firebug.currentContext;
-            if (!context || context.window != win)
-            {
-                FBTrace.sysout("This request doesn't come from selected tab  " +
-                    Http.safeGetRequestName(subject), context);
-                return;
-            }
-
-            // The context doesn't have to exist yet. In such cases a temp Net context is
-            // created within onModifyRequest.
-
-            // Some requests are not associated with any page (e.g. favicon).
-            // These are ignored as Net panel shows only page requests.
-            var tabId = win ? Win.getWindowProxyIdForWindow(win) : null;
-            if (!tabId)
-            {
-                if (FBTrace.DBG_NET)
-                    FBTrace.sysout("net.observe NO TAB " + Http.safeGetRequestName(subject) +
-                        ", " + tabId + ", " + win);
-                return;
-            }
-
-            if (topic == "http-on-modify-request")
-                this.onModifyRequest(subject, win, tabId, context);
-            else if (topic == "http-on-examine-response")
-                this.onExamineResponse(subject, win, tabId, context);
-            else if (topic == "http-on-examine-cached-response")
-                this.onExamineCachedResponse(subject, win, tabId, context);
-        }
-        catch (err)
-        {
-            if (FBTrace.DBG_ERRORS)
-                FBTrace.sysout("net.observe EXCEPTION", err);
-        }
-    },
-
-    onModifyRequest: function(request, win, tabId, context)
-    {
-        var name = request.URI.asciiSpec;
-        var origName = request.originalURI.asciiSpec;
-        var isRedirect = (name != origName);
-
-        // We only need to create a new context if this is a top document uri (not frames).
-        if ((request.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI) &&
-            request.loadGroup && request.loadGroup.groupObserver &&
-            win == win.parent && !isRedirect)
-        {
-            var browser = Firefox.getBrowserForWindow(win);
-
-            // New page loaded, clear UI if 'Persist' isn't active.
-            if (!Firebug.chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
-            {
-                Firebug.NetMonitor.clear(context);
-            }
-        }
-
-        var networkContext = context ? context.netProgress : null;
-
-        if (networkContext)
-        {
-            networkContext.post(startFile, [request, win]);
-
-            // We need to track the request now since the activity observer is not used in case
-            // the response comes from BF cache. If it's a regular HTTP request the timing
-            // is properly overridden by the activity observer (ACTIVITY_SUBTYPE_REQUEST_HEADER).
-            // Even if the Firebug.netShowBFCacheResponses is false now, the user could
-            // switch it on later.
-            var xhr = Http.isXHR(request);
-            networkContext.post(requestedFile, [request, NetUtils.now(), win, xhr]);
-        }
-    },
-
-    onExamineResponse: function(request, win, tabId, context)
-    {
-        var networkContext = context ? context.netProgress : null;
-
-        if (!networkContext)
-            return;
-
-        var info = new Object();
-        info.responseStatus = request.responseStatus;
-        info.responseStatusText = request.responseStatusText;
-
-        // Initialize info.postText property.
-        info.request = request;
-        NetUtils.getPostText(info, context);
-
-        // Get response headers now. They could be replaced by cached headers later
-        // (if the response is coming from the cache).
-        NetUtils.getHttpHeaders(request, info, context);
-
-        if (FBTrace.DBG_NET && info.postText)
-            FBTrace.sysout("net.onExamineResponse, POST data: " + info.postText, info);
-
-        networkContext.post(respondedFile, [request, NetUtils.now(), info]);
-
-        // Make sure to track the first document response.
-        //Firebug.TabCacheModel.registerStreamListener(request, win, true);
-    },
-
-    onExamineCachedResponse: function(request, win, tabId, context)
-    {
-        var networkContext = context ? context.netProgress : null;
-
-        if (!networkContext)
-        {
-            if (FBTrace.DBG_NET_EVENTS)
-                FBTrace.sysout("net.onExamineCachedResponse; No CONTEXT for:" +
-                    Http.safeGetRequestName(request));
-            return;
-        }
-
-        var info = new Object();
-        info.responseStatus = request.responseStatus;
-        info.responseStatusText = request.responseStatusText;
-
-        // Initialize info.postText property.
-        info.request = request;
-        NetUtils.getPostText(info, context);
-
-        networkContext.post(respondedCacheFile, [request, NetUtils.now(), info]);
-    },
-}
-
-// ********************************************************************************************* //
 // Monitoring start/stop
 
 function monitorContext(context)
@@ -439,7 +245,7 @@ function monitorContext(context)
     context.netProgress = netProgress;
 
     // Register activity-distributor observer if available (#488270)
-    netProgress.httpActivityObserver = new NetHttpActivityObserver(context);
+    netProgress.httpActivityObserver = new HttpActivityObserver(context);
     netProgress.httpActivityObserver.registerObserver();
 
     // Add cache listener so, net panel has always fresh responses.
@@ -482,90 +288,6 @@ function unmonitorContext(context)
 
     // And finaly destroy the net panel sub context.
     delete context.netProgress;
-}
-
-// ********************************************************************************************* //
-// TabCache Listener
-
-/**
- * TabCache listner implementation. Net panel uses this listner to remember all
- * responses stored into the cache. There can be more requests to the same URL that
- * returns different responses. The Net panels must remember all of them (tab cache
- * remembers only the last one)
- */
-function NetCacheListener(netProgress)
-{
-    this.netProgress = netProgress;
-    this.cache = null;
-}
-
-NetCacheListener.prototype =
-{
-    dispatchName: "NetCacheListener",
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Registration
-
-    register: function(cache)
-    {
-        if (this.cache)
-            return;
-
-        this.cache = cache;
-        this.cache.addListener(this);
-    },
-
-    unregister: function()
-    {
-        if (!this.cache)
-            return;
-
-        this.cache.removeListener(this);
-        this.cache = null;
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Cache Listener
-
-    onStartRequest: function(context, request)
-    {
-        // Keep in mind that the file object (representing the request) doesn't have to be
-        // created at this moment (top document request).
-    },
-
-    onStopRequest: function(context, request, responseText)
-    {
-        // Remember the response for this request.
-        var file = this.netProgress.getRequestFile(request, null, true);
-        if (file)
-            file.responseText = responseText;
-
-        Events.dispatch(Firebug.NetMonitor.fbListeners, "onResponseBody", [context, file]);
-    }
-}
-
-// ********************************************************************************************* //
-// Browser Cache
-
-Firebug.NetMonitor.BrowserCache =
-{
-    cacheDomain: "browser.cache",
-
-    isEnabled: function()
-    {
-        var diskCache = Options.getPref(this.cacheDomain, "disk.enable");
-        var memoryCache = Options.getPref(this.cacheDomain, "memory.enable");
-        return diskCache && memoryCache;
-    },
-
-    toggle: function(state)
-    {
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("net.BrowserCache.toggle; " + state);
-
-        Options.setPref(this.cacheDomain, "disk.enable", state);
-        Options.setPref(this.cacheDomain, "memory.enable", state);
-    }
 }
 
 // ********************************************************************************************* //

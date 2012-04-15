@@ -17,7 +17,7 @@ define([
     "net/jsonViewer",
     "js/sourceCache"
 ],
-function(FBTrace, Obj, Options, Firebug, Xpcom, HttpRequestObserver, HttpResponseObserver, Locale, Events,
+function(FBTrace, Obj, Options, Firebug, Xpcom, RequestObserver, HttpResponseObserver, Locale, Events,
     Url, Http, Str, Win, JSONViewerModel) {
 
 // ********************************************************************************************* //
@@ -102,7 +102,7 @@ Firebug.TabCacheModel = Obj.extend(Firebug.Module,
 
         if (!this.observing)
         {
-            HttpRequestObserver.addObserver(this, "firebug-http-event", false);
+            RequestObserver.addObserver(this, "firebug-http-event", false);
             this.observing = true;
         }
     },
@@ -140,7 +140,7 @@ Firebug.TabCacheModel = Obj.extend(Firebug.Module,
         /*TraceModule.removeListener(this.traceListener);*/
 
         if (this.observing)
-            HttpRequestObserver.removeObserver(this, "firebug-http-event");
+            RequestObserver.removeObserver(this, "firebug-http-event");
     },
 
     initContext: function(context)
