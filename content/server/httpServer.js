@@ -6,8 +6,9 @@ define([
     "app/firebug",
     "app/defaultPrefs",
     "lib/events",
+    "js/tabCacheModel",
 ],
-function(FBTrace, Options, Firebug, DefaultPrefs, Events) {
+function(FBTrace, Options, Firebug, DefaultPrefs, Events, TabCacheModel) {
 
 // ********************************************************************************************* //
 // Module
@@ -27,8 +28,9 @@ var HttpServer =
         // Some modules like TabCacheModule needs to be initialized even in the server scenario.
         Options.initialize("extensions.httpmonitor");
         Options.registerDefaultPrefs(DefaultPrefs);
-        Events.dispatch(Firebug.modules, "initialize");
-        Events.dispatch(Firebug.modules, "initializeUI");
+
+        TabCacheModel.initialize();
+        TabCacheModel.initializeUI();
 
         try
         {
