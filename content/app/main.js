@@ -16,8 +16,9 @@ require(config, [
     "chrome/infotip",
     "app/firebug",
     "net/netPanel",
+    "js/tabCacheModel",
 ],
-function(FBTrace, HttpMonitor, InfoTip, Firebug, NetPanel) {
+function(FBTrace, HttpMonitor, InfoTip, Firebug, NetPanel, TabCacheModel) {
 
 // ********************************************************************************************* //
 

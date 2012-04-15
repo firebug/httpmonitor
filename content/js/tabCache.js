@@ -290,8 +290,6 @@ Firebug.TabCache.prototype = Obj.extend(Firebug.SourceCache.prototype,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(Firebug.TabCacheModel);
-
 return Firebug.TabCache;
 
 // ********************************************************************************************* //

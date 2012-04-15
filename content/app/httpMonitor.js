@@ -50,6 +50,8 @@ var HttpMonitor =
         this.tabWatcher = new TabWatcher(this.getPanelDocument());
         this.proxy = new LocalProxy();
 
+        Locale.registerStringBundle("chrome://httpmonitor/locale/httpmonitor.properties");
+
         // Localize all strings in the application UI.
         this.internationalizeUI(win.document);
 
