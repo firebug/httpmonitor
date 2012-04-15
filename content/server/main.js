@@ -18,7 +18,7 @@ require(config, [
     "server/httpServer",
     "js/tabCache",
 ],
-function(FBTrace, HttpServer,TabCache) {
+function(FBTrace, HttpServer) {
 
 // ********************************************************************************************* //
 
