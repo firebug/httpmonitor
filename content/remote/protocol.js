@@ -113,7 +113,15 @@ Protocol.prototype =
         if (packet.type != "notify")
             return;
 
-        this.listener.onNetworkEvent(packet);
+        try
+        {
+            this.listener.onNetworkEvent(packet);
+        }
+        catch (e)
+        {
+            if (FBTrace.DBG_ERRORS)
+                FBTrace.sysout("Protocol.onNetworkEvent; EXCEPTION " + e, e);
+        }
     }
 };
 

@@ -806,7 +806,7 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
             var file = queue[i];
 
             // xxxHonza: the entire phase management should ba part of NetPanel object
-            if (!file.phase && this.context.netProgress)
+            //if (!file.phase && this.context.netProgress)
                 this.context.netProgress.extendPhase(file);
 
             if (!file.phase)
@@ -1035,7 +1035,7 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
         var elapsed = file.loaded ? file.endTime - file.startTime : 0; /*this.phaseEndTime - file.startTime*/
         this.barOffset = Math.floor(((file.startTime-this.phaseStartTime)/this.phaseElapsed) * 100);
 
-        //Helper log for debugging timing problems.
+        // Helper log for debugging timing problems.
         //NetUtils.traceRequestTiming("net.calculateFileTimes;", file);
 
         var blockingEnd = NetUtils.getBlockingEndTime(file);

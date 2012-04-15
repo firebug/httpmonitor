@@ -787,14 +787,18 @@ NetProgress.prototype =
 
     getRequestFile: function getRequestFile(request, win, noCreate)
     {
-        var name = Http.safeGetRequestName(request);
-        if (!name || reIgnore.exec(name))
-            return null;
+       // var name = Http.safeGetRequestName(request);
+       // if (!name || reIgnore.exec(name))
+       //     return null;
 
         for (var i=0; i<this.files.length; i++)
         {
             var file = this.files[i];
             if (file.request == request)
+                return file;
+
+            //xxxHonza: the client side doesn't have the channel object.
+            if (file.serial == request)
                 return file;
         }
 
@@ -804,11 +808,13 @@ NetProgress.prototype =
             return null;
         }
 
-        if (!win || Win.getRootWindow(win) != this.context.window)
+        // xxxHonza: is this really needed?
+        // In case of files coming from the server the window is not available.
+        /*if (!win || Win.getRootWindow(win) != this.context.window)
         {
             FBTrace.sysout("no window " + win, this.context);
             return;
-        }
+        }*/
 
         var fileDoc = this.getRequestDocument(win);
         var isDocument = request.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI && fileDoc.parent;
@@ -851,10 +857,17 @@ NetProgress.prototype =
                 return doc;
             }
             else
+            {
                 return this.documents[index];
+            }
         }
         else
+        {
+            if (!this.documents.length)
+                this.documents.push(new NetDocument());
+
             return this.documents[0];
+        }
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -919,6 +932,11 @@ NetProgress.prototype =
             // If there is no phase yet, just create it.
             this.startPhase(file);
         }
+
+        // Update phase's lastFinishedFile in case of long time downloads.
+        // This forces the timeline to have proper extent.
+        if (file.phase && file.phase.endTime < file.endTime)
+            file.phase.lastFinishedFile = file;
     },
 
     startPhase: function(file)
@@ -971,7 +989,8 @@ NetDocument.prototype =
 {
     createFile: function(request)
     {
-        return new NetFile(request.name, this);
+        var name = request.name ? request.name : "";
+        return new NetFile(name, this);
     }
 };
 

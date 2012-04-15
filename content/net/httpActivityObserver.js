@@ -154,6 +154,8 @@ HttpActivityObserver.prototype =
         //var networkContext = Firebug.NetMonitor.contexts[tabId];
         //if (!networkContext)
         var networkContext = this.context.netProgress;
+        if (!networkContext)
+            return;
 
         var time = new Date();
         time.setTime(timestamp/1000);

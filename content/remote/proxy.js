@@ -69,31 +69,22 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
             return;
         }
 
+        // It's the Net panel which is displaying all data coming from the server.
         var netPanel = this.context.getPanel("net", true);
         if (!netPanel)
             return;
 
-        if (!this.context.netProgress.files)
-            this.context.netProgress.files = {};
-
+        // Iterate all received data and populate appropriate file objects.
         for (var i=0; i<packet.files.length; i++)
         {
-            var file = packet.files[i];
+            var dataFile = packet.files[i];
+            var file = this.context.netProgress.getRequestFile(dataFile.serial);
 
-            // xxxHonza: this.context.netProgress.getRequestFile(file.serial) should work?
-            var netFile = this.context.netProgress.files[file.serial];
+            // Merge incoming data into the file object.
+            for (var p in dataFile)
+                file[p] = dataFile[p];
 
-            if (netFile)
-            {
-                for (var p in file)
-                    netFile[p] = file[p];
-                file = netFile;
-            }
-            else
-            {
-                this.context.netProgress.files[file.serial] = file;
-            }
-
+            // Update UI
             netPanel.updateFile(file);
         }
     }
