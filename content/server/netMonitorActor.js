@@ -4,12 +4,11 @@ define([
     "lib/trace",
     "app/firebug",
     "lib/options",
-    "server/netProgress",
     "lib/object",
     "app/tabContext",
     "net/netMonitor",
 ],
-function(FBTrace, Firebug, Options, NetworkProgress, Obj, TabContext, NetMonitor) {
+function(FBTrace, Firebug, Options, Obj, TabContext, NetMonitor) {
 
 // ********************************************************************************************* //
 // Globals
@@ -64,10 +63,6 @@ NetworkMonitorActor.prototype =
 
         try
         {
-            //var callback = Obj.bind(this.onFlushData, this);
-            //this.networkProgress = new NetworkProgress();
-            //this.networkProgress.initialize(this.tab._browser._contentWindow, callback);
-
             this.context = new TabContext(this.tab);
 
             // xxxHonza, hack, the global must go away.
@@ -93,12 +88,6 @@ NetworkMonitorActor.prototype =
     onUnsubscribe: function(request)
     {
         FBTrace.sysout("networkMonitorActor.onUnsubscribe;", request);
-
-        if (this.networkProgress)
-        {
-            this.networkProgress.destroy();
-            this.networkProgress = null;
-        }
 
         if (this.context)
         {
