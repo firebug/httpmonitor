@@ -47,8 +47,6 @@ TabWatcher.prototype =
         Firebug.currentContext = this.context;
 
         NetMonitor.initContext(this.context);
-        NetMonitor.loadedContext(this.context);
-        NetMonitor.showContext(this.context);
 
         // Attach to the context/tab
         proxy.attach(this.context, callback);

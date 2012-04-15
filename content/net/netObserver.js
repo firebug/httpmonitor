@@ -435,23 +435,23 @@ function monitorContext(context)
         FBTrace.sysout("net.monitorContext; (" + networkContext + ") " +
             tabId + ", " + context.getName());
 
-    var netProgress = new NetProgress(context);
-    context.netProgress = netProgress;
+    var networkContext = new NetProgress(context);
+    context.netProgress = networkContext;
 
     // Register activity-distributor observer if available (#488270)
-    netProgress.httpActivityObserver = new NetHttpActivityObserver(context);
-    netProgress.httpActivityObserver.registerObserver();
+    context.httpActivityObserver = new NetHttpActivityObserver(context);
+    context.httpActivityObserver.registerObserver();
 
     // Add cache listener so, net panel has always fresh responses.
     // Safe to call multiple times.
-    netProgress.cacheListener = new NetCacheListener(netProgress);
-    netProgress.cacheListener.register(context.sourceCache);
+    networkContext.cacheListener = new NetCacheListener(netProgress);
+    networkContext.cacheListener.register(context.sourceCache);
 
     // Activate net panel sub-context.
     var panel = context.getPanel(panelName);
     context.netProgress.activate(panel);
 
-    return netProgress;
+    return networkContext;
 }
 
 function unmonitorContext(context)
@@ -461,8 +461,7 @@ function unmonitorContext(context)
             (context ? context.netProgress : "netProgress == NULL") + ") " +
             (context ? context.getName() : "no context"));
 
-    var netProgress = context.netProgress;
-    if (!netProgress)
+    if (!context.netProgress)
         return;
 
     // Since the print into the UI is done by timeout asynchronously,
@@ -471,14 +470,14 @@ function unmonitorContext(context)
     if (panel)
         panel.updateLayout();
 
-    netProgress.httpActivityObserver.unregisterObserver();
-    delete netProgress.httpActivityObserver;
+    context.httpActivityObserver.unregisterObserver();
+    delete context.httpActivityObserver;
 
     // Remove cache listener. Safe to call multiple times.
-    netProgress.cacheListener.unregister();
+    context.netProgress.cacheListener.unregister();
 
     // Deactivate net sub-context.
-    netProgress.activate(null);
+    context.netProgress.activate(null);
 
     // And finaly destroy the net panel sub context.
     delete context.netProgress;

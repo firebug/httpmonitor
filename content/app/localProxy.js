@@ -52,8 +52,6 @@ LocalProxy.prototype = Obj.extend(HttpMonitorProxy,
         this.context = context;
 
         //NetMonitor.initContext(this.context);
-        //NetMonitor.loadedContext(this.context);
-        //NetMonitor.showContext(this.context);
 
         callback();
     },

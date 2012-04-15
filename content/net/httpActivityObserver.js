@@ -65,6 +65,9 @@ NetHttpActivityObserver.prototype =
         if (this.registered)
             return;
 
+        if (FBTrace.DBG_NET)
+            FBTrace.sysout("NetHttpActivityObserver; registerObserver");
+
         var distributor = this.getActivityDistributor();
         distributor.addObserver(this);
 

@@ -24,8 +24,11 @@ function TabContext(tab, persistedState)
     this.browser = tab.linkedBrowser ? tab.linkedBrowser : null;
 
     //xxxHonza: hack, this comes from the actor tab.
-    this.window = tab._browser ? tab._browser._contentWindow : null;
-    this.browser = tab._browser ? tab._browser : null;
+    if (!this.window)
+        this.window = tab._browser ? tab._browser._contentWindow : null;
+
+    if (!this.browser)
+        this.browser = tab._browser ? tab._browser : null;
 
     // xxxHonza: should be passed into create method.
     this.persistedState = persistedState || {};

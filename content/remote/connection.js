@@ -55,7 +55,10 @@ Connection.prototype =
     onPacket: function(packet)
     {
         if (FBTrace.DBG_REMOTEBUG)
-            FBTrace.sysout("remotebug; PACKET RECEIVED: " + JSON.stringify(packet), packet);
+        {
+            FBTrace.sysout("remotebug; PACKET RECEIVED, type: " + packet.type +
+                ", from: " + packet.from, packet);
+        }
 
         // Introduction packet.
         if (packet.applicationType == "browser")
