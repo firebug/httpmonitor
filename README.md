@@ -23,7 +23,7 @@ At the moment there is no UI for settings so be ready to use `about:config`
 * Set `extensions.httpmonitor.serverHost` preference (name/IP address) on the client side (to point to your server machine).
 * Run browsers on both sides. There is a new menu at the top left corner of the HTTP Monitor window. If it says *name:port* of the server - the connection has been properly established. It can also say *Connecting...*
 * After successful connection, pick a remote tab in *Select Tab* menu.
-* Refresh the tab in the browser.
+* Refresh the tab in the remote browser.
 
 Resources
 ---------
