@@ -224,7 +224,7 @@ DomplateTag.prototype =
             var iterOuts = [];
             outputs.push(iterOuts);
 
-            if (iter instanceof Array)
+            if (iter instanceof Array || iter.length)
                 iter = new ArrayIterator(iter);
 
             try
