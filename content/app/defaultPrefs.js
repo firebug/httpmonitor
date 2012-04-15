@@ -13,9 +13,11 @@ function() {
  */
 var DefaultPrefs =
 {
+// Global
     "textSize": 0,
     "showInfoTips": true,
     "toolbarCustomizationDone": false,
+    "alwaysOpen": false,
 
 // Console
     "showNetworkErrors": true,

@@ -67,11 +67,17 @@ function loadBrowserOverlay(win)
         Services.scriptloader.loadSubScript(
             "resource://httpmonitor/content/app/browserOverlay.js",
             win);
+
+        var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch2);
+        if (prefs.getBoolPref("extensions.httpmonitor.alwaysOpen"))
+            win.HttpMonitorOverlay.toggle();
     }
     catch (e)
     {
         Cu.reportError(e);
     }
+
+
 }
 
 function unloadBrowserOverlay(win)
