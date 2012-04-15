@@ -1042,6 +1042,19 @@ NetFile.prototype =
         // Remove all members to avoid circular references and memleaks.
         for (var name in this)
             delete this[name];
+    },
+
+    clone: function()
+    {
+        var result = {};
+        for (var p in this)
+            result[p] = this[p];
+
+        // Do not clone request and phase
+        delete result.request;
+        delete result.phase;
+
+        return result;
     }
 };
 

@@ -13,10 +13,14 @@ function(FBTrace, Firebug, Options, Obj, TabContext, NetMonitor) {
 // ********************************************************************************************* //
 // Globals
 
-Components.utils.import("resource:///modules/devtools/dbg-server.jsm");
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cu = Components.utils;
 
-// ID generator
-var gSerialNumber = 0;
+Cu.import("resource:///modules/devtools/dbg-server.jsm");
+
+var postDataTimeout = Options.get("postDataTimeout");
+var Timer = Cc["@mozilla.org/timer;1"];
 
 // ********************************************************************************************* //
 // Network Monitor Actor Implementation
@@ -25,10 +29,9 @@ function NetworkMonitorActor(tab)
 {
     this.conn = tab.conn;
     this.tab = tab;
-    this.serial = gSerialNumber++;
-    this.networkMonitor = null;
+    this.files = [];
 
-    FBTrace.sysout("networkMonitorActor.constructor; " + this.serial + ", " + this.conn);
+    FBTrace.sysout("networkMonitorActor.constructor; " + this.actorID + ", " + this.conn);
 }
 
 NetworkMonitorActor.prototype =
@@ -37,29 +40,22 @@ NetworkMonitorActor.prototype =
 
     grip: function()
     {
-        FBTrace.sysout("networkMonitorActor.grip " + this.actorID + ", " + this.serial);
+        FBTrace.sysout("networkMonitorActor.grip " + this.actorID);
 
         return {
-            actor: this.actorID,
-            serial: this.serial
+            actor: this.actorID
         };
     },
 
     onPing: function(request)
     {
         FBTrace.sysout("networkMonitorActor.onPing ", request);
-        return {"pong": this.serial};
+        return {"pong": this.actorID};
     },
 
     onSubscribe: function(request)
     {
         FBTrace.sysout("networkMonitorActor.onSubscribe;", request);
-
-        if (this.networkMonitor)
-        {
-            FBTrace.sysout("networkMonitorActor.onSubscribe; ERROR Already subscribed",
-                this.networkMonitor);
-        }
 
         try
         {
@@ -68,12 +64,14 @@ NetworkMonitorActor.prototype =
             // xxxHonza, hack, the global must go away.
             Firebug.currentContext = this.context;
 
+            // Initialize NetMonitor module
             NetMonitor.initialize();
 
+            // Initialize context and attach HTTP handlers (local observers)
             NetMonitor.initContext(this.context);
-            NetMonitor.loadedContext(this.context);
-            NetMonitor.showContext(this.context);
 
+            // Attach |this| object actor to the network context. All HTTP events
+            // will be forwarded into |updateFile| method.
             this.context.netProgress.activate(this);
         }
         catch (err)
@@ -82,7 +80,7 @@ NetworkMonitorActor.prototype =
             FBTrace.sysout("networkMonitorActor.onSubscribe; EXCEPTION " + err, err);
         }
 
-        return {"subscribe": this.serial};
+        return {"subscribe": this.actorID};
     },
 
     onUnsubscribe: function(request)
@@ -91,13 +89,17 @@ NetworkMonitorActor.prototype =
 
         if (this.context)
         {
+            this.context.netProgress.activate(null);
             NetMonitor.destroyContext(this.context);
             NetMonitor.shutdown();
 
             this.context = null;
+
+            // xxxHonza, hack, the global must go away.
+            Firebug.currentContext = null;
         }
 
-        return {"unsubscribe": this.serial};
+        return {"unsubscribe": this.actorID};
     },
 
     disconnect: function()
@@ -110,20 +112,30 @@ NetworkMonitorActor.prototype =
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Network Monitor
+    // Network Monitor Handler
 
     updateFile: function(file)
     {
-        var request = file.request;
-        delete file.request;
+        this.files.push(file.clone());
+        this.flush([file]);
+    },
 
-        var phase = file.phase
-        delete file.phase;
+    flush: function()
+    {
+        // If timeout already in progress than bail out.
+        if (this.flushTimer)
+            return;
 
-        this.onFlushData([file]);
+        this.flushTimer = Timer.createInstance(Ci.nsITimer);
+        this.flushTimer.initWithCallback(this, postDataTimeout, Ci.nsITimer.TYPE_ONE_SHOT);
+    },
 
-        file.request = request;
-        file.phase = phase;
+    notify: function(timer)
+    {
+        // Send all collected data and reset all.
+        this.onFlushData(this.files);
+        this.flushTimer = null;
+        this.files = [];
     },
 
     onFlushData: function(data)
@@ -131,7 +143,6 @@ NetworkMonitorActor.prototype =
         var packet = {
             "type": "notify",
             "from": this.actorID,
-            //"serial": this.serial,
             "files": data
         };
 
@@ -157,10 +168,10 @@ function networkMonitorActorHandler(tab, request)
 {
     FBTrace.sysout("networkMonitorActorHandler ", {tab: tab, request: request});
 
+    //xxxHonza: Just a left over from DCamp's example?
     // Reuse a previously-created actor, if any.
-    if (tab.sampleContextActor)
-        return tab.sampleContextActor;
-
+    //if (tab.sampleContextActor)
+    //    return tab.sampleContextActor;
 
     var actor = new NetworkMonitorActor(tab);
     tab.networkMonitorActor = actor;
