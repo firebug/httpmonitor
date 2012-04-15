@@ -99,8 +99,8 @@ var HttpRequestObserver =
             var context = Firebug.currentContext;
             if (!context || context.window != win)
             {
-                FBTrace.sysout("This request doesn't come from selected tab  " +
-                    Http.safeGetRequestName(subject), context);
+                //FBTrace.sysout("This request doesn't come from selected tab  " +
+                //    Http.safeGetRequestName(subject), context);
                 return;
             }
 

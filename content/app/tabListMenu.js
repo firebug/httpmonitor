@@ -40,6 +40,14 @@ var TabListMenu = Obj.extend(Firebug.Module,
 
     onShowing: function(popup)
     {
+        // Create temporary menu item.
+        Menu.createMenuItem(popup, {
+            nol10n: true,
+            image: "chrome://httpmonitor/skin/loading_16.gif",
+            label: "Fetching list of remote tabs...",
+            disabled: true,
+        });
+
         var self = this;
         var proxy = this.getProxy();
 
@@ -62,15 +70,7 @@ var TabListMenu = Obj.extend(Firebug.Module,
             }
         });
 
-        // Create temporary menu item.
-        Menu.createMenuItem(popup, {
-            nol10n: true,
-            image: "chrome://httpmonitor/skin/loading_16.gif",
-            label: "Fetching list of remote tabs...",
-            disabled: true,
-        });
-
-        // Yep, show the menu immediattely. It'll be populated asynchronously.
+        // Yep, show the menu immediattely. Note that it can be populated asynchronously.
         return true;
     },
 
