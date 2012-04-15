@@ -10,7 +10,7 @@ define([
     "lib/events",
     "lib/dom",
     "lib/options",
-    "app/DefaultPrefs",
+    "app/defaultPrefs",
     "app/tabListMenu",
     "remote/connectionMenu",
     "app/localProxy",

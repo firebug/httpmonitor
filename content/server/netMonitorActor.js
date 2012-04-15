@@ -7,8 +7,9 @@ define([
     "lib/object",
     "app/tabContext",
     "net/netMonitor",
+    "lib/array",
 ],
-function(FBTrace, Firebug, Options, Obj, TabContext, NetMonitor) {
+function(FBTrace, Firebug, Options, Obj, TabContext, NetMonitor, Arr) {
 
 // ********************************************************************************************* //
 // Globals
@@ -29,7 +30,7 @@ function NetworkMonitorActor(tab)
 {
     this.conn = tab.conn;
     this.tab = tab;
-    this.files = [];
+    this.files = {};
 
     FBTrace.sysout("networkMonitorActor.constructor; " + this.actorID + ", " + this.conn);
 }
@@ -116,8 +117,8 @@ NetworkMonitorActor.prototype =
 
     updateFile: function(file)
     {
-        this.files.push(file.clone());
-        this.flush([file]);
+        this.files[file.serial] = file.clone();
+        this.flush();
     },
 
     flush: function()
@@ -132,8 +133,13 @@ NetworkMonitorActor.prototype =
 
     notify: function(timer)
     {
-        // Send all collected data and reset all.
-        this.onFlushData(this.files);
+        // Send all collected data.
+        //xxxHonza: data already sent to the client should not be send again
+        // (especially not the response body)
+        var data = Arr.values(this.files);
+        this.onFlushData(data);
+
+        // Reset timer and data.
         this.flushTimer = null;
         this.files = [];
     },

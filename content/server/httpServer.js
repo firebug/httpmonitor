@@ -3,8 +3,11 @@
 define([
     "lib/trace",
     "lib/options",
+    "app/firebug",
+    "app/defaultPrefs",
+    "lib/events",
 ],
-function(FBTrace, Options) {
+function(FBTrace, Options, Firebug, DefaultPrefs, Events) {
 
 // ********************************************************************************************* //
 // Module
@@ -19,6 +22,13 @@ var HttpServer =
         var serverMode = Options.getPref("extensions.httpmonitor", "serverMode");
         if (!serverMode)
             return;
+
+        //xxHonza Duplicated in HttpMonitor.
+        // Some modules like TabCacheModule needs to be initialized even in the server scenario.
+        Options.initialize("extensions.httpmonitor");
+        Options.registerDefaultPrefs(DefaultPrefs);
+        Events.dispatch(Firebug.modules, "initialize");
+        Events.dispatch(Firebug.modules, "initializeUI");
 
         try
         {
