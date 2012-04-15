@@ -118,8 +118,6 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
         if (context.netProgress)
             return;
 
-        FBTrace.sysout("createNetProgress")
-
         var netProgress = new NetProgress(context);
         context.netProgress = netProgress;
     },

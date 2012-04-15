@@ -67,7 +67,7 @@ FBTrace.DBG_ERRORS = true;
 //FBTrace.DBG_HTTPOBSERVER = true;
 //FBTrace.DBG_OPTIONS = true;
 //FBTrace.DBG_CACHE = true;
-FBTrace.DBG_REMOTENETMONITOR = true;
-FBTrace.DBG_REMOTEBUG = true;
+//FBTrace.DBG_REMOTENETMONITOR = true;
+//FBTrace.DBG_REMOTEBUG = true;
 
 // ********************************************************************************************* //

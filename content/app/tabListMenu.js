@@ -45,6 +45,8 @@ var TabListMenu = Obj.extend(Firebug.Module,
 
         proxy.getTabs(function(tabs)
         {
+            self.clear(popup);
+
             // Populate the popup menu with entries (list of tab titles).
             for (var i=0; i<tabs.length; ++i)
             {
@@ -60,7 +62,13 @@ var TabListMenu = Obj.extend(Firebug.Module,
             }
         });
 
-        // xxxHonza: show one menu item with a throbber.
+        // Create temporary menu item.
+        Menu.createMenuItem(popup, {
+            nol10n: true,
+            image: "chrome://httpmonitor/skin/loading_16.gif",
+            label: "Fetching list of remote tabs...",
+            disabled: true,
+        });
 
         // Yep, show the menu immediattely. It'll be populated asynchronously.
         return true;
@@ -68,9 +76,7 @@ var TabListMenu = Obj.extend(Firebug.Module,
 
     onHidden: function(popup)
     {
-        // As soon as the list of tabs (a popup menu) is closed let's remove all menu items.
-        while (popup.childNodes.length > 0)
-            popup.removeChild(popup.lastChild);
+        this.clear(popup);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -88,6 +94,12 @@ var TabListMenu = Obj.extend(Firebug.Module,
             label = Str.cropString(tab.label, 100);
 
         menu.setAttribute("label", label + " ");
+    },
+
+    clear: function(popup)
+    {
+        while (popup.childNodes.length > 0)
+            popup.removeChild(popup.lastChild);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

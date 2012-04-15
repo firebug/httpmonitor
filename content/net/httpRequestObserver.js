@@ -85,8 +85,11 @@ var HttpRequestObserver =
             var win = Http.getWindowForRequest(subject);
             if (!win)
             {
-                FBTrace.sysout("This request doesn't have a window " +
-                    Http.safeGetRequestName(subject));
+                if (FBTrace.DBG_NET)
+                {
+                    FBTrace.sysout("This request doesn't have a window " +
+                        Http.safeGetRequestName(subject));
+                }
                 return;
             }
 
