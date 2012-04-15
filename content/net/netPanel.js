@@ -180,6 +180,8 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.netPanel.show; " + this.context.getName(), state);
 
+        this.context.netProgress.activate(this);
+
         this.showToolbarButtons("fbNetButtons", true);
 
         Firebug.chrome.setGlobalAttribute("cmd_togglePersistNet", "checked", this.persistContent);
@@ -208,6 +210,11 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
 
         clearInterval(this.layoutInterval);
         delete this.layoutInterval;
+
+        // xxxHonza: Netexport needs to see all requests in the UI (to export them).
+        //panel.updateLayout();
+
+        this.context.netProgress.activate(null);
     },
 
     updateOption: function(name, value)

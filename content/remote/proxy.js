@@ -4,9 +4,10 @@ define([
     "lib/trace",
     "lib/object",
     "remote/protocol",
-    "app/httpMonitorProxy"
+    "app/httpMonitorProxy",
+    "net/netMonitor",
 ],
-function(FBTrace, Obj, Protocol, HttpMonitorProxy) {
+function(FBTrace, Obj, Protocol, HttpMonitorProxy, NetMonitor) {
 
 // ********************************************************************************************* //
 // Implementation
@@ -43,11 +44,17 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
     attach: function(context, callback)
     {
         this.context = context;
+
+        // Initializes network context (netProgress), we don't want to observe
+        // Local HTTP event in remote scenario.
+        NetMonitor.initNetContext(context);
+
         this.protocol.selectTab(context.tab, callback);
     },
 
     detach: function(tabId, callback)
     {
+        NetMonitor.destroyNetContext(this.context);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

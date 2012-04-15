@@ -41,15 +41,15 @@ TabWatcher.prototype =
         // Start HTTP activity of the selected tab/window. The context object represents
         // a container for all data collected by the Net panel.
         this.context = new TabContext(tab, this.persistedState);
-        this.context.create(this.panelDoc);
 
         // xxxHonza, hack, the global must go away.
         Firebug.currentContext = this.context;
 
-        NetMonitor.initContext(this.context);
-
-        // Attach to the context/tab
+        // Attach to the selected tab.
         proxy.attach(this.context, callback);
+
+        // Create panels.
+        this.context.create(this.panelDoc);
     },
 
     unwatchTab: function(proxy)
@@ -57,12 +57,16 @@ TabWatcher.prototype =
         if (!this.context)
             return;
 
-        NetMonitor.destroyContext(this.context);
+        // Destroy panels
+        this.context.destroy(this.persistedState);
 
+        // Detach from the current tab.
         proxy.detach();
 
-        this.context.destroy(this.persistedState);
         this.context = null;
+
+        // xxxHonza, hack, the global must go away.
+        Firebug.currentContext = null;
     },
 
     getContextByWindow: function(win)

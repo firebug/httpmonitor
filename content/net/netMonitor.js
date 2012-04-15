@@ -79,65 +79,22 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.initContext for: " + context.getName());
 
-        // XXXjjb changed test to instanceof because jetpack uses fake window objects
-        // xxxHonza: Window type not available in server mode (bootstrapped context)
-        if (context.window/* && context.window instanceof Window*/)
-        {
-            var win = context.window;
+        this.initNetContext(context);
+        this.attachObservers(context);
 
-            var onWindowPaintHandler = function()
-            {
-                if (context.netProgress)
-                    context.netProgress.post(windowPaint, [win, NetUtils.now()]);
-            }
-
-            if (Options.get("netShowPaintEvents"))
-            {
-                context.addEventListener(win, "MozAfterPaint", onWindowPaintHandler, false);
-            }
-
-            // Register "load" listener in order to track window load time.
-            var onWindowLoadHandler = function()
-            {
-                if (context.netProgress)
-                    context.netProgress.post(windowLoad, [win, NetUtils.now()]);
-                context.removeEventListener(win, "load", onWindowLoadHandler, true);
-
-                context.setTimeout(function()
-                {
-                    if (win && !win.closed)
-                    {
-                        context.removeEventListener(win, "MozAfterPaint", onWindowPaintHandler, false);
-                    }
-                }, 2000); //xxxHonza: this should be customizable using preferences.
-            }
-            context.addEventListener(win, "load", onWindowLoadHandler, true);
-
-            // Register "DOMContentLoaded" listener to track timing.
-            var onContentLoadHandler = function()
-            {
-                if (context.netProgress)
-                    context.netProgress.post(contentLoad, [win, NetUtils.now()]);
-                context.removeEventListener(win, "DOMContentLoaded", onContentLoadHandler, true);
-            }
-
-            context.addEventListener(win, "DOMContentLoaded", onContentLoadHandler, true);
-        }
-
-        monitorContext(context);
+        //xxxHonza: Should be done everty time the page is reloaded.
+        //this.registerLoadListeners(context);
 
         var netProgress = context.netProgress;
-        if (netProgress)
-        {
-            netProgress.loaded = true;
+        netProgress.loaded = true;
 
-            // Set Page title and id into all document objects.
-            for (var i=0; i<netProgress.documents.length; i++)
-            {
-                var doc = netProgress.documents[i];
-                doc.id = context.uid;
-                doc.title = NetUtils.getPageTitle(context);
-            }
+        //xxxHonza: needed by NetExport, should be probably somewhere else.
+        // Set Page title and id into all document objects.
+        for (var i=0; i<netProgress.documents.length; i++)
+        {
+            var doc = netProgress.documents[i];
+            doc.id = context.uid;
+            doc.title = NetUtils.getPageTitle(context);
         }
     },
 
@@ -149,14 +106,101 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
             FBTrace.sysout("net.destroyContext for: " +
                 (context ? context.getName() : "No context"));
 
+        this.destroyNetContext(context);
+        this.detachObservers(context);
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Activation
+
+    initNetContext: function(context)
+    {
         if (context.netProgress)
+            return;
+
+        FBTrace.sysout("createNetProgress")
+
+        var netProgress = new NetProgress(context);
+        context.netProgress = netProgress;
+    },
+
+    destroyNetContext: function(context)
+    {
+        delete context.netProgress;
+        context.netProgress = null;
+    },
+
+    attachObservers: function(context)
+    {
+        var netProgress = context.netProgress;
+        if (!netProgress)
+            return;
+
+        // Register activity-distributor observer if available (#488270)
+        netProgress.httpActivityObserver = new HttpActivityObserver(context);
+        netProgress.httpActivityObserver.registerObserver();
+
+        // Add cache listener so, net panel has always fresh responses.
+        // Safe to call multiple times.
+        netProgress.cacheListener = new NetCacheListener(netProgress);
+        netProgress.cacheListener.register(context.sourceCache);
+    },
+
+    detachObservers: function(context)
+    {
+        var netProgress = context.netProgress;
+        if (!netProgress)
+            return;
+
+        netProgress.httpActivityObserver.unregisterObserver();
+        delete netProgress.httpActivityObserver;
+
+        // Remove cache listener. Safe to call multiple times.
+        netProgress.cacheListener.unregister();
+        delete netProgress.cacheListener;
+    },
+
+    registerLoadListeners: function(context)
+    {
+        var win = context.window;
+
+        var onWindowPaintHandler = function()
         {
-            // Remember existing breakpoints.
-            var persistedPanelState = Persist.getPersistedState(context, panelName);
-            persistedPanelState.breakpoints = context.netProgress.breakpoints;
+            if (context.netProgress)
+                context.netProgress.post(windowPaint, [win, NetUtils.now()]);
         }
 
-        unmonitorContext(context);
+        if (Options.get("netShowPaintEvents"))
+        {
+            context.addEventListener(win, "MozAfterPaint", onWindowPaintHandler, false);
+        }
+
+        // Register "load" listener in order to track window load time.
+        var onWindowLoadHandler = function()
+        {
+            if (context.netProgress)
+                context.netProgress.post(windowLoad, [win, NetUtils.now()]);
+            context.removeEventListener(win, "load", onWindowLoadHandler, true);
+
+            context.setTimeout(function()
+            {
+                if (win && !win.closed)
+                {
+                    context.removeEventListener(win, "MozAfterPaint", onWindowPaintHandler, false);
+                }
+            }, 2000); //xxxHonza: this should be customizable using preferences.
+        }
+        context.addEventListener(win, "load", onWindowLoadHandler, true);
+
+        // Register "DOMContentLoaded" listener to track timing.
+        var onContentLoadHandler = function()
+        {
+            if (context.netProgress)
+                context.netProgress.post(contentLoad, [win, NetUtils.now()]);
+            context.removeEventListener(win, "DOMContentLoaded", onContentLoadHandler, true);
+        }
+
+        context.addEventListener(win, "DOMContentLoaded", onContentLoadHandler, true);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -228,67 +272,6 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
             context.netProgress.post(timeStamp, [context.window, time, label, color]);
     }
 });
-
-// ********************************************************************************************* //
-// Monitoring start/stop
-
-function monitorContext(context)
-{
-    if (context.netProgress)
-        return;
-
-    if (FBTrace.DBG_NET)
-        FBTrace.sysout("net.monitorContext; (" + networkContext + ") " +
-            tabId + ", " + context.getName());
-
-    var netProgress = new NetProgress(context);
-    context.netProgress = netProgress;
-
-    // Register activity-distributor observer if available (#488270)
-    netProgress.httpActivityObserver = new HttpActivityObserver(context);
-    netProgress.httpActivityObserver.registerObserver();
-
-    // Add cache listener so, net panel has always fresh responses.
-    // Safe to call multiple times.
-    netProgress.cacheListener = new NetCacheListener(netProgress);
-    netProgress.cacheListener.register(context.sourceCache);
-
-    // Activate net panel sub-context.
-    var panel = context.getPanel(panelName);
-    context.netProgress.activate(panel);
-
-    return netProgress;
-}
-
-function unmonitorContext(context)
-{
-    if (FBTrace.DBG_NET)
-        FBTrace.sysout("net.unmonitorContext; (" +
-            (context ? context.netProgress : "netProgress == NULL") + ") " +
-            (context ? context.getName() : "no context"));
-
-    var netProgress = context.netProgress;
-    if (!netProgress)
-        return;
-
-    // Since the print into the UI is done by timeout asynchronously,
-    // make sure there are no requests left.
-    var panel = context.getPanel(panelName, true);
-    if (panel)
-        panel.updateLayout();
-
-    netProgress.httpActivityObserver.unregisterObserver();
-    delete netProgress.httpActivityObserver;
-
-    // Remove cache listener. Safe to call multiple times.
-    netProgress.cacheListener.unregister();
-
-    // Deactivate net sub-context.
-    netProgress.activate(null);
-
-    // And finaly destroy the net panel sub context.
-    delete context.netProgress;
-}
 
 // ********************************************************************************************* //
 // Registration
