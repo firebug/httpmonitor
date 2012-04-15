@@ -58,13 +58,27 @@ var Options =
         if (FBTrace.DBG_INITIALIZE)
             FBTrace.sysout("options.initialize with prefDomain " + this.prefDomain);
 
-        //this.initializePrefs();
+        this.initializePrefs();
+    },
+
+    initializePrefs: function()
+    {
+        if (this.observing)
+            this.shutdown();
+
+        prefs.addObserver(this.prefDomain, this, false);
+
+        this.observing = true;
     },
 
     shutdown: function()
     {
         prefService.savePrefFile(null);
-        prefs.removeObserver(this.prefDomain, this, false);
+
+        if (this.observing)
+            prefs.removeObserver(this.prefDomain, this, false);
+
+        this.observing = false;
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -153,11 +167,6 @@ var Options =
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Options
     // TODO support per context options eg break on error
-
-    initializePrefs: function()
-    {
-        prefs.addObserver(this.prefDomain, this, false);
-    },
 
     togglePref: function(name)
     {

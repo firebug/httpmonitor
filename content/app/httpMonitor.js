@@ -70,8 +70,8 @@ var HttpMonitor =
     {
         this.tabWatcher.unwatchTab(this.proxy);
 
-        Events.dispatch(modules, "disable");
-        Events.dispatch(modules, "shutdown");
+        Events.dispatch(Firebug.modules, "disable");
+        Events.dispatch(Firebug.modules, "shutdown");
 
         Options.shutdown();
     },

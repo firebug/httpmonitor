@@ -14,10 +14,6 @@ function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom) {
 // ********************************************************************************************* //
 // Globals
 
-// Server settings
-var host;
-var port;
-
 // ********************************************************************************************* //
 // Module
 
@@ -38,9 +34,7 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
         if (FBTrace.DBG_REMOTEBUG)
             FBTrace.sysout("remotebug; RemoteNetModule.initialize");
 
-        // Server settings
-        host = Options.get("serverHost");
-        port = Options.get("serverPort");
+        Options.addListener(this);
 
         this.updateUI();
 
@@ -55,6 +49,8 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
     shutdown: function()
     {
         Firebug.Module.shutdown.apply(this, arguments);
+
+        Options.removeListener(this);
 
         this.disconnect();
     },
@@ -85,6 +81,9 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
                 FBTrace.sysout("remotebug; Already connected!");
             return;
         }
+
+        var host = Options.get("serverHost");
+        var port = Options.get("serverPort");
 
         // Do not connect if host or port is not specified.
         if (!host || !port)
@@ -161,6 +160,9 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
         var connected = this.isConnected();
         var connecting = this.isConnecting();
 
+        var host = Options.get("serverHost");
+        var port = Options.get("serverPort");
+
         var label = "Connect Me ";
         if (connecting)
             label = "Connecting...";
@@ -171,8 +173,8 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
         menu.setAttribute("disabled", connecting ? "true" : "false");
 
         // xxxHonza: Hide the remoting feature behind a pref for now.
-        if (!host || !port)
-            Dom.collapse(menu, true);
+        // There should be UI for specifying the host and port in the future.
+        Dom.collapse(menu, !host || !port);
     },
 
     onShowing: function(popup)
@@ -187,6 +189,15 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
 
         disconnectItem.setAttribute("disabled", isConnected ? "false" : "true");
     },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Preferences
+
+    updateOption: function(name, value)
+    {
+        if (name == "serverHost" || name == "serverPort")
+            this.updateUI();
+    }
 });
 
 // ********************************************************************************************* //
