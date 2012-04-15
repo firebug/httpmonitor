@@ -184,6 +184,9 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
         var connectItem = Firebug.chrome.$("cmd_httpMonitorConnect");
         var disconnectItem = Firebug.chrome.$("cmd_httpMonitorDisconnect");
 
+        var host = Options.get("serverHost");
+        var port = Options.get("serverPort");
+
         connectItem.setAttribute("disabled", isConnected ? "true" : "false");
         connectItem.setAttribute("label", "Connect to: " + host + ":" + port);
 
