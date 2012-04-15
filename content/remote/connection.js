@@ -29,8 +29,10 @@ function Connection(onConnect, onDisconnect)
     // Hooks
     this.onConnect = onConnect;
     this.onDisconnect = onDisconnect;
-    this.connected = false;
     this.callbacks = {};
+
+    this.connected = false;
+    this.connecting = false;
 }
 
 Connection.prototype =
@@ -40,6 +42,7 @@ Connection.prototype =
         this.transport = debuggerSocketConnect(host ? host : "localhost", port);
         this.transport.hooks = this;
         this.transport.ready();
+        this.connecting = true;
     },
 
     close: function()
@@ -50,6 +53,11 @@ Connection.prototype =
     isConnected: function()
     {
         return this.connected;
+    },
+
+    isConnecting: function()
+    {
+        return this.connecting;
     },
 
     onPacket: function(packet)
@@ -84,7 +92,9 @@ Connection.prototype =
      */
     onClosed: function()
     {
+        this.connecting = false;
         this.connected = false;
+
         this.callbacks = {};
 
         if (this.onDisconnect)
@@ -93,6 +103,7 @@ Connection.prototype =
 
     onIntro: function(packet)
     {
+        this.connecting = false;
         this.connected = true;
 
         if (this.onConnect)
@@ -101,6 +112,8 @@ Connection.prototype =
 
     onError: function(packet)
     {
+        this.connecting = false;
+
         FBTrace.sysout("remotebug; ERROR " + packet.error + ": " + packet.message);
     },
 

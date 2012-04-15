@@ -67,6 +67,11 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
         return (this.connection && this.connection.isConnected());
     },
 
+    isConnecting: function()
+    {
+        return (this.connection && this.connection.isConnecting());
+    },
+
     getConnection: function()
     {
         return this.connection;
@@ -99,6 +104,7 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
         try
         {
             this.connection.open(host, port);
+            this.updateUI();
         }
         catch (err)
         {
@@ -152,13 +158,17 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
     updateUI: function()
     {
         var menu = Firebug.chrome.$("httpMonitorConnectionMenu");
-        var isConnected = this.isConnected();
+        var connected = this.isConnected();
+        var connecting = this.isConnecting();
 
         var label = "Connect Me ";
-        if (isConnected)
+        if (connecting)
+            label = "Connecting...";
+        else if (connected)
             label = host + ":" + port + " ";
 
         menu.setAttribute("label", label + " ");
+        menu.setAttribute("disabled", connecting ? "true" : "false");
 
         // xxxHonza: Hide the remoting feature behind a pref for now.
         if (!host || !port)
