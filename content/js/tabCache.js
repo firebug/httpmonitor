@@ -576,8 +576,9 @@ ChannelListenerProxy.prototype =
         try
         {
             // xxxHonza
-            return HttpMonitor.tabWatcher.context;
+            //return HttpMonitor.tabWatcher.context;
             //return Firebug.connection.getContextByWindow(this.window);
+            return Firebug.currentContext;
         }
         catch (e)
         {
