@@ -8,6 +8,7 @@
 *.swp
 *.tmp
 .*.gz
+*.xpi
 
 # Temporary files created by Eclipse
 .tmp*
