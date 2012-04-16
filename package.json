@@ -1,7 +1,7 @@
 {
   "name": "HTTPMonitor",
-  "description": "HTTP communication visualizer",
-  "version": "0.4.2",
+  "description": "HTTP activity monitor",
+  "version": "0.2",
   "homepage" : "",
   "engines": {
     "node": ">= 0.6.6"
