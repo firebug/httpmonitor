@@ -6,7 +6,6 @@ define([
     "app/firebug",
     "lib/options",
     "lib/string",
-    "lib/persist",
     "net/httpActivityObserver",
     "net/httpRequestObserver",
     "net/netProgress",
@@ -14,7 +13,7 @@ define([
     "lib/events",
     "net/netCacheListener",
 ],
-function(FBTrace, Obj, Firebug, Options, Str, Persist, HttpActivityObserver,
+function(FBTrace, Obj, Firebug, Options, Str, HttpActivityObserver,
     HttpRequestObserver, NetProgress, NetUtils, Events, NetCacheListener) {
 
 // ********************************************************************************************* //

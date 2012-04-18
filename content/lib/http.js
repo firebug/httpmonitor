@@ -3,10 +3,9 @@
 define([
     "lib/xpcom",
     "lib/trace",
-    "lib/deprecated",
     "lib/string"
 ],
-function(Xpcom, FBTrace, Deprecated, Str) {
+function(Xpcom, FBTrace, Str) {
 
 // ********************************************************************************************* //
 // Constants
@@ -295,9 +294,6 @@ Http.getRequestLoadContext = function(request)
     return null;
 };
 
-Http.getRequestWebProgress = Deprecated.deprecated("Use getRequestLoadContext function",
-    Http.getRequestLoadContext);
-
 // ********************************************************************************************* //
 // HTTP Channel Fields
 
@@ -430,15 +426,6 @@ Http.isXHR = function(request)
 
     return false;
 },
-
-// ********************************************************************************************* //
-// Conversions
-
-Http.convertToUnicode = Deprecated.deprecated("Function moved to 'firebug/lib/string' module",
-    Str.convertToUnicode);
-
-Http.convertFromUnicode = Deprecated.deprecated("Function moved to 'firebug/lib/string' module",
-    Str.convertFromUnicode);
 
 // ************************************************************************************************
 // Network Tracing

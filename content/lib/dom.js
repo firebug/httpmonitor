@@ -2,12 +2,11 @@
 
 define([
     "lib/trace",
-    "lib/deprecated",
     "lib/css",
     "lib/array",
     "lib/xml",
 ],
-function(FBTrace, Deprecated, Css, Arr, Xml) {
+function(FBTrace, Css, Arr, Xml) {
 
 // ********************************************************************************************* //
 // Constants
@@ -685,10 +684,6 @@ Dom.EventCopy = function(event)
         } catch (exc) { }
     }
 }
-
-var isDOMConstantDep = Deprecated.deprecated(
-    "isDOMConstant(name) signature changed (object,name)",
-    Dom.isDOMConstant);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

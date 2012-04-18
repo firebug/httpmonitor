@@ -13,7 +13,6 @@ define([
     "lib/css",
     "lib/dom",
     "chrome/window",
-    "lib/search",
     "lib/string",
     "lib/json",
     "lib/array",
@@ -28,7 +27,7 @@ define([
     "net/fontViewer",
     "net/netMonitor"
 ],
-function(FBTrace, Obj, Firebug, Firefox, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Search, Str,
+function(FBTrace, Obj, Firebug, Firefox, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
     Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http) {
 
 with (Domplate) {

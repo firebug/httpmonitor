@@ -250,22 +250,22 @@ Firebug =
 
     shouldIgnore: function(objectChromeView)
     {
-        if (objectChromeView)
+        /*if (objectChromeView)
         {
             var contentView = Wrapper.unwrapObject(objectChromeView);
             return (contentView && contentView.firebugIgnore);
-        }
+        }*/
         // else don't ignore things we don't understand
     },
 
     setIgnored: function(objectChromeView)
     {
-        if (objectChromeView)
+        /*if (objectChromeView)
         {
             var contentView = Wrapper.unwrapObject(objectChromeView);
             if (contentView)
                 contentView.firebugIgnore = true;
-        }
+        }*/
     },
 
     /**

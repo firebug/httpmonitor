@@ -3,10 +3,9 @@
 define([
     "lib/trace",
     "lib/options",
-    "lib/deprecated",
     "lib/xpcom"
 ],
-function(FBTrace, Options, Deprecated, Xpcom) {
+function(FBTrace, Options, Xpcom) {
 
 // ********************************************************************************************* //
 // Constants
@@ -370,11 +369,6 @@ var escapeForCss = Str.escapeForCss = createSimpleEscape('css', 'normal');
 // deprecated compatibility functions
 Str.deprecateEscapeHTML = createSimpleEscape('text', 'normal');
 Str.deprecatedUnescapeHTML = createSimpleEscape('text', 'reverse');
-
-Str.escapeHTML = Deprecated.deprecated("use appropriate escapeFor... function",
-    Str.deprecateEscapeHTML);
-Str.unescapeHTML = Deprecated.deprecated("use appropriate unescapeFor... function",
-    Str.deprecatedUnescapeHTML);
 
 var escapeForSourceLine = Str.escapeForSourceLine = createSimpleEscape('text', 'normal');
 
