@@ -117,52 +117,6 @@ Css.toggleClass = function(elt, name)
         Css.setClass(elt, name);
 };
 
-Css.setClassTimed = function(elt, name, context, timeout)
-{
-    if (!timeout)
-        timeout = 1300;
-
-    if (elt.__setClassTimeout)  // then we are already waiting to remove the class mark
-        context.clearTimeout(elt.__setClassTimeout);  // reset the timer
-    else                        // then we are not waiting to remove the mark
-        Css.setClass(elt, name);
-
-    if (!Xml.isVisible(elt))
-    {
-        if (elt.__invisibleAtSetPoint)
-            elt.__invisibleAtSetPoint--;
-        else
-            elt.__invisibleAtSetPoint = 5;
-    }
-    else
-    {
-        delete elt.__invisibleAtSetPoint;
-    }
-
-    elt.__setClassTimeout = context.setTimeout(function()
-    {
-        delete elt.__setClassTimeout;
-
-        if (elt.__invisibleAtSetPoint)  // then user can't see it, try again later
-            Css.setClassTimed(elt, name, context, timeout);
-        else
-        {
-            delete elt.__invisibleAtSetPoint;  // may be zero
-            Css.removeClass(elt, name);
-        }
-    }, timeout);
-};
-
-Css.cancelClassTimed = function(elt, name, context)
-{
-    if (elt.__setClassTimeout)
-    {
-        Css.removeClass(elt, name);
-        context.clearTimeout(elt.__setClassTimeout);
-        delete elt.__setClassTimeout;
-    }
-};
-
 // ********************************************************************************************* //
 // Registration
 

@@ -41,16 +41,6 @@ Obj.extend = function(l, r)
     return newOb;
 };
 
-Obj.descend = function(prototypeParent, childProperties)
-{
-    function protoSetter() {};
-    protoSetter.prototype = prototypeParent;
-    var newOb = new protoSetter();
-    for (var n in childProperties)
-        newOb[n] = childProperties[n];
-    return newOb;
-};
-
 // ************************************************************************************************
 
 /**
@@ -134,16 +124,6 @@ Obj.hasProperties = function(ob, nonEnumProps, ownPropsOnly)
     return false;
 };
 
-Obj.getPrototype = function(ob)
-{
-    try
-    {
-        return ob.prototype;
-    } catch (exc) {}
-    return null;
-};
-
-
 Obj.getUniqueId = function()
 {
     return this.getRandomInt(0,65536);
@@ -152,64 +132,6 @@ Obj.getUniqueId = function()
 Obj.getRandomInt = function(min, max)
 {
     return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-// Cross Window instanceof; type is local to this window
-Obj.XW_instanceof = function(obj, type)
-{
-    if (obj instanceof type)
-        return true;  // within-window test
-
-    if (!type)
-        return false;
-
-    if (!obj)
-        return (type == "undefined");
-
-    // compare strings: obj constructor.name to type.name.
-    // This is not perfect, we should compare type.prototype to object.__proto__,
-    // but mostly code does not change the constructor object.
-    do
-    {
-        // then the function that constructed us is the argument
-        if (obj.constructor && obj.constructor.name == type.name)
-            return true;
-    }
-    while(obj = obj.__proto__);  // walk the prototype chain.
-
-    return false;
-
-    // https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide/Property_Inheritance_Revisited
-    // /Determining_Instance_Relationships
-}
-
-/**
- * Tells if the given property of the provided object is a non-native getter or not.
- * This method depends on PropertyPanel.jsm module available in Firefox 5+
- * isNonNativeGetter has been introduced in Firefox 7
- *
- * @param object aObject The object that contains the property.
- * @param string aProp The property you want to check if it is a getter or not.
- * @return boolean True if the given property is a getter, false otherwise.
- */
-Obj.isNonNativeGetter = function(obj, propName)
-{
-    try
-    {
-        var scope = {};
-        Components.utils.import("resource:///modules/PropertyPanel.jsm", scope);
-
-        if (scope.isNonNativeGetter)
-        {
-            Obj.isNonNativeGetter = scope.isNonNativeGetter;
-            return Obj.isNonNativeGetter(obj, propName);
-        }
-    }
-    catch (err)
-    {
-    }
-
-    return true;
 }
 
 // ********************************************************************************************* //

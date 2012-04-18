@@ -905,13 +905,14 @@ Firebug.Panel = Obj.extend(new Firebug.Listener(),
      */
     highlightNode: function(node)
     {
-        if (this.highlightedNode)
+        // Not necessary for the Net panel
+        /*if (this.highlightedNode)
             Css.cancelClassTimed(this.highlightedNode, "jumpHighlight", this.context);
 
         this.highlightedNode = node;
 
         if (node)
-            Css.setClassTimed(node, "jumpHighlight", this.context);
+            Css.setClassTimed(node, "jumpHighlight", this.context);*/
     },
 
     /*
