@@ -1254,11 +1254,6 @@ Firebug.Rep = domplate(
         return Str.cropString(text);
     },
 
-    cropMultipleLines: function(text, limit)
-    {
-        return Str.cropMultipleLines(text, limit);
-    },
-
     toLowerCase: function(text)
     {
         return text ? text.toLowerCase() : text;

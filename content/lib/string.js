@@ -16,10 +16,9 @@ var Cu = Components.utils;
 
 const reNotWhitespace = /[^\s]/;
 
-
 var Str = {};
 
-// ************************************************************************************************
+// ********************************************************************************************* //
 // Whitespace and Entity conversions
 
 var entityConversionLists = Str.entityConversionLists =
@@ -108,7 +107,7 @@ e(0x200d, 'zwj', attr, text, white, editor);
 e(0x200e, 'lrm', attr, text, white, editor);
 e(0x200f, 'rlm', attr, text, white, editor);
 
-//************************************************************************************************
+// ********************************************************************************************* //
 // Entity escaping
 
 var entityConversionRegexes =
@@ -191,223 +190,14 @@ function createSimpleEscape(name, direction)
     }
 }
 
-function escapeEntityAsName(char)
-{
-    var entityConverter = Xpcom.CCSV("@mozilla.org/intl/entityconverter;1", "nsIEntityConverter");
-    try
-    {
-        return entityConverter.ConvertToEntity(char, entityConverter.entityW3C);
-    }
-    catch(e)
-    {
-        return char;
-    }
-}
-
-function escapeEntityAsUnicode(char)
-{
-    var charCode = char.charCodeAt(0);
-
-    if (charCode == 34)
-        return "&quot;";
-    else if (charCode == 38)
-        return "&amp;";
-    else if (charCode < 32 || charCode >= 127)
-        return "&#" + charCode + ";";
-
-    return char;
-}
-
-function escapeGroupsForEntities(str, lists, type)
-{
-    var results = [];
-    var noEntityString = "";
-    var textListIndex = -1;
-
-    if (!type)
-        type = "names";
-
-    for (var i = 0, listsLen = lists.length; i < listsLen; i++)
-    {
-        if (lists[i].group == "text")
-        {
-            textListIndex = i;
-            break;
-        }
-    }
-
-    for (var i = 0, strLen = str.length; i < strLen; i++)
-    {
-        var result = str.charAt(i);
-
-        // If there's "text" in the list groups, use a different
-        // method for converting the characters
-        if (textListIndex != -1)
-        {
-            if (type == "unicode")
-                result = escapeEntityAsUnicode(str.charAt(i));
-            else if (type == "names")
-                result = escapeEntityAsName(str.charAt(i));
-        }
-
-        if (result != str.charAt(i))
-        {
-            if (noEntityString != "")
-            {
-                results.push({
-                    "str": noEntityString,
-                    "class": "",
-                    "extra": ""
-                });
-                noEntityString = "";
-            }
-
-            results.push({
-                "str": result,
-                "class": lists[textListIndex].class,
-                "extra": lists[textListIndex].extra[result] ? lists[textListIndex].class
-                        + lists[textListIndex].extra[result] : ""
-            });
-        }
-        else
-        {
-            var listEntity;
-            for each (var list in lists)
-            {
-                if (list.group != "text")
-                {
-                    listEntity = entityConversionLists.normal[list.group][result];
-                    if (listEntity)
-                    {
-                        result = listEntity;
-
-                        if (noEntityString != "")
-                        {
-                            results.push({
-                                "str": noEntityString,
-                                "class": "",
-                                "extra": ""
-                            });
-                            noEntityString = "";
-                        }
-
-                        results.push({
-                            "str": result,
-                            "class": list.class,
-                            "extra": list.extra[result] ? list.class + list.extra[result] : ""
-                        });
-                        break;
-                    }
-                }
-            }
-
-            if (result == str.charAt(i))
-            {
-                noEntityString += result;
-            }
-        }
-    }
-
-    if (noEntityString != "")
-    {
-        results.push({
-            "str": noEntityString,
-            "class": "",
-            "extra": ""
-        });
-    }
-
-    return results;
-}
-
-Str.escapeGroupsForEntities = escapeGroupsForEntities;
-
-function unescapeEntities(str, lists)
-{
-    var re = getEscapeRegexp('reverse', lists),
-        split = String(str).split(re),
-        len = split.length,
-        results = [],
-        cur, r, i, ri = 0, l, list;
-
-    if (!len)
-        return str;
-
-    lists = [].concat(lists);
-    for (i = 0; i < len; i++)
-    {
-        cur = split[i];
-        if (cur == '')
-            continue;
-
-        for (l = 0; l < lists.length; l++)
-        {
-            list = lists[l];
-            r = entityConversionLists.reverse[list.group][cur];
-            if (r)
-            {
-                results[ri] = r;
-                break;
-            }
-        }
-
-        if (!r)
-            results[ri] = cur;
-        ri++;
-    }
-    return results.join('') || '';
-}
-
-// ************************************************************************************************
+// ********************************************************************************************* //
 // String escaping
 
 var escapeForTextNode = Str.escapeForTextNode = createSimpleEscape('text', 'normal');
 var escapeForHtmlEditor = Str.escapeForHtmlEditor = createSimpleEscape('editor', 'normal');
 var escapeForElementAttribute = Str.escapeForElementAttribute = createSimpleEscape('attributes', 'normal');
-var escapeForCss = Str.escapeForCss = createSimpleEscape('css', 'normal');
-
-// deprecated compatibility functions
-Str.deprecateEscapeHTML = createSimpleEscape('text', 'normal');
-Str.deprecatedUnescapeHTML = createSimpleEscape('text', 'reverse');
-
-var escapeForSourceLine = Str.escapeForSourceLine = createSimpleEscape('text', 'normal');
-
-var unescapeWhitespace = createSimpleEscape('whitespace', 'reverse');
-
-Str.unescapeForTextNode = function(str)
-{
-    if (Options.get("showTextNodesWithWhitespace"))
-        str = unescapeWhitespace(str);
-
-    if (Options.get("entityDisplay") == "names")
-        str = escapeForElementAttribute(str);
-
-    return str;
-}
 
 Str.unescapeForURL = createSimpleEscape('text', 'reverse');
-
-Str.escapeNewLines = function(value)
-{
-    return value.replace(/\r/gm, "\\r").replace(/\n/gm, "\\n");
-};
-
-Str.stripNewLines = function(value)
-{
-    return typeof(value) == "string" ? value.replace(/[\r\n]/gm, " ") : value;
-};
-
-Str.escapeSingleQuoteJS = function(value)
-{
-    return value.replace("\\", "\\\\", "g").replace(/\r/gm, "\\r")
-                .replace(/\n/gm, "\\n").replace("'", "\\'", "g");
-};
-
-Str.escapeJS = function(value)
-{
-    return value.replace("\\", "\\\\", "g").replace(/\r/gm, "\\r")
-        .replace(/\n/gm, "\\n").replace('"', '\\"', "g");
-};
 
 Str.cropString = function(text, limit, alterText)
 {
@@ -432,77 +222,6 @@ Str.cropString = function(text, limit, alterText)
         return text.substr(0, halfLimit) + alterText + text.substr(text.length-halfLimit);
 
     return text;
-};
-
-Str.cropStringEx = function(text, limit, alterText, pivot)
-{
-    if (!alterText)
-        alterText = "...";
-
-    // Make sure it's a string.
-    text = text + "";
-
-    // Use default limit if necessary.
-    if (!limit)
-        limit = Options.get("stringCropLength");
-
-    // Crop the string only if a limit is actually specified.
-    if (limit <= 0)
-        return text;
-
-    if (text.length < limit)
-        return text;
-
-    if (typeof(pivot) == "undefined")
-        pivot = text.length / 2;
-
-    var halfLimit = (limit / 2);
-
-    // Adjust the pivot to the real center in case it's at an edge.
-    if (pivot < halfLimit)
-        pivot = halfLimit;
-
-    if (pivot > text.length - halfLimit)
-        pivot = text.length - halfLimit;
-
-    // Get substring around the pivot
-    var begin = Math.max(0, pivot - halfLimit);
-    var end = Math.min(text.length - 1, pivot + halfLimit);
-    var result = text.substring(begin, end);
-
-    // Add alterText to the beginning or end of the result as necessary.
-    if (begin > 0)
-        result = alterText + result;
-
-    if (end < text.length - 1)
-        result += alterText;
-
-    return result;
-};
-
-Str.lineBreak = function()
-{
-    if (navigator.appVersion.indexOf("Win") != -1)
-    {
-      return '\r\n';
-    }
-
-    if (navigator.appVersion.indexOf("Mac") != -1)
-    {
-      return '\r';
-    }
-
-    return '\n';
-};
-
-Str.cropMultipleLines = function(text, limit)
-{
-    return this.escapeNewLines(this.cropString(text, limit));
-};
-
-Str.isWhitespace = function(text)
-{
-    return !reNotWhitespace.exec(text);
 };
 
 Str.splitLines = function(text)
@@ -595,35 +314,7 @@ Str.insertWrappedText = function(text, textBox, noEscapeHTML)
     textBox.innerHTML = "<pre role=\"list\">" + html.join("") + "</pre>";
 }
 
-// ************************************************************************************************
-// Indent
-
-const reIndent = /^(\s+)/;
-
-function getIndent(line)
-{
-    var m = reIndent.exec(line);
-    return m ? m[0].length : 0;
-}
-
-Str.cleanIndentation = function(text)
-{
-    var lines = Str.splitLines(text);
-
-    var minIndent = -1;
-    for (var i = 0; i < lines.length; ++i)
-    {
-        var line = lines[i];
-        var indent = getIndent(line);
-        if (minIndent == -1 && line && !Str.isWhitespace(line))
-            minIndent = indent;
-        if (indent >= minIndent)
-            lines[i] = line.substr(minIndent);
-    }
-    return lines.join("");
-}
-
-// ************************************************************************************************
+// ********************************************************************************************* //
 // Formatting
 
 Str.formatNumber = function(number)
@@ -721,28 +412,6 @@ Str.convertToUnicode = function(text, charset)
         // the exception is worthless, make up a new one
         throw new Error("Firebug failed to convert to unicode using charset: "+conv.charset+
             " in @mozilla.org/intl/scriptableunicodeconverter");
-    }
-};
-
-Str.convertFromUnicode = function(text, charset)
-{
-    if (!text)
-        return "";
-
-    try
-    {
-        var conv = Cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(
-            Ci.nsIScriptableUnicodeConverter);
-        conv.charset = charset ? charset : "UTF-8";
-        return conv.ConvertFromUnicode(text);
-    }
-    catch (exc)
-    {
-        if (FBTrace.DBG_ERRORS)
-        {
-            FBTrace.sysout("Str.convertFromUnicode: fails: for charset "+charset+" conv.charset:"+
-                conv.charset+" exc: "+exc, exc);
-        }
     }
 };
 
