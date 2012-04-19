@@ -9,8 +9,9 @@ define([
     "net/netProgress",
     "net/netUtils",
     "chrome/module",
+    "chrome/chrome",
 ],
-function(Xpcom, Obj, FBTrace, Http, Win, NetProgress, NetUtils, Module) {
+function(Xpcom, Obj, FBTrace, Http, Win, NetProgress, NetUtils, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -328,7 +329,7 @@ var HttpActivityObserverModule = Obj.extend(Module,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(HttpActivityObserverModule);
+Chrome.registerModule(HttpActivityObserverModule);
 
 return HttpActivityObserver;
 

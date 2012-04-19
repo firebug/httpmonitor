@@ -219,10 +219,10 @@ NetPanel.prototype = Obj.extend(Panel,
         if (name == "netFilterCategory")
         {
             Firebug.NetMonitor.syncFilterButtons();
-            Firebug.connection.eachContext(function syncFilters(context)
+            /*Firebug.connection.eachContext(function syncFilters(context)
             {
                 Firebug.NetMonitor.onToggleFilter(context, value);
-            });
+            });*/
         }
         else if (name == "netShowBFCacheResponses")
         {
@@ -234,7 +234,7 @@ NetPanel.prototype = Obj.extend(Panel,
     {
         if (this.table)
         {
-            if (Firebug.netShowBFCacheResponses)
+            if (Options.get("netShowBFCacheResponses"))
                 Css.setClass(this.table, "showBFCacheResponses");
             else
                 Css.removeClass(this.table, "showBFCacheResponses");
@@ -316,11 +316,10 @@ NetPanel.prototype = Obj.extend(Panel,
     {
         var items = [];
 
-        var file = Firebug.getRepObject(target);
+        var file = Chrome.getRepObject(target);
         if (!file || !(file instanceof Firebug.NetFile))
             return items;
 
-        var object = Firebug.getObjectByURL(this.context, file.href);
         var isPost = NetUtils.isURLEncodedRequest(file, this.context);
 
         items.push(
@@ -1136,7 +1135,7 @@ NetPanel.prototype = Obj.extend(Panel,
             var file = phase.files[i];
 
             // Do not count BFCache responses if the user says so.
-            if (!Firebug.netShowBFCacheResponses && file.fromBFCache)
+            if (!Options.get("netShowBFCacheResponses") && file.fromBFCache)
                 continue;
 
             if (!category || file.category == category)
@@ -1308,7 +1307,7 @@ NetPanel.prototype = Obj.extend(Panel,
                     fn(row.files[j].file);
             }
 
-            var file = Firebug.getRepObject(row);
+            var file = Chrome.getRepObject(row);
             if (file)
                 fn(file);
         }
@@ -1470,7 +1469,7 @@ var NetPanelSearch = function(panel, rowFinder)
 
     this.findNextInResponse = function(reverse, caseSensitive)
     {
-        var file = Firebug.getRepObject(this.currentRow);
+        var file = Chrome.getRepObject(this.currentRow);
         if (!file)
             return;
 
@@ -1544,7 +1543,7 @@ Firebug.NetMonitor.ConditionEditor = function(doc)
             return;
 
         var file = target.repObject;
-        var panel = Firebug.getElementPanel(target);
+        var panel = Chrome.getElementPanel(target);
         var bp = panel.context.netProgress.breakpoints.findBreakpoint(file.getFileURL());
         if (bp)
             bp.condition = value;
@@ -1554,7 +1553,7 @@ Firebug.NetMonitor.ConditionEditor = function(doc)
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerPanel(NetPanel);
+Chrome.registerPanel(NetPanel);
 
 return NetPanel;
 

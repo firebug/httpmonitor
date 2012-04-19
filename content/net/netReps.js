@@ -511,7 +511,7 @@ Firebug.NetMonitor.NetRequestEntry = domplate(Rep, new Listener(),
         if (!row)
             return;
 
-        var context = Firebug.getElementPanel(row).context;
+        var context = Chrome.getElementPanel(row).context;
         var panel = context.getPanel(panelName, true);
         if (panel)
             panel.breakOnRequest(row.repObject);
@@ -733,7 +733,7 @@ Firebug.NetMonitor.NetPage = domplate(Rep,
 
         var target = event.target;
         var pageRow = Dom.getAncestorByClass(event.target, "netPageRow");
-        var panel = Firebug.getElementPanel(pageRow);
+        var panel = Chrome.getElementPanel(pageRow);
 
         if (!Css.hasClass(pageRow, "opened"))
         {
@@ -984,8 +984,8 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
         netInfoBox.selectedText.setAttribute("selected", "true");
         netInfoBox.selectedTab.setAttribute("aria-selected", "true");
 
-        var file = Firebug.getRepObject(netInfoBox);
-        var panel = Firebug.getElementPanel(netInfoBox);
+        var file = Chrome.getRepObject(netInfoBox);
+        var panel = Chrome.getElementPanel(netInfoBox);
         if (!panel)
         {
             if (FBTrace.DBG_ERRORS)
@@ -2042,7 +2042,7 @@ Firebug.NetMonitor.ResponseSizeLimit = domplate(Rep,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerRep(Firebug.NetMonitor.NetRequestTable);
+Chrome.registerRep(Firebug.NetMonitor.NetRequestTable);
 
 return Firebug.NetMonitor.NetRequestTable;
 

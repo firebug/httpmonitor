@@ -13,8 +13,10 @@ define([
     "lib/array",
     "net/netUtils",
     "chrome/rep",
+    "chrome/chrome",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Url, Css, Dom, Arr, NetUtils, Rep) {
+function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Url, Css, Dom, Arr, NetUtils, Rep,
+    Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -173,7 +175,7 @@ var BreakpointRep = domplate(Rep,
         if (!Css.hasClass(event.target, "closeButton"))
             return;
 
-        var bpPanel = Firebug.getElementPanel(event.target);
+        var bpPanel = Chrome.getElementPanel(event.target);
         var context = bpPanel.context;
 
         // Remove from list of breakpoints.
@@ -203,7 +205,7 @@ var BreakpointRep = domplate(Rep,
         if (!Css.hasClass(checkBox, "breakpointCheckbox"))
             return;
 
-        var bpPanel = Firebug.getElementPanel(event.target);
+        var bpPanel = Chrome.getElementPanel(event.target);
         var context = bpPanel.context;
 
         var bp = Dom.getAncestorByClass(checkBox, "breakpointRow").repObject;
@@ -234,7 +236,7 @@ var BreakpointRep = domplate(Rep,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerRep(BreakpointRep);
+Chrome.registerRep(BreakpointRep);
 
 return {
     NetBreakpointGroup: NetBreakpointGroup

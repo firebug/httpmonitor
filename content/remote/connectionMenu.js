@@ -205,7 +205,7 @@ var ConnectionMenu = Obj.extend(Module,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(ConnectionMenu);
+Chrome.registerModule(ConnectionMenu);
 
 return ConnectionMenu;
 

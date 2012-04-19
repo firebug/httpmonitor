@@ -48,7 +48,7 @@ var Panel = Obj.extend(new Listener(),
             context.uid);
 
         // Load persistent content if any.
-        var persistedState = Firebug.getPanelState(this);
+        var persistedState = Chrome.getPanelState(this);
         if (persistedState)
         {
             this.persistContent = persistedState.persistContent;
@@ -382,12 +382,12 @@ var Panel = Obj.extend(new Listener(),
 
     getPopupObject: function(target)
     {
-        return Firebug.getRepObject(target);
+        return Chrome.getRepObject(target);
     },
 
     getTooltipObject: function(target)
     {
-        return Firebug.getRepObject(target);
+        return Chrome.getRepObject(target);
     },
 
     showInfoTip: function(infoTip, x, y)

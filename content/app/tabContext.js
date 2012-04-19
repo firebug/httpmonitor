@@ -7,8 +7,9 @@ define([
     "js/tabCache",
     "lib/object",
     "lib/array",
+    "chrome/chrome",
 ],
-function(FBTrace, Win, Url, TabCache, Obj, Arr) {
+function(FBTrace, Win, Url, TabCache, Obj, Arr, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -126,7 +127,7 @@ TabContext.prototype =
 
     createNetPanel: function(doc)
     {
-        var panelType = Firebug.getPanelType("net");
+        var panelType = Chrome.getPanelType("net");
         if (!panelType)
             return null;
 

@@ -15,9 +15,10 @@ define([
     "remote/connectionMenu",
     "app/localProxy",
     "remote/proxy",
+    "chrome/chrome",
 ],
 function(FBTrace, TabWatcher, Menu, Arr, Css, Locale, Events, Dom, Options,
-    DefaultPrefs, TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy) {
+    DefaultPrefs, TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -62,16 +63,16 @@ var HttpMonitor =
         // Initialize modules. Modules represent independent application
         // components that are registered during apppliation load and
         // their life cycle is maintained here.
-        Events.dispatch(Firebug.modules, "initialize");
-        Events.dispatch(Firebug.modules, "initializeUI");
+        Events.dispatch(Chrome.modules, "initialize");
+        Events.dispatch(Chrome.modules, "initializeUI");
     },
 
     destroy: function()
     {
         this.tabWatcher.unwatchTab(this.proxy);
 
-        Events.dispatch(Firebug.modules, "disable");
-        Events.dispatch(Firebug.modules, "shutdown");
+        Events.dispatch(Chrome.modules, "disable");
+        Events.dispatch(Chrome.modules, "shutdown");
 
         Options.shutdown();
     },
@@ -129,15 +130,15 @@ var HttpMonitor =
 
         var object;
         if (target && target.ownerDocument == document)
-            object = Firebug.getRepObject(target);
+            object = Chrome.getRepObject(target);
         else if (target && panel)
             object = panel.getPopupObject(target);
         else if (target)
-            object = Firebug.getRepObject(target);
+            object = Chrome.getRepObject(target);
 
-        var rep = Firebug.getRep(object, context);
+        var rep = Chrome.getRep(object, context);
         var realObject = rep ? rep.getRealObject(object, context) : null;
-        var realRep = realObject ? Firebug.getRep(realObject, context) : null;
+        var realRep = realObject ? Chrome.getRep(realObject, context) : null;
 
         if (FBTrace.DBG_OPTIONS)
             FBTrace.sysout("chrome.onContextShowing object:"+object+" rep: "+rep+
@@ -178,7 +179,7 @@ var HttpMonitor =
 
         // 3. Add menu items from uiListeners
         var items = [];
-        Events.dispatch(Firebug.uiListeners, "onContextMenu", [items, object, target,
+        Events.dispatch(Chrome.uiListeners, "onContextMenu", [items, object, target,
             context, panel, popup]);
 
         if (items)
@@ -217,7 +218,7 @@ var HttpMonitor =
             return;
 
         if (FBTrace.DBG_INITIALIZE)
-            FBTrace.sysout("Firebug.internationalizeUI");
+            FBTrace.sysout("HTTPMonitor.internationalizeUI");
 
         var elements = doc.getElementsByClassName("fbInternational");
         elements = Arr.cloneArray(elements);

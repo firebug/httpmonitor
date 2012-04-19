@@ -18,9 +18,10 @@ define([
     "net/netUtils",
     "lib/options",
     "chrome/module",
+    "chrome/chrome",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Events, Win, Css, Dom, Str, Fonts,
-    Url, Http, NetUtils, Options, Module) {
+    Url, Http, NetUtils, Options, Module, Chrome) {
 
 // ********************************************************************************************* //
 
@@ -50,7 +51,8 @@ Firebug.FontViewerModel = Obj.extend(Module,
 
         Firebug.TabCacheModel.addListener(this);
         Firebug.NetMonitor.NetInfoBody.addListener(this);
-        Firebug.registerUIListener(this);
+
+        Chrome.registerUIListener(this);
     },
 
     shutdown: function()
@@ -59,7 +61,8 @@ Firebug.FontViewerModel = Obj.extend(Module,
 
         Firebug.TabCacheModel.removeListener(this);
         Firebug.NetMonitor.NetInfoBody.removeListener(this);
-        Firebug.unregisterUIListener(this);
+
+        Chrome.unregisterUIListener(this);
     },
 
     /**
@@ -577,7 +580,7 @@ Firebug.FontViewerModel.Preview = domplate(
         Css.setClass(target, "selected");
 
         var content = translatedInfo.getElementsByClassName("fontInfoTranslatedContent").item(0);
-        content.textContent = this.getTranslatedText(Firebug.getRepObject(target),
+        content.textContent = this.getTranslatedText(Chrome.getRepObject(target),
             target.textContent);
     },
 
@@ -700,7 +703,7 @@ Firebug.FontViewerModel.Preview = domplate(
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(Firebug.FontViewerModel);
+Chrome.registerModule(Firebug.FontViewerModel);
 
 return Firebug.FontViewerModel;
 

@@ -2,8 +2,9 @@
 
 define([
     "lib/trace",
+    "lib/array",
 ],
-function(FBTrace) {
+function(FBTrace, Arr) {
 
 // ********************************************************************************************* //
 // Chrome
@@ -13,6 +14,135 @@ function(FBTrace) {
  */
 var Chrome =
 {
+    modules: [],
+    panelTypes: [],
+    uiListeners: [],
+    panelTypeMap: {},
+    reps: [],
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Registration
+
+    registerModule: function()
+    {
+        this.modules.push.apply(this.modules, arguments);
+    },
+
+    registerUIListener: function()
+    {
+        this.uiListeners.push.apply(this.uiListeners, arguments);
+    },
+
+    unregisterUIListener: function()
+    {
+        for (var i=0; i<arguments.length; ++i)
+            Arr.remove(this.uiListeners, arguments[i]);
+    },
+
+    registerPanel: function()
+    {
+        this.panelTypes.push.apply(this.panelTypes, arguments);
+
+        for (var i=0; i<arguments.length; ++i)
+            this.panelTypeMap[arguments[i].prototype.name] = arguments[i];
+    },
+
+    registerRep: function()
+    {
+        this.reps.push.apply(this.reps, arguments);
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Reps
+
+    getRep: function(object, context)
+    {
+        var type = typeof(object);
+        if (type == 'object' && object instanceof String)
+            type = 'string';
+
+        for (var i = 0; i < reps.length; ++i)
+        {
+            var rep = reps[i];
+            try
+            {
+                if (rep.supportsObject(object, type, (context?context:Firebug.currentContext) ))
+                {
+                    //if (FBTrace.DBG_DOM)
+                    //    FBTrace.sysout("getRep type: "+type+" object: "+object, rep);
+                    return rep;
+                }
+            }
+            catch (exc)
+            {
+                if (FBTrace.DBG_ERRORS)
+                {
+                    FBTrace.sysout("firebug.getRep FAILS: "+ exc, exc);
+                    FBTrace.sysout("firebug.getRep reps["+i+"/"+reps.length+"]: "+
+                        (typeof(reps[i])), reps[i]);
+                }
+            }
+        }
+
+        //if (FBTrace.DBG_DOM)
+        //    FBTrace.sysout("getRep default type: "+type+" object: "+object, rep);
+
+        return (type == "function") ? defaultFuncRep : defaultRep;
+    },
+
+    getRepObject: function(node)
+    {
+        var target = null;
+        for (var child = node; child; child = child.parentNode)
+        {
+            if (Css.hasClass(child, "repTarget"))
+                target = child;
+
+            if (child.repObject)
+            {
+                if (!target && Css.hasClass(child, "repIgnore"))
+                    break;
+                else
+                    return child.repObject;
+            }
+        }
+    },
+
+    /**
+     * Takes an element from a panel document and finds the owning panel.
+     */
+    getElementPanel: function(element)
+    {
+        for (; element; element = element.parentNode)
+        {
+            if (element.ownerPanel)
+                return element.ownerPanel;
+        }
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Panels
+
+    getPanelType: function(panelName)
+    {
+        if (this.panelTypeMap.hasOwnProperty(panelName))
+            return this.panelTypeMap[panelName];
+        else
+            return null;
+    },
+
+    getPanelState: function(panel)
+    {
+        var persistedState = panel.context.persistedState;
+        if (!persistedState || !persistedState.panelState)
+            return null;
+
+        return persistedState.panelState[panel.name];
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // UI (XUL document)
+
     $: function(id)
     {
         if (typeof(top) == "undefined")

@@ -1058,6 +1058,7 @@ NetFile.prototype =
     }
 };
 
+//xxxHonza: should be removed but used in net panel (instanceof Firebug.NetFile)
 Firebug.NetFile = NetFile;
 
 // ********************************************************************************************* //

@@ -4,6 +4,7 @@ define([
     "lib/trace",
     "lib/object",
     "app/firebug",
+    "chrome/chrome",
     "lib/domplate",
     "lib/locale",
     "lib/xpcom",
@@ -13,7 +14,7 @@ define([
     "chrome/module",
     "chrome/rep",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Css, Http, NetUtils, Module, Rep) {
+function(FBTrace, Obj, Firebug, Chrome, Domplate, Locale, Xpcom, Css, Http, NetUtils, Module, Rep) {
 
 // ************************************************************************************************
 // Constants
@@ -182,7 +183,7 @@ Firebug.SVGViewerModel.ParseError = domplate(Rep,
 // ************************************************************************************************
 // Registration
 
-Firebug.registerModule(Firebug.SVGViewerModel);
+Chrome.registerModule(Firebug.SVGViewerModel);
 
 return Firebug.SVGViewerModel;
 

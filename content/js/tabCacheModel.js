@@ -14,9 +14,10 @@ define([
     "net/jsonViewer",
     "chrome/window",
     "chrome/module",
+    "chrome/chrome",
 ],
 function(FBTrace, Obj, Options, Firebug, RequestObserver, HttpResponseObserver, Events,
-    Url, Http, Str, JSONViewerModel, Win, Module) {
+    Url, Http, Str, JSONViewerModel, Win, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -322,7 +323,7 @@ ChannelListenerProxy.prototype =
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(Firebug.TabCacheModel);
+Chrome.registerModule(Firebug.TabCacheModel);
 
 return Firebug.TabCacheModel;
 

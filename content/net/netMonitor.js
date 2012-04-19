@@ -275,7 +275,7 @@ Firebug.NetMonitor = Obj.extend(Module,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(Firebug.NetMonitor);
+Chrome.registerModule(Firebug.NetMonitor);
 
 return Firebug.NetMonitor;
 

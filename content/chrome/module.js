@@ -98,10 +98,6 @@ var Module = Obj.extend(new Listener(),
     {
     },
 
-    getObjectByURL: function(context, url)
-    {
-    },
-
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // intermodule dependency
 

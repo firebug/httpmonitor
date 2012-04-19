@@ -13,8 +13,10 @@ define([
     "lib/fonts",
     "lib/options",
     "chrome/module",
+    "chrome/chrome",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Str, Fonts, Options, Module) {
+function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Str, Fonts, Options,
+    Module, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -375,7 +377,7 @@ function getFontFaceCss(font)
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(Firebug.InfoTip);
+Chrome.registerModule(Firebug.InfoTip);
 
 return Firebug.InfoTip;
 

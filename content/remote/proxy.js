@@ -6,8 +6,9 @@ define([
     "remote/protocol",
     "chrome/proxy",
     "net/netMonitor",
+    "chrome/chrome",
 ],
-function(FBTrace, Obj, Protocol, Proxy, NetMonitor) {
+function(FBTrace, Obj, Protocol, Proxy, NetMonitor, Chrome) {
 
 // ********************************************************************************************* //
 // Implementation

@@ -2,7 +2,6 @@
 
 define([
     "lib/trace",
-    "app/firebug",
     "lib/object",
     "chrome/menu",
     "lib/string",
@@ -10,7 +9,7 @@ define([
     "chrome/module",
     "chrome/chrome",
 ],
-function(FBTrace, Firebug, Obj, Menu, Str, Events, Module, Chrome) {
+function(FBTrace, Obj, Menu, Str, Events, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Module
@@ -137,7 +136,7 @@ var TabListMenu = Obj.extend(Module,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(TabListMenu);
+Chrome.registerModule(TabListMenu);
 
 return TabListMenu;
 

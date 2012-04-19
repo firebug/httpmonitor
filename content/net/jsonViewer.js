@@ -17,9 +17,10 @@ define([
     "lib/system",
     "lib/options",
     "chrome/module",
+    "chrome/chrome",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Http, Str, Json,
-    ToggleBranch, Arr, System, Options, Module) {
+    ToggleBranch, Arr, System, Options, Module, Chrome) {
 
 // ********************************************************************************************* //
 
@@ -51,7 +52,7 @@ Firebug.JSONViewerModel = Obj.extend(Module,
         Module.initialize.apply(this, arguments);
 
         Firebug.NetMonitor.NetInfoBody.addListener(this);
-        Firebug.registerUIListener(this);
+        Chrome.registerUIListener(this);
     },
 
     shutdown: function()
@@ -59,7 +60,7 @@ Firebug.JSONViewerModel = Obj.extend(Module,
         Module.shutdown.apply(this, arguments);
 
         Firebug.NetMonitor.NetInfoBody.removeListener(this);
-        Firebug.unregisterUIListener(this);
+        Chrome.unregisterUIListener(this);
     },
 
     onContextMenu: function(items, object, target, context, panel, popup)
@@ -285,7 +286,7 @@ JSONTreePlate.prototype = Obj.extend(Firebug.DOMBasePanel.prototype,
 // ********************************************************************************************* //
 // Registration
 
-Firebug.registerModule(Firebug.JSONViewerModel);
+Chrome.registerModule(Firebug.JSONViewerModel);
 
 return Firebug.JSONViewerModel;
 
