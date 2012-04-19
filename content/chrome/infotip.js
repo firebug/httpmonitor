@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/domplate",
     "lib/locale",
     "lib/events",
@@ -15,8 +14,10 @@ define([
     "base/module",
     "chrome/chrome",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Str, Fonts, Options,
+function(FBTrace, Obj, Domplate, Locale, Events, Css, Dom, Str, Fonts, Options,
     Module, Chrome) {
+
+with (Domplate) {
 
 // ********************************************************************************************* //
 // Constants
@@ -27,8 +28,7 @@ const infoTipWindowPadding = 25;
 
 // ********************************************************************************************* //
 
-with (Domplate) {
-Firebug.InfoTip = Obj.extend(Module,
+var InfoTip = Obj.extend(Module,
 {
     dispatchName: "infoTip",
     tags: domplate(
@@ -345,7 +345,7 @@ Firebug.InfoTip = Obj.extend(Module,
 
         return true;
     },
-})};
+});
 
 // ********************************************************************************************* //
 // Local Helpers
@@ -377,9 +377,9 @@ function getFontFaceCss(font)
 // ********************************************************************************************* //
 // Registration
 
-Chrome.registerModule(Firebug.InfoTip);
+Chrome.registerModule(InfoTip);
 
-return Firebug.InfoTip;
+return InfoTip;
 
 // ********************************************************************************************* //
-});
+}});

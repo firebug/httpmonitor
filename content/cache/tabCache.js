@@ -3,15 +3,15 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/locale",
     "lib/events",
     "lib/http",
     "lib/string",
     "cache/sourceCache",
     "lib/options",
+    "cache/tabCacheModel"
 ],
-function(FBTrace, Obj, Firebug, Locale, Events, Http, Str, SourceCache, Options) {
+function(FBTrace, Obj, Locale, Events, Http, Str, SourceCache, Options, TabCacheModel) {
 
 // ********************************************************************************************* //
 // Constants
@@ -38,15 +38,15 @@ var responseSizeLimit = Options.get("cache.responseLimit");
  * The object is derived from SourceCache so, the same interface and most of the
  * implementation is used.
  */
-Firebug.TabCache = function(context)
+function TabCache(context)
 {
     if (FBTrace.DBG_CACHE)
         FBTrace.sysout("tabCache.TabCache Created for: " + context.getName());
 
-    Firebug.SourceCache.call(this, context);
+    SourceCache.call(this, context);
 };
 
-Firebug.TabCache.prototype = Obj.extend(Firebug.SourceCache.prototype,
+TabCache.prototype = Obj.extend(SourceCache.prototype,
 {
     // Responses in progress
     responses: [],
@@ -203,7 +203,7 @@ Firebug.TabCache.prototype = Obj.extend(Firebug.SourceCache.prototype,
             }
 
             // Don't load responses that shouldn't be cached.
-            if (!Firebug.TabCacheModel.shouldCacheRequest(channel))
+            if (!TabCacheModel.shouldCacheRequest(channel))
             {
                 if (FBTrace.DBG_CACHE)
                     FBTrace.sysout("tabCache.loadFromCache; The resource from this URL is not text: " + url);
@@ -244,7 +244,7 @@ Firebug.TabCache.prototype = Obj.extend(Firebug.SourceCache.prototype,
         // initialized (cleared) now. If no data is received, the response entry remains empty.
         var response = this.getResponse(request);
 
-        Events.dispatch(Firebug.TabCacheModel.fbListeners, "onStartRequest", [this.context, request]);
+        Events.dispatch(TabCacheModel.fbListeners, "onStartRequest", [this.context, request]);
         Events.dispatch(this.fbListeners, "onStartRequest", [this.context, request]);
     },
 
@@ -259,7 +259,7 @@ Firebug.TabCache.prototype = Obj.extend(Firebug.SourceCache.prototype,
             value: inputStream
         };
 
-        Events.dispatch(Firebug.TabCacheModel.fbListeners, "onDataAvailable",
+        Events.dispatch(TabCacheModel.fbListeners, "onDataAvailable",
             [this.context, request, requestContext, stream, offset, count]);
         Events.dispatch(this.fbListeners, "onDataAvailable", [this.context,
             request, requestContext, stream, offset, count]);
@@ -281,7 +281,7 @@ Firebug.TabCache.prototype = Obj.extend(Firebug.SourceCache.prototype,
             FBTrace.sysout("tabCache.channel.stopRequest: " + Http.safeGetRequestName(request),
                 responseText);
 
-        Events.dispatch(Firebug.TabCacheModel.fbListeners, "onStopRequest",
+        Events.dispatch(TabCacheModel.fbListeners, "onStopRequest",
             [this.context, request, responseText]);
         Events.dispatch(this.fbListeners, "onStopRequest", [this.context, request, responseText]);
     }
@@ -290,7 +290,7 @@ Firebug.TabCache.prototype = Obj.extend(Firebug.SourceCache.prototype,
 // ********************************************************************************************* //
 // Registration
 
-return Firebug.TabCache;
+return TabCache;
 
 // ********************************************************************************************* //
 });

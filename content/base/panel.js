@@ -60,10 +60,10 @@ var Panel = Obj.extend(new Listener(),
 
         // Update panel's tab in case the break-on-next (BON) is active.
         var shouldBreak = this.shouldBreakOnNext();
-        //Firebug.Breakpoint.updatePanelTab(this, shouldBreak);
+        //Breakpoint.updatePanelTab(this, shouldBreak);
 
         if (FBTrace.DBG_INITIALIZE)
-            FBTrace.sysout("firebug.initialize panelNode for " + this.name);
+            FBTrace.sysout("Panel.initialize panelNode for " + this.name);
 
         this.initializeNode(this.panelNode);
     },
@@ -71,7 +71,7 @@ var Panel = Obj.extend(new Listener(),
     destroy: function(state) // Panel may store info on state
     {
         if (FBTrace.DBG_INITIALIZE)
-            FBTrace.sysout("firebug.destroy panelNode for " + this.name);
+            FBTrace.sysout("Panel.destroy panelNode for " + this.name);
 
         if (this.panelNode)
         {
@@ -222,7 +222,7 @@ var Panel = Obj.extend(new Listener(),
             this.location = object;
             this.updateLocation(object);
 
-            Events.dispatch(Firebug.uiListeners, "onPanelNavigate", [object, this]);
+            Events.dispatch(Chrome.uiListeners, "onPanelNavigate", [object, this]);
         }
         else
         {
@@ -250,7 +250,7 @@ var Panel = Obj.extend(new Listener(),
             object = this.getDefaultSelection();
 
         if (FBTrace.DBG_PANELS)
-            FBTrace.sysout("firebug.select "+this.name+" forceUpdate: "+forceUpdate+" "+
+            FBTrace.sysout("Panel.select "+this.name+" forceUpdate: "+forceUpdate+" "+
                 object+((object==this.selection)?"==":"!=")+this.selection);
 
         if (forceUpdate || object != this.selection)
@@ -258,7 +258,7 @@ var Panel = Obj.extend(new Listener(),
             this.selection = object;
             this.updateSelection(object);
 
-            Events.dispatch(Firebug.uiListeners, "onObjectSelected", [object, this]);
+            Events.dispatch(Chrome.uiListeners, "onObjectSelected", [object, this]);
         }
     },
 
@@ -335,8 +335,9 @@ var Panel = Obj.extend(new Listener(),
      */
     getSearchOptionsMenuItems: function()
     {
+        // xxxHonza: the 'Search' box is not available yet.
         return [
-            Firebug.Search.searchOptionMenu("search.Case Sensitive", "searchCaseSensitive",
+            Search.searchOptionMenu("search.Case Sensitive", "searchCaseSensitive",
                 "search.tip.Case_Sensitive")
         ];
     },

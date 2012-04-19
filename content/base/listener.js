@@ -23,7 +23,7 @@ Listener.prototype =
         if (!listener)
         {
             if (FBTrace.DBG_ERRORS)
-                FBTrace.sysout("firebug.Listener.addListener; ERROR null listener registered.");
+                FBTrace.sysout("Listener.addListener; ERROR null listener registered.");
             return;
         }
 

@@ -36,13 +36,13 @@ const NS_BINDING_ABORTED = 0x804b0002;
 
 // ********************************************************************************************* //
 
-Firebug.SourceCache = function(context)
+function SourceCache(context)
 {
     this.context = context;
     this.cache = {};
 };
 
-Firebug.SourceCache.prototype = Obj.extend(new Listener(),
+SourceCache.prototype = Obj.extend(new Listener(),
 {
     isCached: function(url)
     {
@@ -105,8 +105,8 @@ Firebug.SourceCache.prototype = Obj.extend(new Listener(),
         var c = Url.reChrome.test(url);
         if (c)
         {
-            if (Firebug.filterSystemURLs)
-                return ["Filtered chrome url "+url];  // ignore chrome
+            //if (Options.get("filterSystemURLs"))
+            //    return ["Filtered chrome url "+url];  // ignore chrome
 
             // If the chrome.manifest has  xpcnativewrappers=no, platform munges the url
             var reWrapperMunge = /(\S*)\s*->\s*(\S*)/;
@@ -423,7 +423,7 @@ function getCacheKey(context)
 // ********************************************************************************************* //
 // Registration
 
-return Firebug.SourceCache;
+return SourceCache;
 
 // ********************************************************************************************* //
 });

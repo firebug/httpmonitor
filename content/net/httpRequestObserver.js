@@ -191,7 +191,7 @@ var HttpRequestObserver =
         networkContext.post(respondedFile, [request, NetUtils.now(), info]);
 
         // Make sure to track the first document response.
-        //Firebug.TabCacheModel.registerStreamListener(request, win, true);
+        //TabCacheModel.registerStreamListener(request, win, true);
     },
 
     onExamineCachedResponse: function(request, win, tabId, context)

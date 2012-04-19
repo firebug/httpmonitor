@@ -93,36 +93,6 @@ System.copyToClipboard = function(string)
 };
 
 // ********************************************************************************************* //
-// Firebug Version Comparator
-
-/**
- * Compare expected Firebug version with the current Firebug installed.
- * @param {Object} expectedVersion Expected version of Firebug.
- * @returns
- * -1 the current version is smaller
- *  0 the current version is the same
- *  1 the current version is bigger
- *
- * @example:
- * if (compareFirebugVersion("1.9") >= 0)
- * {
- *     // The current version is Firebug 1.9+
- * }
- */
-System.checkFirebugVersion = function(expectedVersion)
-{
-    if (!expectedVersion)
-        return 1;
-
-    var version = Firebug.getVersion();
-
-    // Use Firefox comparator service.
-    var versionChecker = Cc["@mozilla.org/xpcom/version-comparator;1"].
-        getService(Ci.nsIVersionComparator);
-    return versionChecker.compare(version, expectedVersion);
-}
-
-// ********************************************************************************************* //
 
 return System;
 

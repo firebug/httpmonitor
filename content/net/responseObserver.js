@@ -24,7 +24,7 @@ var redirectionLimit = PrefService.getIntPref("network.http.redirection-limit");
 /**
  * This object implements nsIStreamListener interface and is intended to monitor all network
  * channels (nsIHttpChannel). A new instance of this object is created and registered an HTTP
- * channel. See Firebug.TabCacheModel.onExamineResponse method.
+ * channel. See TabCacheModel.onExamineResponse method.
  */
 function ChannelListener(win, request, listener)
 /** lends ChannelListener */

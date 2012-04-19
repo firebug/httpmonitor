@@ -23,9 +23,11 @@ define([
     "base/listener",
     "base/rep",
     "chrome/chrome",
+    "viewers/fontViewer",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
-    Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener, Rep, Chrome) {
+    Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener, Rep, Chrome,
+    FontViewer) {
 
 with (Domplate) {
 
@@ -1026,21 +1028,21 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
             if (file.responseHeaders && !netInfoBox.responseHeadersPresented)
             {
                 netInfoBox.responseHeadersPresented = true;
-                Firebug.NetMonitor.NetInfoHeaders.renderHeaders(headersText,
+                NetInfoHeaders.renderHeaders(headersText,
                     file.responseHeaders, "ResponseHeaders");
             }
 
             if (file.cachedResponseHeaders && !netInfoBox.cachedResponseHeadersPresented)
             {
                 netInfoBox.cachedResponseHeadersPresented = true;
-                Firebug.NetMonitor.NetInfoHeaders.renderHeaders(headersText,
+                NetInfoHeaders.renderHeaders(headersText,
                     file.cachedResponseHeaders, "CachedResponseHeaders");
             }
 
             if (file.requestHeaders && !netInfoBox.requestHeadersPresented)
             {
                 netInfoBox.requestHeadersPresented = true;
-                Firebug.NetMonitor.NetInfoHeaders.renderHeaders(headersText,
+                NetInfoHeaders.renderHeaders(headersText,
                     file.requestHeaders, "RequestHeaders");
             }
 
@@ -1053,7 +1055,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
             if (file.postRequestsHeaders && !netInfoBox.postRequestsHeadersPresented)
             {
                 netInfoBox.postRequestsHeadersPresented = true;
-                Firebug.NetMonitor.NetInfoHeaders.renderHeaders(headersText,
+                NetInfoHeaders.renderHeaders(headersText,
                     file.postRequestsHeaders, "PostRequestHeaders");
             }
         }
@@ -1064,7 +1066,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
             {
                 netInfoBox.postPresented  = true;
                 var postText = netInfoBox.getElementsByClassName("netInfoPostText").item(0);
-                Firebug.NetMonitor.NetInfoPostData.render(context, postText, file);
+                NetInfoPostData.render(context, postText, file);
             }
         }
 
@@ -1074,7 +1076,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
             {
                 netInfoBox.putPresented  = true;
                 var putText = netInfoBox.getElementsByClassName("netInfoPutText").item(0);
-                Firebug.NetMonitor.NetInfoPostData.render(context, putText, file);
+                NetInfoPostData.render(context, putText, file);
             }
         }
 
@@ -1190,7 +1192,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
                     panel.openResponseInTab(file);
                 }
             };
-            Firebug.NetMonitor.ResponseSizeLimit.append(object, responseTextBox);
+            ResponseSizeLimit.append(object, responseTextBox);
         }
 
         netInfoBox.responsePresented = true;
@@ -1226,7 +1228,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
  * @domplate Represents posted data within request info (the info, which is visible when
  * a request entry is expanded. This template renders content of the Post tab.
  */
-Firebug.NetMonitor.NetInfoPostData = domplate(Rep, new Listener(),
+var NetInfoPostData = domplate(Rep, new Listener(),
 {
     // application/x-www-form-urlencoded
     paramsTable:
@@ -1385,6 +1387,7 @@ Firebug.NetMonitor.NetInfoPostData = domplate(Rep, new Listener(),
 
         var contentType = NetUtils.findHeader(file.requestHeaders, "content-type");
 
+        // xxxHonza: there should be APIs for registering viewersw.
         if (Firebug.JSONViewerModel.isJSON(contentType, text))
             this.insertJSON(parentNode, file, context);
 
@@ -1394,7 +1397,7 @@ Firebug.NetMonitor.NetInfoPostData = domplate(Rep, new Listener(),
         if (Firebug.SVGViewerModel.isSVG(contentType))
             this.insertSVG(parentNode, file, context);
 
-        if (Firebug.FontViewerModel.isFont(contentType, file.href, text))
+        if (FontViewer.isFont(contentType, file.href, text))
             this.insertFont(parentNode, file, context);
 
         var postText = NetUtils.getPostText(file, context);
@@ -1472,7 +1475,7 @@ Firebug.NetMonitor.NetInfoPostData = domplate(Rep, new Listener(),
         var fontTable = this.fontTable.append(null, parentNode);
         var fontBody = fontTable.getElementsByClassName("netInfoPostFontBody").item(0);
 
-        Firebug.FontViewerModel.insertFont(fontBody, text);
+        FontViewer.insertFont(fontBody, text);
     },
 
     insertSource: function(parentNode, text)
@@ -1526,7 +1529,7 @@ Firebug.NetMonitor.NetInfoPostData = domplate(Rep, new Listener(),
  * @domplate Used within the Net panel to display raw source of request and response headers
  * as well as pretty-formatted summary of these headers.
  */
-Firebug.NetMonitor.NetInfoHeaders = domplate(Rep, new Listener(),
+var NetInfoHeaders = domplate(Rep, new Listener(),
 {
     tag:
         DIV({"class": "netInfoHeadersTable", "role": "tabpanel"},
@@ -2015,7 +2018,7 @@ Firebug.NetMonitor.NetLimit = domplate(Rep,
 
 // ********************************************************************************************* //
 
-Firebug.NetMonitor.ResponseSizeLimit = domplate(Rep,
+var ResponseSizeLimit = domplate(Rep,
 {
     tag:
         DIV({"class": "netInfoResponseSizeLimit"},

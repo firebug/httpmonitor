@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/domplate",
     "lib/locale",
     "lib/xpcom",
@@ -19,9 +18,11 @@ define([
     "lib/options",
     "base/module",
     "chrome/chrome",
+    "cache/tabCacheModel",
+    "net/netMonitor",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Events, Win, Css, Dom, Str, Fonts,
-    Url, Http, NetUtils, Options, Module, Chrome) {
+function(FBTrace, Obj, Domplate, Locale, Xpcom, Events, Win, Css, Dom, Str, Fonts,
+    Url, Http, NetUtils, Options, Module, Chrome, TabCacheModel, NetMonitor) {
 
 // ********************************************************************************************* //
 
@@ -40,7 +41,7 @@ var contentTypes =
 // ********************************************************************************************* //
 // Model implementation
 
-Firebug.FontViewerModel = Obj.extend(Module,
+var FontViewer = Obj.extend(Module,
 {
     dispatchName: "fontViewer",
     contentTypes: contentTypes,
@@ -49,8 +50,8 @@ Firebug.FontViewerModel = Obj.extend(Module,
     {
         Module.initialize.apply(this, arguments);
 
-        Firebug.TabCacheModel.addListener(this);
-        Firebug.NetMonitor.NetInfoBody.addListener(this);
+        TabCacheModel.addListener(this);
+        NetMonitor.NetInfoBody.addListener(this);
 
         Chrome.registerUIListener(this);
     },
@@ -59,8 +60,8 @@ Firebug.FontViewerModel = Obj.extend(Module,
     {
         Module.shutdown.apply(this, arguments);
 
-        Firebug.TabCacheModel.removeListener(this);
-        Firebug.NetMonitor.NetInfoBody.removeListener(this);
+        TabCacheModel.removeListener(this);
+        NetMonitor.NetInfoBody.removeListener(this);
 
         Chrome.unregisterUIListener(this);
     },
@@ -121,7 +122,7 @@ Firebug.FontViewerModel = Obj.extend(Module,
      */
     parseFont: function(file)
     {
-        return Fonts.getFontInfo(Firebug.currentContext, null, file.href);
+        return Fonts.getFontInfo(null, null, file.href);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -165,7 +166,7 @@ Firebug.FontViewerModel = Obj.extend(Module,
 // ********************************************************************************************* //
 
 with (Domplate) {
-Firebug.FontViewerModel.Preview = domplate(
+FontViewer.Preview = domplate(
 {
     bodyTag:
         DIV({"class": "fontInfo", _repObject: "$fontObject"},
@@ -344,7 +345,7 @@ Firebug.FontViewerModel.Preview = domplate(
      */
     getTag: function(prop)
     {
-        return prop.tag ? prop.tag : Firebug.FontViewerModel.Preview.textTag;
+        return prop.tag ? prop.tag : FontViewer.Preview.textTag;
     },
 
     /**
@@ -397,9 +398,9 @@ Firebug.FontViewerModel.Preview = domplate(
     getLinkedTextTag: function(node)
     {
         if (this.getUrl(node))
-            return Firebug.FontViewerModel.Preview.linkTag;
+            return FontViewer.Preview.linkTag;
         else
-            return Firebug.FontViewerModel.Preview.textTag;
+            return FontViewer.Preview.textTag;
     },
 
     /**
@@ -546,11 +547,11 @@ Firebug.FontViewerModel.Preview = domplate(
 
         var props = [];
         var propValueTemplates = {
-            vendor: Firebug.FontViewerModel.Preview.vendorTag,
-            credits: Firebug.FontViewerModel.Preview.creditsTag,
-            copyright: Firebug.FontViewerModel.Preview.translatedInfoTag,
-            trademark: Firebug.FontViewerModel.Preview.translatedInfoTag,
-            license: Firebug.FontViewerModel.Preview.licenseTag
+            vendor: FontViewer.Preview.vendorTag,
+            credits: FontViewer.Preview.creditsTag,
+            copyright: FontViewer.Preview.translatedInfoTag,
+            trademark: FontViewer.Preview.translatedInfoTag,
+            license: FontViewer.Preview.licenseTag
         }
 
         for (var i=0; i<root.children.length; i++)
@@ -563,7 +564,7 @@ Firebug.FontViewerModel.Preview = domplate(
             FBTrace.sysout("fontviewer.insertMetaDataFormatted; props", props);
 
         tbody.repObject = root;
-        Firebug.FontViewerModel.Preview.propDataTag.insertRows({props: props}, tbody);
+        FontViewer.Preview.propDataTag.insertRows({props: props}, tbody);
     },
 
     /**
@@ -667,7 +668,7 @@ Firebug.FontViewerModel.Preview = domplate(
                 {name: Locale.$STR("fontviewer.CSS Family Name"), node: fontObject.CSSFamilyName},
                 {name: Locale.$STR("fontviewer.Format"), node: fontObject.format}
             ];
-            Firebug.FontViewerModel.Preview.propDataTag.insertRows({props: props}, tbody);
+            FontViewer.Preview.propDataTag.insertRows({props: props}, tbody);
         }
     },
 
@@ -703,9 +704,9 @@ Firebug.FontViewerModel.Preview = domplate(
 // ********************************************************************************************* //
 // Registration
 
-Chrome.registerModule(Firebug.FontViewerModel);
+Chrome.registerModule(FontViewer);
 
-return Firebug.FontViewerModel;
+return FontViewer;
 
 // ********************************************************************************************* //
 });

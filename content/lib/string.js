@@ -334,7 +334,6 @@ Str.formatSize = function(bytes)
     var negative = (bytes < 0);
     bytes = Math.abs(bytes);
 
-    // xxxHonza, XXXjjb: Why Firebug.sizePrecision is not set in Chromebug?
     var sizePrecision = Options.get("sizePrecision");
     if (typeof(sizePrecision) == "undefined")
     {

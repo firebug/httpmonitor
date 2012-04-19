@@ -17,7 +17,7 @@ define([
     "chrome/chrome",
 ],
 function(FBTrace, Obj, Options, Firebug, RequestObserver, HttpResponseObserver, Events,
-    Url, Http, Str, JSONViewerModel, Win, Module, Chrome) {
+    Url, Http, Str, JSONViewer, Win, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -115,7 +115,7 @@ Firebug.TabCacheModel = Obj.extend(Module,
         }
 
         // Merge with JSON types
-        var jsonTypes = JSONViewerModel.contentTypes;
+        var jsonTypes = JSONViewer.contentTypes;
         for (var p in jsonTypes)
             contentTypes[p] = 1;
     },

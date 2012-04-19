@@ -32,18 +32,6 @@ var Rep = domplate(
         return false;
     },
 
-    highlightObject: function(object, context)
-    {
-        var realObject = this.getRealObject(object, context);
-        if (realObject)
-            Firebug.Inspector.highlightObject(realObject, context);
-    },
-
-    unhighlightObject: function(object, context)
-    {
-        Firebug.Inspector.highlightObject(null);
-    },
-
     persistObject: function(object, context)
     {
     },
@@ -88,7 +76,7 @@ var Rep = domplate(
      *
      * @param object: the 'realObject', a model value, eg a DOM property
      * @param target: the HTML element clicked on.
-     * @param context: the context, probably Firebug.currentContext
+     * @param context: the context
      * @return an array of menu items.
      */
     getContextMenuItems: function(object, target, context)
