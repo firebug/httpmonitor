@@ -8,7 +8,7 @@ define([
     "lib/events",
     "lib/http",
     "lib/string",
-    "js/sourceCache",
+    "cache/sourceCache",
     "lib/options",
 ],
 function(FBTrace, Obj, Firebug, Locale, Events, Http, Str, SourceCache, Options) {

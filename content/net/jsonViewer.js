@@ -16,7 +16,7 @@ define([
     "lib/array",
     "lib/system",
     "lib/options",
-    "chrome/module",
+    "base/module",
     "chrome/chrome",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Http, Str, Json,

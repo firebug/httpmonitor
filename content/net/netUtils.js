@@ -10,7 +10,7 @@ define([
     "lib/http",
     "lib/string",
     "lib/xml",
-    "chrome/window"
+    "lib/window"
 ],
 function(FBTrace, Firebug, Locale, Events, Url, Xpcom, Http, Str, Xml, Win) {
 

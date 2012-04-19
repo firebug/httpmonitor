@@ -3,7 +3,7 @@
 define([
     "lib/trace",
     "app/firebug",
-    "chrome/window",
+    "lib/window",
     "lib/http",
     "net/netUtils",
     "net/requestObserver",

@@ -2,9 +2,9 @@
 
 define([
     "lib/trace",
-    "chrome/window",
+    "lib/window",
     "lib/url",
-    "js/tabCache",
+    "cache/tabCache",
     "lib/object",
     "lib/array",
     "chrome/chrome",

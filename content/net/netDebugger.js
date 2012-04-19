@@ -12,7 +12,7 @@ define([
     "lib/dom",
     "lib/array",
     "net/netUtils",
-    "chrome/rep",
+    "base/rep",
     "chrome/chrome",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Url, Css, Dom, Arr, NetUtils, Rep,

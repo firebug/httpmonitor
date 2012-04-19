@@ -7,7 +7,7 @@ define([
     "lib/events",
     "lib/dom",
     "lib/array",
-    "chrome/listener",
+    "base/listener",
     "chrome/chrome",
 ],
 function(FBTrace, Css, Obj, Events, Dom, Arr, Listener, Chrome) {

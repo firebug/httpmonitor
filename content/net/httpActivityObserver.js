@@ -5,10 +5,10 @@ define([
     "lib/object",
     "lib/trace",
     "lib/http",
-    "chrome/window",
+    "lib/window",
     "net/netProgress",
     "net/netUtils",
-    "chrome/module",
+    "base/module",
     "chrome/chrome",
 ],
 function(Xpcom, Obj, FBTrace, Http, Win, NetProgress, NetUtils, Module, Chrome) {

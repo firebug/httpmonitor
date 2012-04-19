@@ -8,7 +8,7 @@ define([
     "lib/url",
     "lib/http",
     "lib/string",
-    "chrome/listener",
+    "base/listener",
 ],
 function(FBTrace, Obj, Firebug, Xpcom, Url, Http, Str, Listener) {
 

@@ -11,8 +11,8 @@ define([
     "lib/css",
     "lib/http",
     "net/netUtils",
-    "chrome/module",
-    "chrome/rep",
+    "base/module",
+    "base/rep",
 ],
 function(FBTrace, Obj, Firebug, Chrome, Domplate, Locale, Xpcom, Css, Http, NetUtils, Module, Rep) {
 

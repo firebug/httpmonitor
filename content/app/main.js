@@ -16,7 +16,7 @@ require(config, [
     "chrome/infotip",
     "app/firebug",
     "net/netPanel",
-    "js/tabCacheModel",
+    "cache/tabCacheModel",
     "net/xmlViewer",
     "net/svgViewer",
     "net/jsonViewer",

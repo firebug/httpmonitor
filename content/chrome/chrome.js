@@ -3,8 +3,9 @@
 define([
     "lib/trace",
     "lib/array",
+    "lib/css",
 ],
-function(FBTrace, Arr) {
+function(FBTrace, Arr, Css) {
 
 // ********************************************************************************************* //
 // Chrome

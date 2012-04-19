@@ -16,7 +16,7 @@ config.baseUrl = "resource://httpmonitor/content";
 require(config, [
     "lib/trace",
     "server/httpServer",
-    "js/tabCache",
+    "cache/tabCache",
 ],
 function(FBTrace, HttpServer) {
 

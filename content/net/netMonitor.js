@@ -12,7 +12,7 @@ define([
     "net/netUtils",
     "lib/events",
     "net/netCacheListener",
-    "chrome/module",
+    "base/module",
     "chrome/chrome",
 ],
 function(FBTrace, Obj, Firebug, Options, Str, HttpActivityObserver, HttpRequestObserver,

@@ -2,9 +2,9 @@
 
 define([
     "lib/trace",
-    "app/tabContext",
+    "chrome/tabContext",
     "net/netMonitor",
-    "chrome/window",
+    "lib/window",
 ],
 function(FBTrace, TabContext, NetMonitor, Win) {
 

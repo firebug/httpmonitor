@@ -3,8 +3,8 @@
 define([
     "lib/trace",
     "lib/object",
-    "chrome/proxy",
-    "chrome/window",
+    "base/proxy",
+    "lib/window",
     "net/netMonitor",
 ],
 function(FBTrace, Obj, Proxy, Win, NetMonitor) {

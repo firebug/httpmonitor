@@ -3,10 +3,10 @@
 define([
     "lib/trace",
     "lib/object",
-    "chrome/menu",
+    "lib/menu",
     "lib/string",
     "lib/events",
-    "chrome/module",
+    "base/module",
     "chrome/chrome",
 ],
 function(FBTrace, Obj, Menu, Str, Events, Module, Chrome) {

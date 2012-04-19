@@ -4,7 +4,7 @@ define([
     "lib/trace",
     "lib/object",
     "remote/protocol",
-    "chrome/proxy",
+    "base/proxy",
     "net/netMonitor",
     "chrome/chrome",
 ],

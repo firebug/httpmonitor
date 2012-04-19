@@ -9,7 +9,7 @@ define([
     "lib/url",
     "lib/http",
     "lib/css",
-    "chrome/window",
+    "lib/window",
     "lib/string",
     "lib/array",
     "lib/system",

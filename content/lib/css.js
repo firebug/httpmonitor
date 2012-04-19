@@ -4,7 +4,7 @@ define([
     "lib/trace",
     "lib/url",
     "lib/options",
-    "chrome/window",
+    "lib/window",
     "lib/xml",
     "lib/http",
 ],

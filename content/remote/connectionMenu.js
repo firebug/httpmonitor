@@ -8,7 +8,7 @@ define([
     "lib/events",
     "remote/connection",
     "lib/dom",
-    "chrome/module",
+    "base/module",
     "chrome/chrome",
 ],
 function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom, Module, Chrome) {

@@ -12,7 +12,7 @@ define([
     "lib/string",
     "lib/fonts",
     "lib/options",
-    "chrome/module",
+    "base/module",
     "chrome/chrome",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Str, Fonts, Options,

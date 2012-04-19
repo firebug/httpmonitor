@@ -4,9 +4,9 @@ define([
     "lib/trace",
     "lib/options",
     "app/firebug",
-    "app/defaultPrefs",
+    "chrome/defaultPrefs",
     "lib/events",
-    "js/tabCacheModel",
+    "cache/tabCacheModel",
 ],
 function(FBTrace, Options, Firebug, DefaultPrefs, Events, TabCacheModel) {
 

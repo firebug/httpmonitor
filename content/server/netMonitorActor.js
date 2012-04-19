@@ -5,7 +5,7 @@ define([
     "app/firebug",
     "lib/options",
     "lib/object",
-    "app/tabContext",
+    "chrome/tabContext",
     "net/netMonitor",
     "lib/array",
 ],
