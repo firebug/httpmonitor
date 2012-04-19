@@ -373,7 +373,7 @@ Str.formatTime = function(elapsed)
     if (elapsed == -1)
         return "";
     else if (elapsed == 0)
-        return "0";
+        return "0 ms";
     else if (elapsed < 1000)
         return elapsed + "ms";
     else if (elapsed < 60000)

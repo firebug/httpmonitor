@@ -686,7 +686,7 @@ Firebug.NetMonitor.NetRequestEntry = domplate(Firebug.Rep, new Firebug.Listener(
 
     getElapsedTime: function(file)
     {
-        if (!file.elapsed || file.elapsed < 0)
+        if (typeof(file.elapsed) == "undefined" || file.elapsed < 0)
             return "";
 
         return this.formatTime(file.elapsed);
