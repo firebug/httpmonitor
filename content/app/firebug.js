@@ -42,8 +42,6 @@ Firebug =
     uiListeners: [],
     reps: reps,
 
-    stringCropLength: 50,
-
     // Custom stylesheets registered by extensions.
     stylesheets: [],
 
@@ -255,27 +253,6 @@ Firebug =
     },
 
     /**
-     * The child node that has a repObject
-     */
-    getRepNode: function(node)
-    {
-        for (var child = node; child; child = child.parentNode)
-        {
-            if (child.repObject)
-                return child;
-        }
-    },
-
-    getElementByRepObject: function(element, object)
-    {
-        for (var child = element.firstChild; child; child = child.nextSibling)
-        {
-            if (child.repObject == object)
-                return child;
-        }
-    },
-
-    /**
      * Takes an element from a panel document and finds the owning panel.
      */
     getElementPanel: function(element)
@@ -287,39 +264,6 @@ Firebug =
         }
     },
 };
-
-// ********************************************************************************************* //
-
-// xxxHonza:
-Firebug.chrome =
-{
-    $: function(id)
-    {
-        if (typeof(top) == "undefined")
-            return;
-
-        return top.document.getElementById(id);
-    },
-
-    setGlobalAttribute: function(id, name, value)
-    {
-        var elt = this.$(id);
-        if (elt)
-        {
-            if (value == null)
-                elt.removeAttribute(name);
-            else
-                elt.setAttribute(name, value);
-        }
-    },
-
-    getGlobalAttribute: function(id, name)
-    {
-        var elt = this.$(id);
-        if (elt)
-            return elt.getAttribute(name);
-    },
-}
 
 // ********************************************************************************************* //
 

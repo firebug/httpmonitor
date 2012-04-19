@@ -22,9 +22,10 @@ define([
     "lib/http",
     "chrome/listener",
     "chrome/rep",
+    "chrome/chrome",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
-    Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener, Rep) {
+    Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener, Rep, Chrome) {
 
 with (Domplate) {
 
@@ -281,7 +282,7 @@ Firebug.NetMonitor.NetRequestTable = domplate(Rep, new Listener(),
      */
     getContextMenuItems: function(object, target, context)
     {
-        var popup = Firebug.chrome.$("monitorContextMenu");
+        var popup = Chrome.$("monitorContextMenu");
         if (popup.firstChild && popup.firstChild.getAttribute("command") == "cmd_copy")
             popup.removeChild(popup.firstChild);
 

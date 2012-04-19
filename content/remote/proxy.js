@@ -71,7 +71,7 @@ RemoteProxy.prototype = Obj.extend(Proxy,
 
         // New page loaded, bail out if 'Persist' is active.
         //xxxHonza: Fix me
-        if (Firebug.chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
+        if (Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
             return;
 
         // Clear the UI.

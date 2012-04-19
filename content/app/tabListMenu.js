@@ -8,8 +8,9 @@ define([
     "lib/string",
     "lib/events",
     "chrome/module",
+    "chrome/chrome",
 ],
-function(FBTrace, Firebug, Obj, Menu, Str, Events, Module) {
+function(FBTrace, Firebug, Obj, Menu, Str, Events, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Module
@@ -84,7 +85,7 @@ var TabListMenu = Obj.extend(Module,
 
     updateUI: function()
     {
-        var menu = Firebug.chrome.$("httpMonitorTabListMenu");
+        var menu = Chrome.$("httpMonitorTabListMenu");
 
         var proxy = this.getProxy();
 

@@ -9,8 +9,9 @@ define([
     "remote/connection",
     "lib/dom",
     "chrome/module",
+    "chrome/chrome",
 ],
-function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom, Module) {
+function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Module
@@ -154,7 +155,7 @@ var ConnectionMenu = Obj.extend(Module,
 
     updateUI: function()
     {
-        var menu = Firebug.chrome.$("httpMonitorConnectionMenu");
+        var menu = Chrome.$("httpMonitorConnectionMenu");
         var connected = this.isConnected();
         var connecting = this.isConnecting();
 
@@ -179,8 +180,8 @@ var ConnectionMenu = Obj.extend(Module,
     {
         var isConnected = this.isConnected();
 
-        var connectItem = Firebug.chrome.$("cmd_httpMonitorConnect");
-        var disconnectItem = Firebug.chrome.$("cmd_httpMonitorDisconnect");
+        var connectItem = Chrome.$("cmd_httpMonitorConnect");
+        var disconnectItem = Chrome.$("cmd_httpMonitorDisconnect");
 
         var host = Options.get("serverHost");
         var port = Options.get("serverPort");

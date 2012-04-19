@@ -23,11 +23,13 @@ define([
     "net/netProgress",
     "net/browserCache",
     "chrome/panel",
+    "chrome/chrome",
     "net/netMonitor",
     "net/netReps",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Xpcom, Locale, Events, Options, Url, Http,
-    Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache, Panel) {
+    Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache,
+    Panel, Chrome) {
 
 with (Domplate) {
 
@@ -82,7 +84,7 @@ NetPanel.prototype = Obj.extend(Panel,
         Events.addEventListener(this.panelNode, "contextmenu", this.onContextMenu, false);
 
         this.onResizer = Obj.bind(this.onResize, this);
-        this.resizeEventTarget = Firebug.chrome.$('content');
+        this.resizeEventTarget = Chrome.$("content");
 
         Events.addEventListener(this.resizeEventTarget, "resize", this.onResizer, true);
 
@@ -179,7 +181,7 @@ NetPanel.prototype = Obj.extend(Panel,
 
         this.showToolbarButtons("fbNetButtons", true);
 
-        Firebug.chrome.setGlobalAttribute("cmd_togglePersistNet", "checked", this.persistContent);
+        Chrome.setGlobalAttribute("cmd_togglePersistNet", "checked", this.persistContent);
 
         if (!this.filterCategory)
             this.setFilter(Options.get("netFilterCategory"));
@@ -216,7 +218,7 @@ NetPanel.prototype = Obj.extend(Panel,
     {
         if (name == "netFilterCategory")
         {
-            Firebug.NetMonitor.syncFilterButtons(Firebug.chrome);
+            Firebug.NetMonitor.syncFilterButtons();
             Firebug.connection.eachContext(function syncFilters(context)
             {
                 Firebug.NetMonitor.onToggleFilter(context, value);
@@ -394,16 +396,6 @@ NetPanel.prototype = Obj.extend(Panel,
                     command: Obj.bindFixed(this.stopLoading, this, file)
                 }
             );
-        }
-
-        if (object)
-        {
-            var subItems = Firebug.chrome.getInspectMenuItems(object);
-            if (subItems.length)
-            {
-                items.push("-");
-                items.push.apply(items, subItems);
-            }
         }
 
         if (file.isXHR)
@@ -1402,26 +1394,6 @@ NetPanel.prototype = Obj.extend(Panel,
         }
     },
 });
-
-// ********************************************************************************************* //
-
-/*
- * Use this object to automatically select Net panel and inspect a network request.
- * Firebug.chrome.select(new Firebug.NetMonitor.NetFileLink(url [, request]));
- */
-Firebug.NetMonitor.NetFileLink = function(href, request)
-{
-    this.href = href;
-    this.request = request;
-}
-
-Firebug.NetMonitor.NetFileLink.prototype =
-{
-    toString: function()
-    {
-        return this.message + this.href;
-    }
-};
 
 // ********************************************************************************************* //
 

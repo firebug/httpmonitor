@@ -18,6 +18,7 @@ var DefaultPrefs =
     "showInfoTips": true,
     "toolbarCustomizationDone": false,
     "alwaysOpen": false,
+    "stringCropLength": 50, 
 
 // Console
     "showNetworkErrors": true,

@@ -9,10 +9,11 @@ define([
     "net/requestObserver",
     "lib/xpcom",
     "lib/string",
-    "net/netProgress"
+    "net/netProgress",
+    "chrome/chrome",
 ],
 function(FBTrace, Firebug, Win, Http, NetUtils, RequestObserver, Xpcom, Str,
-    NetProgress) {
+    NetProgress, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -143,7 +144,7 @@ var HttpRequestObserver =
             win == win.parent && !isRedirect)
         {
             // New page loaded, clear UI if 'Persist' isn't active.
-            if (!Firebug.chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
+            if (!Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
             {
                 Firebug.NetMonitor.clear(context);
             }

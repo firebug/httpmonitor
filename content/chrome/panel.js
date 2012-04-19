@@ -7,9 +7,10 @@ define([
     "lib/events",
     "lib/dom",
     "lib/array",
-    "chrome/listener"
+    "chrome/listener",
+    "chrome/chrome",
 ],
-function(FBTrace, Css, Obj, Events, Dom, Arr, Listener) {
+function(FBTrace, Css, Obj, Events, Dom, Arr, Listener, Chrome) {
 
 // ********************************************************************************************* //
 // Panel
@@ -173,7 +174,7 @@ var Panel = Obj.extend(new Listener(),
     {
         try
         {
-            var buttons = Firebug.chrome.$(buttonsId);
+            var buttons = Chrome.$(buttonsId);
             Dom.collapse(buttons, !show);
         }
         catch (exc)

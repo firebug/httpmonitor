@@ -13,9 +13,10 @@ define([
     "lib/events",
     "net/netCacheListener",
     "chrome/module",
+    "chrome/chrome",
 ],
 function(FBTrace, Obj, Firebug, Options, Str, HttpActivityObserver, HttpRequestObserver,
-    NetProgress, NetUtils, Events, NetCacheListener, Module) {
+    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -62,7 +63,7 @@ Firebug.NetMonitor = Obj.extend(Module,
         Firebug.NetMonitor.updateMaxLimit();
 
         // Synchronize buttons with the current filter.
-        this.syncFilterButtons(Firebug.chrome);
+        this.syncFilterButtons();
     },
 
     shutdown: function()
@@ -229,10 +230,10 @@ Firebug.NetMonitor = Obj.extend(Module,
         }
     },
 
-    syncFilterButtons: function(chrome)
+    syncFilterButtons: function()
     {
         var id = "fbNetFilter-" + Options.get("netFilterCategory");
-        var button = chrome.$(id);
+        var button = Chrome.$(id);
         if (!button)
         {
             if (FBTrace.DBG_ERRORS)
@@ -248,7 +249,7 @@ Firebug.NetMonitor = Obj.extend(Module,
     {
         var panel = context.getPanel(panelName);
         panel.persistContent = panel.persistContent ? false : true;
-        Firebug.chrome.setGlobalAttribute("cmd_togglePersistNet", "checked", panel.persistContent);
+        Chrome.setGlobalAttribute("cmd_togglePersistNet", "checked", panel.persistContent);
     },
 
     updateOption: function(name, value)

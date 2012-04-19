@@ -107,12 +107,6 @@ function $el(name, attributes, children, parent)
 
 function $command(id, oncommand, arg)
 {
-    // Wrap the command within a startFirebug call. If Firebug isn't yet loaded
-    // this will force it to load.
-    /*oncommand = "Firebug.GlobalUI.startFirebug(function(){" + oncommand + "})";
-    if (arg)
-        oncommand = "void function(arg){" + oncommand + "}(" + arg + ")";*/
-
     return $el("command", {
         id: id,
         oncommand: oncommand
