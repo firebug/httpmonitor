@@ -1,7 +1,7 @@
 {
   "name": "HTTPMonitor",
   "description": "HTTP activity monitor",
-  "version": "0.2",
+  "version": "0.3",
   "homepage" : "",
   "engines": {
     "node": ">= 0.6.6"
