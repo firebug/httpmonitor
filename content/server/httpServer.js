@@ -46,8 +46,6 @@ var HttpServer =
             // Open a TCP listener
             // xxxHonza: what about a pref for the port number?
             DebuggerServer.openListener(2929, false);
-
-            FBTrace.sysout("HttpServer; Running at port: 2929");
         }
         catch (ex)
         {

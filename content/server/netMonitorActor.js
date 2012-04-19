@@ -32,7 +32,8 @@ function NetworkMonitorActor(tab)
     this.tab = tab;
     this.files = {};
 
-    FBTrace.sysout("networkMonitorActor.constructor; " + this.actorID + ", " + this.conn);
+    if (FBTrace.DBG_NETACTOR)
+        FBTrace.sysout("networkMonitorActor.constructor; " + this.actorID + ", " + this.conn);
 }
 
 NetworkMonitorActor.prototype =
@@ -41,7 +42,8 @@ NetworkMonitorActor.prototype =
 
     grip: function()
     {
-        FBTrace.sysout("networkMonitorActor.grip " + this.actorID);
+        if (FBTrace.DBG_NETACTOR)
+            FBTrace.sysout("networkMonitorActor.grip " + this.actorID);
 
         return {
             actor: this.actorID
@@ -50,13 +52,16 @@ NetworkMonitorActor.prototype =
 
     onPing: function(request)
     {
-        FBTrace.sysout("networkMonitorActor.onPing ", request);
+        if (FBTrace.DBG_NETACTOR)
+            FBTrace.sysout("networkMonitorActor.onPing ", request);
+
         return {"pong": this.actorID};
     },
 
     onSubscribe: function(request)
     {
-        FBTrace.sysout("networkMonitorActor.onSubscribe;", request);
+        if (FBTrace.DBG_NETACTOR)
+            FBTrace.sysout("networkMonitorActor.onSubscribe;", request);
 
         try
         {
@@ -77,8 +82,11 @@ NetworkMonitorActor.prototype =
         }
         catch (err)
         {
-            FBTrace.sysout(err.stack);
-            FBTrace.sysout("networkMonitorActor.onSubscribe; EXCEPTION " + err, err);
+            if (FBTrace.DBG_NETACTOR || FBTrace.DBG_ERRORS)
+            {
+                FBTrace.sysout(err.stack);
+                FBTrace.sysout("networkMonitorActor.onSubscribe; EXCEPTION " + err, err);
+            }
         }
 
         return {"subscribe": this.actorID};
@@ -86,7 +94,8 @@ NetworkMonitorActor.prototype =
 
     onUnsubscribe: function(request)
     {
-        FBTrace.sysout("networkMonitorActor.onUnsubscribe;", request);
+        if (FBTrace.DBG_NETACTOR)
+            FBTrace.sysout("networkMonitorActor.onUnsubscribe;", request);
 
         if (this.context)
         {
@@ -105,7 +114,8 @@ NetworkMonitorActor.prototype =
 
     disconnect: function()
     {
-        FBTrace.sysout("networkMonitorActor.disconnet");
+        if (FBTrace.DBG_NETACTOR)
+            FBTrace.sysout("networkMonitorActor.disconnet");
 
         this.onUnsubscribe();
 
@@ -152,6 +162,9 @@ NetworkMonitorActor.prototype =
             "files": data
         };
 
+        if (FBTrace.DBG_NETACTOR)
+            FBTrace.sysout("networkMonitorActor.onFlushData;", packet);
+
         // Send network notification.
         this.conn.send(packet);
     }
@@ -172,8 +185,6 @@ NetworkMonitorActor.prototype.requestTypes =
 
 function networkMonitorActorHandler(tab, request)
 {
-    FBTrace.sysout("networkMonitorActorHandler ", {tab: tab, request: request});
-
     //xxxHonza: Just a left over from DCamp's example?
     // Reuse a previously-created actor, if any.
     //if (tab.sampleContextActor)
@@ -183,7 +194,8 @@ function networkMonitorActorHandler(tab, request)
     tab.networkMonitorActor = actor;
     tab.contextActorPool.addActor(actor);
 
-    FBTrace.sysout("networkMonitorActor created for tab: " + tab);
+    if (FBTrace.DBG_NETACTOR)
+        FBTrace.sysout("networkMonitorActorHandler ", {tab: tab, request: request});
 
     return actor.grip();
 }

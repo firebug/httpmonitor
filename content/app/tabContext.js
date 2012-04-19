@@ -6,11 +6,17 @@ define([
     "lib/url",
     "js/tabCache",
     "lib/object",
+    "lib/array",
 ],
-function(FBTrace, Win, Url, TabCache, Obj) {
+function(FBTrace, Win, Url, TabCache, Obj, Arr) {
 
 // ********************************************************************************************* //
 // Constants
+
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+
+var Timer = Cc["@mozilla.org/timer;1"];
 
 // ********************************************************************************************* //
 // Implementation
@@ -75,7 +81,7 @@ TabContext.prototype =
         if (this.timeouts)
         {
             for (var timeout in this.timeouts)
-                clearTimeout(timeout);
+                timeout.cancel();
         }
 
         // Also all waiting intervals must be cleared.
@@ -84,9 +90,6 @@ TabContext.prototype =
             for (var timeout in this.intervals)
                 clearInterval(timeout);
         }
-
-        if (this.throttleTimeout)
-            clearTimeout(this.throttleTimeout);
 
         // All existing DOM listeners need to be cleared
         this.unregisterAllListeners();
@@ -170,55 +173,48 @@ TabContext.prototype =
 
     setTimeout: function(fn, delay)
     {
-        if (typeof(setTimeout) == "undefined")
-        {
-            FBTrace.sysout("setTimeout is not defined")
-            return;
-        }
-
-        if (setTimeout == this.setTimeout)
-            throw new Error("setTimeout recursion");
-
-        // we're using a sandboxed setTimeout function
-        var timeout = setTimeout(fn, delay);
-
-        if (!this.timeouts)
-            this.timeouts = {};
-
-        this.timeouts[timeout] = 1;
-
-        return timeout;
+        return this.setTimer(fn, delay, Ci.nsITimer.TYPE_ONE_SHOT);
     },
 
     clearTimeout: function(timeout)
     {
-        // we're using a sandboxed clearTimeout function
-        clearTimeout(timeout);
-
-        if (this.timeouts)
-            delete this.timeouts[timeout];
+        this.cancelTimer(timeout);
     },
 
     setInterval: function(fn, delay)
     {
-        // we're using a sandboxed setInterval function
-        var timeout = setInterval(fn, delay);
-
-        if (!this.intervals)
-            this.intervals = {};
-
-        this.intervals[timeout] = 1;
-
-        return timeout;
+        return this.setTimer(fn, delay, Ci.nsITimer.TYPE_REPEATING_SLACK);
     },
 
-    clearInterval: function(timeout)
+    clearInterval: function(timer)
     {
-        // we're using a sandboxed clearInterval function
-        clearInterval(timeout);
+        this.cancelTimer(timer);
+    },
 
-        if (this.intervals)
-            delete this.intervals[timeout];
+    setTimer: function(fn, delay, type)
+    {
+        var callback = {
+            notify: function(timer) {
+                fn();
+            }
+        };
+
+        var timer = Timer.createInstance(Ci.nsITimer);
+        timer.initWithCallback(callback, delay, type);
+
+        if (!this.timers)
+            this.timers = [];
+
+        this.timers.push(timer);
+        return timer;
+    },
+
+    cancelTimer: function(timer)
+    {
+        timer.cancel();
+
+        if (this.timers)
+            Arr.remove(this.timers, timer);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

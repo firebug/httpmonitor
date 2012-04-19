@@ -21,6 +21,15 @@ require(config, [
 function(FBTrace, HttpServer) {
 
 // ********************************************************************************************* //
+// Constants
+
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+
+var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+
+// ********************************************************************************************* //
+// Initialization
 
 try
 {
@@ -29,7 +38,7 @@ try
     // Load net actor after the server is initialized.
     require(config, ["server/netMonitorActor"], function()
     {
-        FBTrace.sysout("HttpServer; Initialized OK");
+        consoleService.logStringMessage("HttpServer; Running at port: 2929");
     });
 }
 catch (e)
