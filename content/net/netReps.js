@@ -21,9 +21,10 @@ define([
     "net/netProgress",
     "lib/http",
     "chrome/listener",
+    "chrome/rep",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
-    Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener) {
+    Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener, Rep) {
 
 with (Domplate) {
 
@@ -43,7 +44,7 @@ const reSplitIP = /^(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)$/;
 /**
  * @domplate Represents a template that is used to render basic content of the net panel.
  */
-Firebug.NetMonitor.NetRequestTable = domplate(Firebug.Rep, new Listener(),
+Firebug.NetMonitor.NetRequestTable = domplate(Rep, new Listener(),
 {
     inspectable: false,
 
@@ -383,7 +384,7 @@ Firebug.NetMonitor.NetRequestTable = domplate(Firebug.Rep, new Listener(),
 /**
  * @domplate Represents a template that is used to render net panel entries.
  */
-Firebug.NetMonitor.NetRequestEntry = domplate(Firebug.Rep, new Listener(),
+Firebug.NetMonitor.NetRequestEntry = domplate(Rep, new Listener(),
 {
     fileTag:
         FOR("file", "$files",
@@ -705,7 +706,7 @@ Firebug.NetMonitor.NetRequestEntry = domplate(Firebug.Rep, new Listener(),
 
 // ********************************************************************************************* //
 
-Firebug.NetMonitor.NetPage = domplate(Firebug.Rep,
+Firebug.NetMonitor.NetPage = domplate(Rep,
 {
     separatorTag:
         TR({"class": "netRow netPageSeparatorRow"},
@@ -769,7 +770,7 @@ Firebug.NetMonitor.NetPage = domplate(Firebug.Rep,
  * @domplate Represents a template that is used to render detailed info about a request.
  * This template is rendered when a request is expanded.
  */
-Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep, new Listener(),
+Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
 {
     tag:
         DIV({"class": "netInfoBody", _repObject: "$file"},
@@ -1224,7 +1225,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep, new Listener(),
  * @domplate Represents posted data within request info (the info, which is visible when
  * a request entry is expanded. This template renders content of the Post tab.
  */
-Firebug.NetMonitor.NetInfoPostData = domplate(Firebug.Rep, new Listener(),
+Firebug.NetMonitor.NetInfoPostData = domplate(Rep, new Listener(),
 {
     // application/x-www-form-urlencoded
     paramsTable:
@@ -1524,7 +1525,7 @@ Firebug.NetMonitor.NetInfoPostData = domplate(Firebug.Rep, new Listener(),
  * @domplate Used within the Net panel to display raw source of request and response headers
  * as well as pretty-formatted summary of these headers.
  */
-Firebug.NetMonitor.NetInfoHeaders = domplate(Firebug.Rep, new Listener(),
+Firebug.NetMonitor.NetInfoHeaders = domplate(Rep, new Listener(),
 {
     tag:
         DIV({"class": "netInfoHeadersTable", "role": "tabpanel"},
@@ -1665,7 +1666,7 @@ Firebug.NetMonitor.NetInfoHeaders = domplate(Firebug.Rep, new Listener(),
  * @domplate Represents a template for popup tip that displays detailed timing info about
  * a network request.
  */
-Firebug.NetMonitor.TimeInfoTip = domplate(Firebug.Rep,
+Firebug.NetMonitor.TimeInfoTip = domplate(Rep,
 {
     tableTag:
         TABLE({"class": "timeInfoTip", "id": "fbNetTimeInfoTip"},
@@ -1861,7 +1862,7 @@ Firebug.NetMonitor.TimeInfoTip = domplate(Firebug.Rep,
 /**
  * @domplate Represents a template for a pupup tip with detailed size info.
  */
-Firebug.NetMonitor.SizeInfoTip = domplate(Firebug.Rep,
+Firebug.NetMonitor.SizeInfoTip = domplate(Rep,
 {
     tag:
         TABLE({"class": "sizeInfoTip", "id": "fbNetSizeInfoTip", role:"presentation"},
@@ -1940,7 +1941,7 @@ Firebug.NetMonitor.SizeInfoTip = domplate(Firebug.Rep,
 
 // ********************************************************************************************* //
 
-Firebug.NetMonitor.NetLimit = domplate(Firebug.Rep,
+Firebug.NetMonitor.NetLimit = domplate(Rep,
 {
     collapsed: true,
 
@@ -2013,7 +2014,7 @@ Firebug.NetMonitor.NetLimit = domplate(Firebug.Rep,
 
 // ********************************************************************************************* //
 
-Firebug.NetMonitor.ResponseSizeLimit = domplate(Firebug.Rep,
+Firebug.NetMonitor.ResponseSizeLimit = domplate(Rep,
 {
     tag:
         DIV({"class": "netInfoResponseSizeLimit"},

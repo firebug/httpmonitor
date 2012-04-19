@@ -12,8 +12,9 @@ define([
     "lib/dom",
     "lib/array",
     "net/netUtils",
+    "chrome/rep",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Url, Css, Dom, Arr, NetUtils) {
+function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Url, Css, Dom, Arr, NetUtils, Rep) {
 
 // ********************************************************************************************* //
 // Constants
@@ -137,7 +138,7 @@ Breakpoint.prototype =
 // Breakpoint UI
 
 with (Domplate) {
-var BreakpointRep = domplate(Firebug.Rep,
+var BreakpointRep = domplate(Rep,
 {
     inspectable: false,
 

@@ -10,9 +10,10 @@ define([
     "lib/css",
     "lib/http",
     "net/netUtils",
-    "chrome/module"
+    "chrome/module",
+    "chrome/rep",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Css, Http, NetUtils, Module) {
+function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Css, Http, NetUtils, Module, Rep) {
 
 // ************************************************************************************************
 // Constants
@@ -150,7 +151,7 @@ Firebug.SVGViewerModel = Obj.extend(Module,
  * <code>Firebug.SVGViewerModel</code>.
  */
 with (Domplate) {
-Firebug.SVGViewerModel.ParseError = domplate(Firebug.Rep,
+Firebug.SVGViewerModel.ParseError = domplate(Rep,
 {
     tag:
         DIV({"class": "svgInfoError"},
