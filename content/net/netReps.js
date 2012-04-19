@@ -4,7 +4,6 @@ define([
     "lib/trace",
     "lib/object",
     "app/firebug",
-    "chrome/firefox",
     "lib/domplate",
     "lib/locale",
     "lib/events",
@@ -27,7 +26,7 @@ define([
     "net/fontViewer",
     "net/netMonitor"
 ],
-function(FBTrace, Obj, Firebug, Firefox, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
+function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
     Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http) {
 
 with (Domplate) {

@@ -4,7 +4,6 @@ define([
     "lib/trace",
     "lib/object",
     "app/firebug",
-    "chrome/firefox",
     "lib/domplate",
     "lib/xpcom",
     "lib/locale",
@@ -30,9 +29,8 @@ define([
     "net/netMonitor",
     "net/netReps"
 ],
-function(FBTrace, Obj, Firebug, Firefox, Domplate, Xpcom, Locale,
-    Events, Options, Url, Http, Css, Dom, Win, Search, Str,
-    Arr, System, Menu, NetUtils, NetProgress, BrowserCache) {
+function(FBTrace, Obj, Firebug, Domplate, Xpcom, Locale, Events, Options, Url, Http,
+    Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache) {
 
 with (Domplate) {
 

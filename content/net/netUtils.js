@@ -6,13 +6,13 @@ define([
     "lib/locale",
     "lib/events",
     "lib/url",
-    "chrome/firefox",
     "lib/xpcom",
     "lib/http",
     "lib/string",
-    "lib/xml"
+    "lib/xml",
+    "chrome/window"
 ],
-function(FBTrace, Firebug, Locale, Events, Url, Firefox, Xpcom, Http, Str, Xml) {
+function(FBTrace, Firebug, Locale, Events, Url, Xpcom, Http, Str, Xml, Win) {
 
 // ********************************************************************************************* //
 // Constants
@@ -402,9 +402,8 @@ var NetUtils =
             stream.setInputStream(inputStream);
             var encodedResponse = btoa(stream.readBytes(stream.available()));
             var dataURI = "data:" + file.request.contentType + ";base64," + encodedResponse;
-        
-            var tabBrowser = Firefox.getTabBrowser();
-            tabBrowser.selectedTab = tabBrowser.addTab(dataURI);
+
+            Win.openNewTab(dataURI);
         }
         catch (err)
         {

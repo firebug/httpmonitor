@@ -106,58 +106,6 @@ Firebug =
             for (var i = 0; i < arguments.length; ++i)
                 FBTrace.sysout("registerPanel "+arguments[i].prototype.name);
         }
-
-        // If Firebug is not initialized yet the UI will be updated automatically soon.
-        if (!this.isInitialized)
-            return;
-
-        Firebug.chrome.syncMainPanels();
-        Firebug.chrome.syncSidePanels();
-    },
-
-    unregisterPanel: function(panelType)
-    {
-        var panelName = panelType ? panelType.prototype.name : null;
-
-        if (FBTrace.DBG_REGISTRATION)
-        {
-            FBTrace.sysout("firebug.unregisterPanel: " +
-                (panelName ? panelName : "Undefined panelType"));
-        }
-
-        // Remove all instance of the panel.
-        Firebug.connection.eachContext(function (context)
-        {
-            // An empty state can be probably used at this moment since
-            // we are unregistering the panel anyway.
-            var state = {}; //context.browser.persistedState;
-            context.removePanel(panelType, state);
-        });
-
-        // Now remove panel-type itself.
-        for (var i=0; i<panelTypes.length; i++)
-        {
-            if (panelTypes[i] == panelType)
-            {
-                panelTypes.splice(i, 1);
-                break;
-            }
-        }
-
-        delete panelTypeMap[panelType.prototype.name];
-
-        // We don't have to update Firebug UI if it's just closing.
-        if (this.isShutdown)
-            return;
-
-        // Make sure another panel is selected if the current one is has been removed.
-        var panel = this.chrome.getSelectedPanel();
-        if (panel && panel.name == panelName)
-            Firebug.chrome.selectPanel("html");
-
-        // The panel tab must be removed from the UI.
-        Firebug.chrome.syncMainPanels();
-        Firebug.chrome.syncSidePanels();
     },
 
     registerRep: function()
@@ -180,33 +128,6 @@ Firebug =
     registerStringBundle: function(bundleURI)
     {
         Locale.registerStringBundle(bundleURI);
-    },
-
-    unregisterStringBundle: function(bundleURI)
-    {
-        // xxxHonza: TODO:
-    },
-
-    /**
-     * Allows registering of custom stylesheet coming from extension. The stylesheet is then
-     * used automatially thorough Firebug UI.
-     * @param {Object} styleURI URI of the stylesheet.
-     */
-    registerStylesheet: function(styleURI)
-    {
-        this.stylesheets.push(styleURI);
-
-        // Append the stylesheet into the UI if Firebug is already loaded
-        if (this.isLoaded)
-            Firebug.chrome.appendStylesheet(styleURI);
-
-        if (FBTrace.DBG_REGISTRATION)
-            FBTrace.sysout("registerStylesheet " + styleURI);
-    },
-
-    unregisterStylesheet: function(styleURI)
-    {
-        // xxxHonza: TODO
     },
 
     registerMenuItem: function(menuItemController)
@@ -247,26 +168,6 @@ Firebug =
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-    shouldIgnore: function(objectChromeView)
-    {
-        /*if (objectChromeView)
-        {
-            var contentView = Wrapper.unwrapObject(objectChromeView);
-            return (contentView && contentView.firebugIgnore);
-        }*/
-        // else don't ignore things we don't understand
-    },
-
-    setIgnored: function(objectChromeView)
-    {
-        /*if (objectChromeView)
-        {
-            var contentView = Wrapper.unwrapObject(objectChromeView);
-            if (contentView)
-                contentView.firebugIgnore = true;
-        }*/
-    },
 
     /**
      * Gets an object containing the state of the panel from the last time
@@ -842,61 +743,6 @@ Firebug.Panel = Obj.extend(new Firebug.Listener(),
         }
     },
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Inspector
-
-    /**
-     * Called by the framework when the user starts inspecting. Inspecting must be enabled
-     * for the panel (panel.inspectable == true)
-     */
-    startInspecting: function()
-    {
-    },
-
-    /**
-     * Called by the framework when inspecting is in progress and the user moves mouse over
-     * a new page element. Inspecting must be enabled for the panel (panel.inspectable == true).
-     * This method is called in a timeout to avoid performance penalties when the user moves
-     * the mouse over the page elements too fast.
-     * @param {Element} node The page element being inspected
-     * @returns {Boolean} Returns true if the node should be selected within the panel using
-     *      the default panel selection mechanism (i.e. by calling panel.select(node) method).
-     */
-    inspectNode: function(node)
-    {
-        return true;
-    },
-
-    /**
-     * Called by the framework when the user stops inspecting. Inspecting must be enabled
-     * for the panel (panel.inspectable == true)
-     * @param {Element} node The last page element inspected
-     * @param {Boolean} canceled Set to true if inspecing has been canceled
-     *          by pressing the escape key.
-     */
-    stopInspecting: function(node, canceled)
-    {
-    },
-
-    /**
-     * Called by the framework when inspecting is in progress. Allows to inspect
-     * only nodes that are supported by the panel. Derived panels can provide effective
-     * algorithms to provide these nodes.
-     * @param {Element} node Currently inspected page element.
-     */
-    getInspectNode: function(node)
-    {
-        while (node)
-        {
-            if (this.supportsObject(node, typeof node))
-                return node;
-            node = node.parentNode;
-        }
-        return null;
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
     /*
      * Called by search in the case something was found.
      * This will highlight the given node for a specific timespan. There's only one node
@@ -938,58 +784,6 @@ Firebug.Panel = Obj.extend(new Firebug.Listener(),
         ];
     },
 
-    /**
-     * Navigates to the next document whose match parameter returns true.
-     */
-    navigateToNextDocument: function(match, reverse)
-    {
-        // This is an approximation of the UI that is displayed by the location
-        // selector. This should be close enough, although it may be better
-        // to simply generate the sorted list within the module, rather than
-        // sorting within the UI.
-        var self = this;
-        function compare(a, b) {
-            var locA = self.getObjectDescription(a);
-            var locB = self.getObjectDescription(b);
-            if(locA.path > locB.path)
-                return 1;
-            if(locA.path < locB.path)
-                return -1;
-            if(locA.name > locB.name)
-                return 1;
-            if(locA.name < locB.name)
-                return -1;
-            return 0;
-        }
-        var allLocs = this.getLocationList().sort(compare);
-        for (var curPos = 0; curPos < allLocs.length && allLocs[curPos] != this.location; curPos++);
-
-        function transformIndex(index)
-        {
-            if (reverse)
-            {
-                // For the reverse case we need to implement wrap around.
-                var intermediate = curPos - index - 1;
-                return (intermediate < 0 ? allLocs.length : 0) + intermediate;
-            }
-            else
-            {
-                return (curPos + index + 1) % allLocs.length;
-            }
-        };
-
-        for (var next = 0; next < allLocs.length - 1; next++)
-        {
-            var object = allLocs[transformIndex(next)];
-
-            if (match(object))
-            {
-                this.navigate(object);
-                return object;
-            }
-        }
-    },
-
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     // Called when "Options" clicked. Return array of
@@ -1029,10 +823,6 @@ Firebug.Panel = Obj.extend(new Firebug.Listener(),
         return null;
     },
 
-    browseObject: function(object)
-    {
-    },
-
     getPopupObject: function(target)
     {
         return Firebug.getRepObject(target);
@@ -1046,72 +836,6 @@ Firebug.Panel = Obj.extend(new Firebug.Listener(),
     showInfoTip: function(infoTip, x, y)
     {
 
-    },
-
-    getObjectPath: function(object)
-    {
-        return null;
-    },
-
-    // An array of objects that can be passed to getObjectLocation.
-    // The list of things a panel can show, eg sourceFiles.
-    // Only shown if panel.location defined and supportsObject true
-    getLocationList: function()
-    {
-        return null;
-    },
-
-    getDefaultLocation: function()
-    {
-        return null;
-    },
-
-    getObjectLocation: function(object)
-    {
-        return "";
-    },
-
-    // Text for the location list menu eg script panel source file list
-    // return.path: group/category label, return.name: item label
-    getObjectDescription: function(object)
-    {
-        var url = this.getObjectLocation(object);
-        return Url.splitURLBase(url);
-    },
-
-    /**
-     *  UI signal that a tab needs attention, eg Script panel is currently stopped on a breakpoint
-     *  @param: show boolean, true turns on.
-     */
-    highlight: function(show)
-    {
-        var tab = this.getTab();
-        if (!tab)
-            return;
-
-        if (show)
-            tab.setAttribute("highlight", "true");
-        else
-            tab.removeAttribute("highlight");
-    },
-
-    getTab: function()
-    {
-        var chrome = Firebug.chrome;
-
-        var tab = chrome.$("fbPanelBar2").getTab(this.name);
-        if (!tab)
-            tab = chrome.$("fbPanelBar1").getTab(this.name);
-        return tab;
-    },
-
-    /**
-     * If the panel supports source viewing, then return a SourceLink, else null
-     * @param target an element from the panel under the mouse
-     * @param object the realObject under the mouse
-     */
-    getSourceLink: function(target, object)
-    {
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -1178,15 +902,6 @@ Firebug.Rep = domplate(
     unhighlightObject: function(object, context)
     {
         Firebug.Inspector.highlightObject(null);
-    },
-
-    inspectObject: function(object, context)
-    {
-        Firebug.chrome.select(object);
-    },
-
-    browseObject: function(object, context)
-    {
     },
 
     persistObject: function(object, context)

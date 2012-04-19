@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "app/firebug",
-    "chrome/firefox",
     "chrome/window",
     "lib/http",
     "net/netUtils",
@@ -12,7 +11,7 @@ define([
     "lib/string",
     "net/netProgress"
 ],
-function(FBTrace, Firebug, Firefox, Win, Http, NetUtils, RequestObserver, Xpcom, Str,
+function(FBTrace, Firebug, Win, Http, NetUtils, RequestObserver, Xpcom, Str,
     NetProgress) {
 
 // ********************************************************************************************* //
@@ -109,7 +108,7 @@ var HttpRequestObserver =
 
             // Some requests are not associated with any page (e.g. favicon).
             // These are ignored as Net panel shows only page requests.
-            var tabId = win ? Win.getWindowProxyIdForWindow(win) : null;
+            var tabId = win ? Win.getTabIdForWindow(win) : null;
             if (!tabId)
             {
                 if (FBTrace.DBG_NET)
@@ -143,8 +142,6 @@ var HttpRequestObserver =
             request.loadGroup && request.loadGroup.groupObserver &&
             win == win.parent && !isRedirect)
         {
-            var browser = Firefox.getBrowserForWindow(win);
-
             // New page loaded, clear UI if 'Persist' isn't active.
             if (!Firebug.chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
             {

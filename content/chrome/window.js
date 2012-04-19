@@ -3,9 +3,8 @@
 define([
     "lib/trace",
     "lib/http",
-    "chrome/firefox"
 ],
-function(FBTrace, Http, Firefox) {
+function(FBTrace, Http) {
 
 // ********************************************************************************************* //
 // Constants
@@ -14,36 +13,30 @@ var Ci = Components.interfaces;
 var Cc = Components.classes;
 var Cu = Components.utils;
 
-var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-
+// Module object
 var Win = {};
 
-var window = {};     // these declarations exist to cause errors if we accidently
-var document = {};   // reference these globals
+// ********************************************************************************************* //
+// Window
+
+Win.getRootWindow = function(win)
+{
+    for (; win; win = win.parent)
+    {
+        if (!win.parent || win == win.parent || !(win.parent instanceof win.Window) )
+            return win;
+    }
+    return null;
+};
 
 // ********************************************************************************************* //
-// Crossbrowser API
-
-Win.getWindowProxyIdForWindow = function(win)
-{
-    if (!win)
-        return null;
-
-    var id = Win.getWindowId(win).outerWindowID;
-
-    // xxxJJB, xxxHonza: the id is often null, what could be the problem?
-    // jjb: My guess: just another Mozilla bug
-    if (!id)
-        return Win.getTabIdForWindow(win);
-
-    return id;
-};
+// Firefox Tab Browser
 
 Win.getTabForWindow = function(aWindow)
 {
     aWindow = Win.getRootWindow(aWindow);
 
-    var tabBrowser = Firefox.getTabBrowser();
+    var tabBrowser = Win.getTabBrowser();
     if (!aWindow || !tabBrowser || !tabBrowser.getBrowserIndexForDocument)
     {
         if (FBTrace.DBG_WINDOWS)
@@ -87,39 +80,15 @@ Win.getTabIdForWindow = function(win)
     return tab ? tab.linkedPanel : null;
 };
 
-// ********************************************************************************************* //
-// Window iteration
-
-Win.iterateWindows = function(win, handler)
+Win.getTabBrowser = function()
 {
-    if (!win || !win.document)
+    var context = Firebug.currentContext;
+    if (!context)
         return;
 
-    handler(win);
-
-    if (win == top || !win.frames)
-        return; // XXXjjb hack for chromeBug
-
-    for (var i = 0; i < win.frames.length; ++i)
-    {
-        var subWin = win.frames[i];
-        if (subWin != win)
-            Win.iterateWindows(subWin, handler);
-    }
-};
-
-Win.getRootWindow = function(win)
-{
-    for (; win; win = win.parent)
-    {
-        if (!win.parent || win == win.parent || !(win.parent instanceof win.Window) )
-            return win;
-    }
-    return null;
-};
-
-// ********************************************************************************************* //
-// Firefox browsing
+    var doc = context.browser.ownerDocument;
+    return doc.getElementById("content");
+}
 
 Win.openNewTab = function(url, postText)
 {
@@ -136,14 +105,23 @@ Win.openNewTab = function(url, postText)
         postData.setData(stringStream);
     }
 
-    var tabBrowser = Firefox.getTabBrowser();
+    var tabBrowser = Win.getTabBrowser();
     return tabBrowser.selectedTab = tabBrowser.addTab(url, null, null, postData);
 };
 
-// Iterate over all opened firefox windows of the given type. If the callback returns true
-// the iteration is stopped.
+// ********************************************************************************************* //
+// Browser Windows Iteration
+
+/**
+ * Iterate over all opened firefox windows of the given type. If the callback returns true
+ * the iteration is stopped.
+ * 
+ * @param {Object} windowType
+ * @param {Object} callback
+ */
 Win.iterateBrowserWindows = function(windowType, callback)
 {
+    var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
     var windowList = wm.getZOrderDOMWindowEnumerator(windowType, true);
     if (!windowList.hasMoreElements())
         windowList = wm.getEnumerator(windowType);
@@ -171,74 +149,6 @@ Win.iterateBrowserTabs = function(browserWindow, callback)
 
     return false;
 }
-
-
-Win.getBrowserByWindow = function(win)
-{
-    var browsers = Firefox.getBrowsers();
-    for (var i = 0; i < browsers.length; ++i)
-    {
-        var browser = browsers[i];
-        if (browser.contentWindow === win)
-            return browser;
-    }
-
-    return null;
-}
-
-// ********************************************************************************************* //
-
-Win.getWindowId = function(win)
-{
-    var util = win.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindowUtils);
-    var innerWindowID = "(none)";
-
-    try
-    {
-        var outerWindowID = util.outerWindowID;
-        innerWindowID = util.currentInnerWindowID;
-    }
-    catch(exc)
-    {
-        // no - op
-    }
-
-    return {
-        outer: outerWindowID,
-        inner: innerWindowID,
-        toString: function() {
-            return this.outer+"."+this.inner;
-        }
-    };
-};
-
-Win.safeGetWindowLocation = function(window)
-{
-    try
-    {
-        if (window)
-        {
-            if (window.closed)
-                return "(window.closed)";
-            if ("location" in window)
-                return window.location+"";
-            else
-                return "(no window.location)";
-        }
-        else
-            return "(no context.window)";
-    }
-    catch (exc)
-    {
-        if (FBTrace.DBG_WINDOWS || FBTrace.DBG_ERRORS)
-        {
-            FBTrace.sysout("TabContext.getWindowLocation failed "+exc, exc);
-            FBTrace.sysout("TabContext.getWindowLocation failed window:", window);
-        }
-
-        return "(getWindowLocation: "+exc+")";
-    }
-};
 
 // ********************************************************************************************* //
 
