@@ -7,9 +7,8 @@ define([
     "chrome/window",
     "lib/xml",
     "lib/http",
-    "lib/xpath",
 ],
-function(FBTrace, Url, Options, Win, Xml, Http, Xpath) {
+function(FBTrace, Url, Options, Win, Xml, Http) {
 
 // ********************************************************************************************* //
 // Module Implementation
