@@ -60,6 +60,26 @@ RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Listener
 
+    onTabNavigated: function(tabActor)
+    {
+        if (!this.context)
+        {
+            if (FBTrace.DBG_REMOTENETMONITOR)
+                FBTrace.sysout("remotenet; No context!");
+            return;
+        }
+
+        // New page loaded, bail out if 'Persist' is active.
+        //xxxHonza: Fix me
+        if (Firebug.chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
+            return;
+
+        // Clear the UI.
+        var netPanel = this.context.getPanel("net", true);
+        if (netPanel)
+            netPanel.clear();
+    },
+
     onNetworkEvent: function(packet)
     {
         if (!this.context)

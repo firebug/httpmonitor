@@ -30,6 +30,9 @@ Protocol.prototype =
         if (FBTrace.DBG_REMOTEBUG)
             FBTrace.sysout("remotebug; Selected remote tab: " + tab.id, tab);
 
+        if (this.currentTab)
+            this.unselectTab(this.currentTab)
+
         var self = this;
         this.connection.sendPacket(tab.id, "attach", true, function(packet)
         {
@@ -38,12 +41,18 @@ Protocol.prototype =
 
             self.currentTab = tab;
 
-            self.onTabSelected(tab.id);
+            self.onTabSelected(tab);
 
             callback();
 
+            // xxxHonza; do we need this?
             //Events.dispatch(self.fbListeners, "onTabSelected", [tab.id]);
         });
+    },
+
+    unselectTab: function(tabActor)
+    {
+        self.onTabUnselected(tabActor);
     },
 
     getCurrentTab: function()
@@ -82,25 +91,63 @@ Protocol.prototype =
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Hooks
 
     /**
      * Executed by RemoteBug.Module if a remote tab is selected.
-     * @param {Object} tab The selcted tab descriptor
+     * @param {Object} tabActor The selected tab descriptor
      */
     onTabSelected: function(tabActor)
     {
         var self = this;
-        var callback = Obj.bind(this.onNetworkEvent, this);
+        var netEvent = Obj.bind(this.onNetworkEvent, this);
+        var tabNavigated = Obj.bind(self.onTabNavigated, self);
 
         // A tab has been selected so, subscribe to the Net monitor actor. The callback
         // will receive events about any HTTP traffic within the target tab.
-        this.getNetActor(tabActor, function(packet)
+        this.getNetActor(tabActor.id, function(packet)
         {
-            self.subscribe(packet.actor, callback);
+            self.subscribe(packet.actor, netEvent);
+
+            // Also register callback for 'tabNavigated' events.
+            self.connection.addCallback(tabActor.id, tabNavigated, false);
         });
     },
 
+    onTabUnselected: function(tabActor)
+    {
+        this.connection.removeCallback(tabActor.id);
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Hooks
+
+    /**
+     * Executed when the remote attached tab is reloaded
+     * @param {Object} tabActor The selected tab descriptor
+     */
+    onTabNavigated: function(packet)
+    {
+        if (FBTrace.DBG_REMOTENETMONITOR)
+            FBTrace.sysout("remotenet; onTabNavigated: " + packet.from);
+
+        if (packet.type != "tabNavigated")
+            return;
+
+        try
+        {
+            this.listener.onTabNavigated(packet);
+        }
+        catch (e)
+        {
+            if (FBTrace.DBG_ERRORS)
+                FBTrace.sysout("Protocol.onNetworkEvent; EXCEPTION " + e, e);
+        }
+    },
+
+    /**
+     * Executed when NetworkMonitorActor send data about server side HTTP activity
+     * @param {Object} packet
+     */
     onNetworkEvent: function(packet)
     {
         if (packet.subscribe)
