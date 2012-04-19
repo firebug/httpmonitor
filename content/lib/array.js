@@ -21,23 +21,6 @@ Arr.isArray = function(obj)
     return Object.prototype.toString.call(obj) === "[object Array]";
 }
 
-// At least sometimes the keys will be on user-level window objects
-Arr.keys = function(map)
-{
-    var keys = [];
-    try
-    {
-        for (var name in map)  // enumeration is safe
-            keys.push(name);   // name is string, safe
-    }
-    catch (exc)
-    {
-        // Sometimes we get exceptions trying to iterate properties
-    }
-
-    return keys;  // return is safe
-};
-
 Arr.values = function(map)
 {
     var values = [];
@@ -80,15 +63,6 @@ Arr.remove = function(list, item)
     return false;
 };
 
-Arr.sliceArray = function(array, index)
-{
-    var slice = [];
-    for (var i = index; i < array.length; ++i)
-        slice.push(array[i]);
-
-    return slice;
-};
-
 Arr.cloneArray = function(array, fn)
 {
    var newArray = [];
@@ -117,31 +91,6 @@ Arr.arrayInsert = function(array, index, other)
        array.splice(i+index, 0, other[i]);
 
    return array;
-}
-
-/**
- * Merge two arrays and keep only unique values. Note that this method always
- * sorts the output (sorting is used for fast removal of duplicated items).
- *
- * @param {Array} arr1 The first array to merge.
- * @param {Array} arr2 The second array to merge.
- * @param {Function} sortFunc Optional function for proper sorting of items in arrays.
- */
-Arr.merge = function(arr1, arr2, sortFunc)
-{
-    var ar = Arr.extendArray(arr1, arr2);
-    ar.sort(sortFunc);
-
-    var ret = [];
-    for (var i=0; i<ar.length; i++)
-    {
-        // Skip duplicated entries
-        if (i && ar[i-1] === ar[i])
-            continue;
-        ret.push(ar[i]);
-    }
-
-    return ret;
 }
 
 // ********************************************************************************************* //
