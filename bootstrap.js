@@ -108,7 +108,7 @@ function loadServer()
 
     try
     {
-        //if (serverMode)
+        if (serverMode)
             Services.scriptloader.loadSubScript("resource://httpmonitor/content/server/main.js");
     }
     catch (e)
