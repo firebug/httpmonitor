@@ -27,7 +27,5 @@ At the moment there is no UI for settings so be ready to use `about:config`
 
 Resources
 ---------
-* [HTTP Monitor Remoting](http://getfirebug.com/wiki/index.php/Net_Panel_Remoting)
-* [HTTP Monitor Architecture](http://getfirebug.com/wiki/index.php/Net_Panel_Architecture_Review)
-* [Remote Protocol](https://wiki.mozilla.org/Remote_Debugging_Protocol)
+* [Wiki](http://getfirebug.com/wiki/index.php/HTTP_Monitor)
 * [Issue Tracker](https://wiki.mozilla.org/Remote_Debugging_Protocol)
