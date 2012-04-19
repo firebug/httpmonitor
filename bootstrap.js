@@ -108,8 +108,7 @@ function loadServer()
 
     try
     {
-        var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch2);
-        if (serverMode)
+        //if (serverMode)
             Services.scriptloader.loadSubScript("resource://httpmonitor/content/server/main.js");
     }
     catch (e)
