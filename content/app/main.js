@@ -17,14 +17,17 @@ require(config, [
     "app/firebug",
     "net/netPanel",
     "cache/tabCacheModel",
-    "net/xmlViewer",
-    "net/svgViewer",
-    "net/jsonViewer",
-    "net/fontViewer",
+    "viewers/xmlViewer",
+    "viewers/svgViewer",
+    "viewers/jsonViewer",
+    "viewers/fontViewer",
 ],
 function(FBTrace, HttpMonitor) {
 
 // ********************************************************************************************* //
+
+// Request/response body viewers are loaded here.
+// xxxHonza: there should be API for creating new viewers in extensions.
 
 // This is the only application global (within monitor.xul window)
 top.HttpMonitor = HttpMonitor;

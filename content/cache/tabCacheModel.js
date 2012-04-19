@@ -11,7 +11,7 @@ define([
     "lib/url",
     "lib/http",
     "lib/string",
-    "net/jsonViewer",
+    "viewers/jsonViewer",
     "lib/window",
     "base/module",
     "chrome/chrome",
