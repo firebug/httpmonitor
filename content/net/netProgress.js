@@ -922,7 +922,7 @@ NetProgress.prototype =
             // otherwise create a new phase.
             var phaseInterval = 1000; // xxxHonza Firebug.netPhaseInterval;
             var lastStartTime = this.currentPhase.lastStartTime;
-            if (phaseInterval > 0 && this.loaded && file.startTime - lastStartTime >= phaseInterval)
+            if (phaseInterval > 0 && file.loaded && file.startTime - lastStartTime >= phaseInterval)
                 this.startPhase(file);
             else
                 this.currentPhase.addFile(file);
