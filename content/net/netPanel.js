@@ -22,15 +22,12 @@ define([
     "net/netUtils",
     "net/netProgress",
     "net/browserCache",
-    "net/xmlViewer",
-    "net/svgViewer",
-    "net/jsonViewer",
-    "net/fontViewer",
+    "chrome/panel",
     "net/netMonitor",
-    "net/netReps"
+    "net/netReps",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Xpcom, Locale, Events, Options, Url, Http,
-    Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache) {
+    Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache, Panel) {
 
 with (Domplate) {
 
@@ -49,12 +46,12 @@ var NetRequestEntry = Firebug.NetMonitor.NetRequestEntry;
 
 /**
  * @panel Represents a Firebug panel that displayes info about HTTP activity associated with
- * the current page. This class is derived from <code>Firebug.Panel</code> in order
+ * the current page. This class is derived from <code>Panel</code> in order
  * to support activation (enable/disable). This allows to avoid (performance) expensive
  * features if the functionality is not necessary for the user.
  */
 function NetPanel() {}
-NetPanel.prototype = Obj.extend(Firebug.Panel,
+NetPanel.prototype = Obj.extend(Panel,
 /** lends NetPanel */
 {
     name: panelName,
@@ -72,12 +69,12 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
         this.queue = [];
         this.onContextMenu = Obj.bind(this.onContextMenu, this);
 
-        Firebug.Panel.initialize.apply(this, arguments);
+        Panel.initialize.apply(this, arguments);
     },
 
     destroy: function(state)
     {
-        Firebug.Panel.destroy.apply(this, arguments);
+        Panel.destroy.apply(this, arguments);
     },
 
     initializeNode : function()
@@ -89,7 +86,7 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
 
         Events.addEventListener(this.resizeEventTarget, "resize", this.onResizer, true);
 
-        Firebug.Panel.initializeNode.apply(this, arguments);
+        Panel.initializeNode.apply(this, arguments);
     },
 
     destroyNode : function()
@@ -97,7 +94,7 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
         Events.removeEventListener(this.panelNode, "contextmenu", this.onContextMenu, false);
         Events.removeEventListener(this.resizeEventTarget, "resize", this.onResizer, true);
 
-        Firebug.Panel.destroyNode.apply(this, arguments);
+        Panel.destroyNode.apply(this, arguments);
     },
 
     loadPersistedContent: function(state)
@@ -168,7 +165,7 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
 
     savePersistedContent: function(state)
     {
-        Firebug.Panel.savePersistedContent.apply(this, arguments);
+        Panel.savePersistedContent.apply(this, arguments);
 
         state.pageTitle = NetUtils.getPageTitle(this.context);
     },
@@ -277,7 +274,7 @@ NetPanel.prototype = Obj.extend(Firebug.Panel,
         if (header)
             return Firebug.NetMonitor.NetRequestTable;
 
-        return Firebug.Panel.getPopupObject.apply(this, arguments);
+        return Panel.getPopupObject.apply(this, arguments);
     },
 
     supportsObject: function(object, type)

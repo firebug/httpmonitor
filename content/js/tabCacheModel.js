@@ -12,10 +12,11 @@ define([
     "lib/http",
     "lib/string",
     "net/jsonViewer",
-    "chrome/window"
+    "chrome/window",
+    "chrome/module",
 ],
 function(FBTrace, Obj, Options, Firebug, RequestObserver, HttpResponseObserver, Events,
-    Url, Http, Str, JSONViewerModel, Win) {
+    Url, Http, Str, JSONViewerModel, Win, Module) {
 
 // ********************************************************************************************* //
 // Constants
@@ -76,7 +77,7 @@ var contentTypes =
  * observer so, HTTP communication can be intercepted and all incoming data stored within
  * a cache.
  */
-Firebug.TabCacheModel = Obj.extend(Firebug.Module,
+Firebug.TabCacheModel = Obj.extend(Module,
 {
     dispatchName: "tabCache",
     contentTypes: contentTypes,
@@ -84,7 +85,7 @@ Firebug.TabCacheModel = Obj.extend(Firebug.Module,
 
     initialize: function()
     {
-        Firebug.Module.initialize.apply(this, arguments);
+        Module.initialize.apply(this, arguments);
 
         /*this.traceListener = new TraceListener("tabCache.", "DBG_CACHE", false);
         TraceModule.addListener(this.traceListener);*/
@@ -98,7 +99,7 @@ Firebug.TabCacheModel = Obj.extend(Firebug.Module,
 
     initializeUI: function(owner)
     {
-        Firebug.Module.initializeUI.apply(this, arguments);
+        Module.initializeUI.apply(this, arguments);
 
         if (FBTrace.DBG_CACHE)
             FBTrace.sysout("tabCache.initializeUI;");

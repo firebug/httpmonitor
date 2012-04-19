@@ -8,8 +8,9 @@ define([
     "lib/string",
     "app/httpMonitorProxy",
     "lib/events",
+    "chrome/module",
 ],
-function(FBTrace, Firebug, Obj, Menu, Str, HttpMonitorProxy, Events) {
+function(FBTrace, Firebug, Obj, Menu, Str, HttpMonitorProxy, Events, Module) {
 
 // ********************************************************************************************* //
 // Module
@@ -17,7 +18,7 @@ function(FBTrace, Firebug, Obj, Menu, Str, HttpMonitorProxy, Events) {
 /**
  * @module
  */
-var TabListMenu = Obj.extend(Firebug.Module,
+var TabListMenu = Obj.extend(Module,
 /** @lends TabListMenu */
 {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -25,14 +26,14 @@ var TabListMenu = Obj.extend(Firebug.Module,
 
     initialize: function()
     {
-        Firebug.Module.initialize.apply(this, arguments);
+        Module.initialize.apply(this, arguments);
 
         this.updateUI();
     },
 
     shutdown: function()
     {
-        Firebug.Module.shutdown.apply(this, arguments);
+        Module.shutdown.apply(this, arguments);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

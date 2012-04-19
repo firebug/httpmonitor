@@ -16,9 +16,10 @@ define([
     "lib/array",
     "lib/system",
     "lib/options",
+    "chrome/module",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Http, Str, Json,
-    ToggleBranch, Arr, System, Options) {
+    ToggleBranch, Arr, System, Options, Module) {
 
 // ********************************************************************************************* //
 
@@ -40,19 +41,23 @@ var contentTypes =
 // ********************************************************************************************* //
 // Model implementation
 
-Firebug.JSONViewerModel = Obj.extend(Firebug.Module,
+Firebug.JSONViewerModel = Obj.extend(Module,
 {
     dispatchName: "jsonViewer",
     contentTypes: contentTypes,
 
     initialize: function()
     {
+        Module.initialize.apply(this, arguments);
+
         Firebug.NetMonitor.NetInfoBody.addListener(this);
         Firebug.registerUIListener(this);
     },
 
     shutdown: function()
     {
+        Module.shutdown.apply(this, arguments);
+
         Firebug.NetMonitor.NetInfoBody.removeListener(this);
         Firebug.unregisterUIListener(this);
     },

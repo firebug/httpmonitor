@@ -12,9 +12,10 @@ define([
     "net/netUtils",
     "lib/events",
     "net/netCacheListener",
+    "chrome/module",
 ],
-function(FBTrace, Obj, Firebug, Options, Str, HttpActivityObserver,
-    HttpRequestObserver, NetProgress, NetUtils, Events, NetCacheListener) {
+function(FBTrace, Obj, Firebug, Options, Str, HttpActivityObserver, HttpRequestObserver,
+    NetProgress, NetUtils, Events, NetCacheListener, Module) {
 
 // ********************************************************************************************* //
 // Constants
@@ -34,11 +35,11 @@ var contentLoad = NetProgress.prototype.contentLoad;
 
 /**
  * @module Represents a module object for the Net panel. This object is derived
- * from <code>Firebug.Module</code> in order to support activation (enable/disable).
+ * from <code>Module</code> in order to support activation (enable/disable).
  * This allows to avoid (performance) expensive features if the functionality is not necessary
  * for the user.
  */
-Firebug.NetMonitor = Obj.extend(Firebug.Module,
+Firebug.NetMonitor = Obj.extend(Module,
 {
     dispatchName: "netMonitor",
     maxQueueRequests: 500,
@@ -48,14 +49,14 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
 
     initialize: function()
     {
-        Firebug.Module.initialize.apply(this, arguments);
+        Module.initialize.apply(this, arguments);
 
         HttpRequestObserver.registerObserver();
     },
 
     initializeUI: function()
     {
-        Firebug.Module.initializeUI.apply(this, arguments);
+        Module.initializeUI.apply(this, arguments);
 
         // Initialize max limit for logged requests.
         Firebug.NetMonitor.updateMaxLimit();
@@ -66,14 +67,14 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
 
     shutdown: function()
     {
-        Firebug.Module.shutdown.apply(this, arguments);
+        Module.shutdown.apply(this, arguments);
 
         HttpRequestObserver.unregisterObserver();
     },
 
     initContext: function(context, persistedState)
     {
-        Firebug.Module.initContext.apply(this, arguments);
+        Module.initContext.apply(this, arguments);
 
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.initContext for: " + context.getName());
@@ -99,7 +100,7 @@ Firebug.NetMonitor = Obj.extend(Firebug.Module,
 
     destroyContext: function(context, persistedState)
     {
-        Firebug.Module.destroyContext.apply(this, arguments);
+        Module.destroyContext.apply(this, arguments);
 
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.destroyContext for: " +

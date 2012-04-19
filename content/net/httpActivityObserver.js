@@ -7,9 +7,10 @@ define([
     "lib/http",
     "chrome/window",
     "net/netProgress",
-    "net/netUtils"
+    "net/netUtils",
+    "chrome/module",
 ],
-function(Xpcom, Obj, FBTrace, Http, Win, NetProgress, NetUtils) {
+function(Xpcom, Obj, FBTrace, Http, Win, NetProgress, NetUtils, Module) {
 
 // ********************************************************************************************* //
 // Constants
@@ -290,7 +291,7 @@ function getActivitySubtypeDescription(a)
 // ********************************************************************************************* //
 
 // https://bugzilla.mozilla.org/show_bug.cgi?id=669730
-var HttpActivityObserverModule = Obj.extend(Firebug.Module,
+var HttpActivityObserverModule = Obj.extend(Module,
 {
     dispatchName: "HttpActivityObserverModule",
 

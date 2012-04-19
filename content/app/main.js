@@ -17,8 +17,12 @@ require(config, [
     "app/firebug",
     "net/netPanel",
     "js/tabCacheModel",
+    "net/xmlViewer",
+    "net/svgViewer",
+    "net/jsonViewer",
+    "net/fontViewer",
 ],
-function(FBTrace, HttpMonitor, InfoTip, Firebug, NetPanel, TabCacheModel) {
+function(FBTrace, HttpMonitor) {
 
 // ********************************************************************************************* //
 

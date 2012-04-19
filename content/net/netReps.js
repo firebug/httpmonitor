@@ -20,14 +20,10 @@ define([
     "net/netUtils",
     "net/netProgress",
     "lib/http",
-    "net/xmlViewer",
-    "net/svgViewer",
-    "net/jsonViewer",
-    "net/fontViewer",
-    "net/netMonitor"
+    "chrome/listener",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
-    Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http) {
+    Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener) {
 
 with (Domplate) {
 
@@ -47,7 +43,7 @@ const reSplitIP = /^(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)$/;
 /**
  * @domplate Represents a template that is used to render basic content of the net panel.
  */
-Firebug.NetMonitor.NetRequestTable = domplate(Firebug.Rep, new Firebug.Listener(),
+Firebug.NetMonitor.NetRequestTable = domplate(Firebug.Rep, new Listener(),
 {
     inspectable: false,
 
@@ -387,7 +383,7 @@ Firebug.NetMonitor.NetRequestTable = domplate(Firebug.Rep, new Firebug.Listener(
 /**
  * @domplate Represents a template that is used to render net panel entries.
  */
-Firebug.NetMonitor.NetRequestEntry = domplate(Firebug.Rep, new Firebug.Listener(),
+Firebug.NetMonitor.NetRequestEntry = domplate(Firebug.Rep, new Listener(),
 {
     fileTag:
         FOR("file", "$files",
@@ -773,7 +769,7 @@ Firebug.NetMonitor.NetPage = domplate(Firebug.Rep,
  * @domplate Represents a template that is used to render detailed info about a request.
  * This template is rendered when a request is expanded.
  */
-Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep, new Firebug.Listener(),
+Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep, new Listener(),
 {
     tag:
         DIV({"class": "netInfoBody", _repObject: "$file"},
@@ -1228,7 +1224,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Firebug.Rep, new Firebug.Listener(),
  * @domplate Represents posted data within request info (the info, which is visible when
  * a request entry is expanded. This template renders content of the Post tab.
  */
-Firebug.NetMonitor.NetInfoPostData = domplate(Firebug.Rep, new Firebug.Listener(),
+Firebug.NetMonitor.NetInfoPostData = domplate(Firebug.Rep, new Listener(),
 {
     // application/x-www-form-urlencoded
     paramsTable:
@@ -1528,7 +1524,7 @@ Firebug.NetMonitor.NetInfoPostData = domplate(Firebug.Rep, new Firebug.Listener(
  * @domplate Used within the Net panel to display raw source of request and response headers
  * as well as pretty-formatted summary of these headers.
  */
-Firebug.NetMonitor.NetInfoHeaders = domplate(Firebug.Rep, new Firebug.Listener(),
+Firebug.NetMonitor.NetInfoHeaders = domplate(Firebug.Rep, new Listener(),
 {
     tag:
         DIV({"class": "netInfoHeadersTable", "role": "tabpanel"},

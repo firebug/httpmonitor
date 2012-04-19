@@ -16,10 +16,11 @@ define([
     "lib/url",
     "lib/http",
     "net/netUtils",
-    "lib/options"
+    "lib/options",
+    "chrome/module",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Events, Win, Css, Dom, Str, Fonts, Url, Http,
-    NetUtils, Options) {
+function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Events, Win, Css, Dom, Str, Fonts,
+    Url, Http, NetUtils, Options, Module) {
 
 // ********************************************************************************************* //
 
@@ -38,13 +39,15 @@ var contentTypes =
 // ********************************************************************************************* //
 // Model implementation
 
-Firebug.FontViewerModel = Obj.extend(Firebug.Module,
+Firebug.FontViewerModel = Obj.extend(Module,
 {
     dispatchName: "fontViewer",
     contentTypes: contentTypes,
 
     initialize: function()
     {
+        Module.initialize.apply(this, arguments);
+
         Firebug.TabCacheModel.addListener(this);
         Firebug.NetMonitor.NetInfoBody.addListener(this);
         Firebug.registerUIListener(this);
@@ -52,6 +55,8 @@ Firebug.FontViewerModel = Obj.extend(Firebug.Module,
 
     shutdown: function()
     {
+        Module.shutdown.apply(this, arguments);
+
         Firebug.TabCacheModel.removeListener(this);
         Firebug.NetMonitor.NetInfoBody.removeListener(this);
         Firebug.unregisterUIListener(this);

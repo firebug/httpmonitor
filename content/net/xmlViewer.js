@@ -9,9 +9,10 @@ define([
     "lib/xpcom",
     "lib/css",
     "lib/http",
-    "net/netUtils"
+    "net/netUtils",
+    "chrome/module"
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Css, Http, NetUtils) {
+function(FBTrace, Obj, Firebug, Domplate, Locale, Xpcom, Css, Http, NetUtils, Module) {
 
 // ********************************************************************************************* //
 // Constants
@@ -37,20 +38,22 @@ var xmlContentTypes =
  * tab wihin network request detail, a listener is registered into
  * <code>Firebug.NetMonitor.NetInfoBody</code> object.
  */
-Firebug.XMLViewerModel = Obj.extend(Firebug.Module,
+Firebug.XMLViewerModel = Obj.extend(Module,
 /** lends Firebug.XMLViewerModel */
 {
     dispatchName: "xmlViewer",
 
     initialize: function()
     {
-        Firebug.Module.initialize.apply(this, arguments);
+        Module.initialize.apply(this, arguments);
+
         Firebug.NetMonitor.NetInfoBody.addListener(this);
     },
 
     shutdown: function()
     {
-        Firebug.Module.shutdown.apply(this, arguments);
+        Module.shutdown.apply(this, arguments);
+
         Firebug.NetMonitor.NetInfoBody.removeListener(this);
     },
 

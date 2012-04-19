@@ -8,11 +8,9 @@ define([
     "lib/events",
     "remote/connection",
     "lib/dom",
+    "chrome/module",
 ],
-function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom) {
-
-// ********************************************************************************************* //
-// Globals
+function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom, Module) {
 
 // ********************************************************************************************* //
 // Module
@@ -21,7 +19,7 @@ function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom) {
  * @module This object represent a popu menu that is responsible for Connect and
  * disconnect to/from remote browser.
  */
-var ConnectionMenu = Obj.extend(Firebug.Module,
+var ConnectionMenu = Obj.extend(Module,
 /** @lends ConnectionMenu */
 {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -29,7 +27,7 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
 
     initialize: function()
     {
-        Firebug.Module.initialize.apply(this, arguments);
+        Module.initialize.apply(this, arguments);
 
         if (FBTrace.DBG_REMOTEBUG)
             FBTrace.sysout("remotebug; RemoteNetModule.initialize");
@@ -48,7 +46,7 @@ var ConnectionMenu = Obj.extend(Firebug.Module,
 
     shutdown: function()
     {
-        Firebug.Module.shutdown.apply(this, arguments);
+        Module.shutdown.apply(this, arguments);
 
         Options.removeListener(this);
 

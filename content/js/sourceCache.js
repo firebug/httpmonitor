@@ -7,9 +7,10 @@ define([
     "lib/xpcom",
     "lib/url",
     "lib/http",
-    "lib/string"
+    "lib/string",
+    "chrome/listener",
 ],
-function(FBTrace, Obj, Firebug, Xpcom, Url, Http, Str) {
+function(FBTrace, Obj, Firebug, Xpcom, Url, Http, Str, Listener) {
 
 // ********************************************************************************************* //
 // Constants
@@ -41,7 +42,7 @@ Firebug.SourceCache = function(context)
     this.cache = {};
 };
 
-Firebug.SourceCache.prototype = Obj.extend(new Firebug.Listener(),
+Firebug.SourceCache.prototype = Obj.extend(new Listener(),
 {
     isCached: function(url)
     {

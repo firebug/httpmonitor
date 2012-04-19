@@ -11,9 +11,10 @@ define([
     "lib/dom",
     "lib/string",
     "lib/fonts",
-    "lib/options"
+    "lib/options",
+    "chrome/module",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Str, Fonts, Options) {
+function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Str, Fonts, Options, Module) {
 
 // ********************************************************************************************* //
 // Constants
@@ -25,7 +26,7 @@ const infoTipWindowPadding = 25;
 // ********************************************************************************************* //
 
 with (Domplate) {
-Firebug.InfoTip = Obj.extend(Firebug.Module,
+Firebug.InfoTip = Obj.extend(Module,
 {
     dispatchName: "infoTip",
     tags: domplate(
@@ -146,7 +147,7 @@ Firebug.InfoTip = Obj.extend(Firebug.Module,
 
     initialize: function()
     {
-        Firebug.Module.initialize.apply(this, arguments);
+        Module.initialize.apply(this, arguments);
 
         var panelBrowser = HttpMonitor.getPanelBrowser();
         var infoTip = panelBrowser.infoTip;
