@@ -6,11 +6,10 @@ define([
     "lib/object",
     "chrome/menu",
     "lib/string",
-    "app/httpMonitorProxy",
     "lib/events",
     "chrome/module",
 ],
-function(FBTrace, Firebug, Obj, Menu, Str, HttpMonitorProxy, Events, Module) {
+function(FBTrace, Firebug, Obj, Menu, Str, Events, Module) {
 
 // ********************************************************************************************* //
 // Module

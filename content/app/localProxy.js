@@ -3,11 +3,11 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/httpMonitorProxy",
+    "chrome/proxy",
     "chrome/window",
     "net/netMonitor",
 ],
-function(FBTrace, Obj, HttpMonitorProxy, Win, NetMonitor) {
+function(FBTrace, Obj, Proxy, Win, NetMonitor) {
 
 // ********************************************************************************************* //
 // Implementation
@@ -16,7 +16,7 @@ function LocalProxy()
 {
 }
 
-LocalProxy.prototype = Obj.extend(HttpMonitorProxy,
+LocalProxy.prototype = Obj.extend(Proxy,
 {
     getTabs: function(callback)
     {

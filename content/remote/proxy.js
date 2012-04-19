@@ -4,10 +4,10 @@ define([
     "lib/trace",
     "lib/object",
     "remote/protocol",
-    "app/httpMonitorProxy",
+    "chrome/proxy",
     "net/netMonitor",
 ],
-function(FBTrace, Obj, Protocol, HttpMonitorProxy, NetMonitor) {
+function(FBTrace, Obj, Protocol, Proxy, NetMonitor) {
 
 // ********************************************************************************************* //
 // Implementation
@@ -17,7 +17,7 @@ function RemoteProxy(connection)
     this.protocol = new Protocol(connection, this);
 }
 
-RemoteProxy.prototype = Obj.extend(HttpMonitorProxy,
+RemoteProxy.prototype = Obj.extend(Proxy,
 {
     getTabs: function(callback)
     {
