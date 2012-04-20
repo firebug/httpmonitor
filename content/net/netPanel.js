@@ -26,11 +26,12 @@ define([
     "chrome/chrome",
     "chrome/infoTip",
     "net/netMonitor",
+    "net/netFile",
     "net/netReps",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Xpcom, Locale, Events, Options, Url, Http,
     Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache,
-    Panel, Chrome, InfoTip, NetMonitor) {
+    Panel, Chrome, InfoTip, NetMonitor, NetFile) {
 
 with (Domplate) {
 
@@ -318,7 +319,7 @@ NetPanel.prototype = Obj.extend(Panel,
         var items = [];
 
         var file = Chrome.getRepObject(target);
-        if (!file || !(file instanceof Firebug.NetFile))
+        if (!file || !(file instanceof NetFile))
             return items;
 
         var isPost = NetUtils.isURLEncodedRequest(file, this.context);
