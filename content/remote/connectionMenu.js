@@ -2,7 +2,6 @@
 
 define([
     "lib/trace",
-    "app/firebug",
     "lib/object",
     "lib/options",
     "lib/events",
@@ -11,7 +10,7 @@ define([
     "base/module",
     "chrome/chrome",
 ],
-function(FBTrace, Firebug, Obj, Options, Events, Connection, Dom, Module, Chrome) {
+function(FBTrace, Obj, Options, Events, Connection, Dom, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Module

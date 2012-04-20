@@ -2,10 +2,9 @@
 
 define([
     "lib/trace",
-    "app/firebug",
     "lib/events",
 ],
-function(FBTrace, Firebug, Events) {
+function(FBTrace, Events) {
 
 // ********************************************************************************************* //
 // TabCache Listener

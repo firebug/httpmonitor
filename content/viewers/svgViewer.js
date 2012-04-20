@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "chrome/chrome",
     "lib/domplate",
     "lib/locale",
@@ -15,7 +14,7 @@ define([
     "base/rep",
     "net/netMonitor",
 ],
-function(FBTrace, Obj, Firebug, Chrome, Domplate, Locale, Xpcom, Css, Http, NetUtils,
+function(FBTrace, Obj, Chrome, Domplate, Locale, Xpcom, Css, Http, NetUtils,
     Module, Rep, NetMonitor) {
 
 // ********************************************************************************************* //

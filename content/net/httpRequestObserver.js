@@ -2,7 +2,6 @@
 
 define([
     "lib/trace",
-    "app/firebug",
     "lib/window",
     "lib/http",
     "net/netUtils",
@@ -12,8 +11,7 @@ define([
     "net/netProgress",
     "chrome/chrome",
 ],
-function(FBTrace, Firebug, Win, Http, NetUtils, RequestObserver, Xpcom, Str,
-    NetProgress, Chrome) {
+function(FBTrace, Win, Http, NetUtils, RequestObserver, Xpcom, Str, NetProgress, Chrome) {
 
 // ********************************************************************************************* //
 // Constants

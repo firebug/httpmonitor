@@ -2,7 +2,6 @@
 
 define([
     "lib/trace",
-    "app/firebug",
     "lib/locale",
     "lib/events",
     "lib/url",
@@ -13,7 +12,7 @@ define([
     "lib/window",
     "lib/options",
 ],
-function(FBTrace, Firebug, Locale, Events, Url, Xpcom, Http, Str, Xml, Win, Options) {
+function(FBTrace, Locale, Events, Url, Xpcom, Http, Str, Xml, Win, Options) {
 
 // ********************************************************************************************* //
 // Constants

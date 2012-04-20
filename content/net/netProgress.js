@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/locale",
     "lib/events",
     "lib/url",
@@ -17,7 +16,7 @@ define([
     "net/browserCache",
     "net/netFile",
 ],
-function(FBTrace, Obj, Firebug, Locale, Events, Url, Http, Css, Win, Str,
+function(FBTrace, Obj, Locale, Events, Url, Http, Css, Win, Str,
     Arr, System, NetUtils, BrowserCache, NetFile) {
 
 // ********************************************************************************************* //

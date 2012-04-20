@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/options",
     "lib/string",
     "net/httpActivityObserver",
@@ -15,7 +14,7 @@ define([
     "base/module",
     "chrome/chrome",
 ],
-function(FBTrace, Obj, Firebug, Options, Str, HttpActivityObserver, HttpRequestObserver,
+function(FBTrace, Obj, Options, Str, HttpActivityObserver, HttpRequestObserver,
     NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome) {
 
 // ********************************************************************************************* //

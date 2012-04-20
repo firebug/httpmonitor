@@ -2,7 +2,6 @@
 
 define([
     "lib/trace",
-    "app/firebug",
     "lib/options",
     "lib/object",
     "chrome/tabContext",
@@ -10,7 +9,7 @@ define([
     "lib/array",
     "chrome/chrome",
 ],
-function(FBTrace, Firebug, Options, Obj, TabContext, NetMonitor, Arr, Chrome) {
+function(FBTrace, Options, Obj, TabContext, NetMonitor, Arr, Chrome) {
 
 // ********************************************************************************************* //
 // Globals

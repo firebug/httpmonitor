@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/domplate",
     "lib/xpcom",
     "lib/locale",
@@ -29,7 +28,7 @@ define([
     "net/netFile",
     "net/netReps",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Xpcom, Locale, Events, Options, Url, Http,
+function(FBTrace, Obj, Domplate, Xpcom, Locale, Events, Options, Url, Http,
     Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache,
     Panel, Chrome, InfoTip, NetMonitor, NetFile) {
 

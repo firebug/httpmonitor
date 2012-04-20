@@ -3,14 +3,13 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/xpcom",
     "lib/url",
     "lib/http",
     "lib/string",
     "base/listener",
 ],
-function(FBTrace, Obj, Firebug, Xpcom, Url, Http, Str, Listener) {
+function(FBTrace, Obj, Xpcom, Url, Http, Str, Listener) {
 
 // ********************************************************************************************* //
 // Constants
@@ -78,7 +77,7 @@ SourceCache.prototype = Obj.extend(new Listener(),
             for (var prop in this.cache)
                 urls.push(prop);
 
-            FBTrace.sysout("sourceCache.load: Not in the Firebug internal cache", urls);
+            FBTrace.sysout("sourceCache.load: Not in the internal cache", urls);
         }
 
         var d = Url.splitDataURL(url);  //TODO the RE should not have baseLine

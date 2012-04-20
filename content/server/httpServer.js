@@ -3,12 +3,11 @@
 define([
     "lib/trace",
     "lib/options",
-    "app/firebug",
     "chrome/defaultPrefs",
     "lib/events",
     "cache/tabCacheModel",
 ],
-function(FBTrace, Options, Firebug, DefaultPrefs, Events, TabCacheModel) {
+function(FBTrace, Options, DefaultPrefs, Events, TabCacheModel) {
 
 // ********************************************************************************************* //
 // Module

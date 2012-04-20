@@ -4,7 +4,6 @@ define([
     "lib/trace",
     "lib/object",
     "lib/options",
-    "app/firebug",
     "net/requestObserver",
     "net/responseObserver",
     "lib/events",
@@ -16,7 +15,7 @@ define([
     "base/module",
     "chrome/chrome",
 ],
-function(FBTrace, Obj, Options, Firebug, RequestObserver, HttpResponseObserver, Events,
+function(FBTrace, Obj, Options, RequestObserver, HttpResponseObserver, Events,
     Url, Http, Str, JSONViewer, Win, Module, Chrome) {
 
 // ********************************************************************************************* //

@@ -2,10 +2,9 @@
 
 define([
     "lib/trace",
-    "app/firebug",
     "lib/object",
 ],
-function(FBTrace, Firebug, Obj) {
+function(FBTrace, Obj) {
 
 // ********************************************************************************************* //
 // Globals

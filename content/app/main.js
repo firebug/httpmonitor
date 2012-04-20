@@ -14,7 +14,6 @@ require(config, [
     "lib/trace",
     "app/httpMonitor",
     "chrome/infotip",
-    "app/firebug",
     "net/netPanel",
     "cache/tabCacheModel",
     "viewers/xmlViewer",
