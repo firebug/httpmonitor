@@ -92,7 +92,7 @@ var TabCacheModel = Obj.extend(Module,
 
         if (!this.observing)
         {
-            RequestObserver.addObserver(this, "firebug-http-event", false);
+            RequestObserver.addObserver(this, "http-event", false);
             this.observing = true;
         }
     },
@@ -127,7 +127,7 @@ var TabCacheModel = Obj.extend(Module,
         /*TraceModule.removeListener(this.traceListener);*/
 
         if (this.observing)
-            RequestObserver.removeObserver(this, "firebug-http-event");
+            RequestObserver.removeObserver(this, "http-event");
     },
 
     initContext: function(context)

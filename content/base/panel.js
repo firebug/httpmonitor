@@ -87,7 +87,7 @@ var Panel = Obj.extend(new Listener(),
 
         // xxxHonza: not exactly sure why, but it helps when testing memory-leask.
         // Note the the selection can point to a document (in case of the HTML panel).
-        // Perhaps it breaks a cycle (page -> firebug -> page)?
+        // Perhaps it breaks a cycle?
         delete this.selection;
         delete this.panelBrowser;
     },

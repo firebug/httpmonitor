@@ -26,10 +26,6 @@ Xml.getElementXML = function(element)
             {
                 var attr = elt.attributes[i];
 
-                // Hide attributes set by Firebug
-                if (Str.hasPrefix(attr.localName, "firebug-"))
-                    continue;
-
                 // MathML
                 if (Str.hasPrefix(attr.localName, "-moz-math"))
                 {

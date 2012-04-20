@@ -220,14 +220,14 @@ Locale.internationalizeElements = function(doc, elements, attributes)
 Locale.registerStringBundle = function(bundleURI)
 {
     // Notice that this category entry must not be persistent in Fx 4.0
-    categoryManager.addCategoryEntry("strings_firebug", bundleURI, "", false, true);
+    categoryManager.addCategoryEntry("strings_httpmonitor", bundleURI, "", false, true);
     this.stringBundle = null;
 }
 
 Locale.getStringBundle = function()
 {
     if (!this.stringBundle)
-        this.stringBundle = stringBundleService.createExtensibleBundle("strings_firebug");
+        this.stringBundle = stringBundleService.createExtensibleBundle("strings_httpmonitor");
     return this.stringBundle;
 }
 

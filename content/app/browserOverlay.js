@@ -127,7 +127,7 @@ function $key(id, keycode, modifiers, command, position)
 function $toolbarButton(id, attrs, children, defaultPos)
 {
     attrs["class"] = "toolbarbutton-1 chromeclass-toolbar-additional";
-    attrs.firebugRootNode = true;
+    attrs.httpMonitorRootNode = true;
     attrs.id = id;
 
     // in seamonkey gNavToolbox is null onload

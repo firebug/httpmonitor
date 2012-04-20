@@ -208,7 +208,7 @@ var Options =
     /**
      * Set a preference value.
      *
-     * @param prefDomain, e.g. "extensions.firebug"
+     * @param prefDomain, e.g. "extensions.httpmonitor"
      * @param name Name of the preference (the part after prfDomain without dot)
      * @param value New value for the preference.
      * @param prefType optional pref type useful when adding a new preference.
@@ -324,7 +324,6 @@ var Options =
             }
             catch(e)
             {
-                // due to some error in older version of firebug user ended up with wrong type 
                 if (e.result == 0x8000ffff)
                 {
                     try
@@ -334,7 +333,7 @@ var Options =
                     }
                     catch(e)
                     {
-                        Cu.reportError("firebug can't set default value for " + name);
+                        Cu.reportError("can't set default value for " + name);
                     }
                 }
             }

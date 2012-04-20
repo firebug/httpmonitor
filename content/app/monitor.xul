@@ -57,42 +57,42 @@
                     <toolbarbutton id="fbNetFilter-all" label="filter.All"
                         type="radio"
                         class="toolbar-text-button fbInternational"
-                        group="firebugNetFilter" checked="true"
+                        group="NetFilter" checked="true"
                         oncommand="HttpMonitor.onToggleFilter('all')"/>
                     <toolbarbutton id="fbNetFilter-html"
                         label="HTML" type="radio"
                         class="toolbar-text-button"
-                        group="firebugNetFilter"
+                        group="NetFilter"
                         oncommand="HttpMonitor.onToggleFilter('html')"/>
                     <toolbarbutton id="fbNetFilter-css" label="CSS"
                         type="radio"
                         class="toolbar-text-button"
-                        group="firebugNetFilter"
+                        group="NetFilter"
                         oncommand="HttpMonitor.onToggleFilter('css')"/>
                     <toolbarbutton id="fbNetFilter-js" label="JS"
                         type="radio"
                         class="toolbar-text-button"
-                        group="firebugNetFilter"
+                        group="NetFilter"
                         oncommand="HttpMonitor.onToggleFilter('js')"/>
                     <toolbarbutton id="fbNetFilter-xhr" label="XHR"
                         type="radio"
                         tooltiptext="XMLHttpRequest"
-                        class="toolbar-text-button" group="firebugNetFilter"
+                        class="toolbar-text-button" group="NetFilter"
                         oncommand="HttpMonitor.onToggleFilter('xhr')"/>
                     <toolbarbutton id="fbNetFilter-image"
                         label="filter.Images" type="radio"
                         class="toolbar-text-button fbInternational"
-                        group="firebugNetFilter"
+                        group="NetFilter"
                         oncommand="HttpMonitor.onToggleFilter('image')"/>
                     <toolbarbutton id="fbNetFilter-flash"
                         label="filter.Flash" type="radio"
                         class="toolbar-text-button fbInternational"
-                        group="firebugNetFilter"
+                        group="NetFilter"
                         oncommand="HttpMonitor.onToggleFilter('flash')"/>
                     <toolbarbutton id="fbNetFilter-media"
                         label="net.filter.Media" type="radio"
                         class="toolbar-text-button fbInternational"
-                        group="firebugNetFilter"
+                        group="NetFilter"
                         oncommand="HttpMonitor.onToggleFilter('media')"/>
                 </hbox>
             </hbox>

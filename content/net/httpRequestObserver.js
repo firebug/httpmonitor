@@ -48,7 +48,7 @@ var HttpRequestObserver =
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.HttpRequestObserver.register;");
 
-        RequestObserver.addObserver(this, "firebug-http-event", false);
+        RequestObserver.addObserver(this, "http-event", false);
 
         this.registered = true;
     },
@@ -61,7 +61,7 @@ var HttpRequestObserver =
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.HttpRequestObserver.unregister;");
 
-        RequestObserver.removeObserver(this, "firebug-http-event");
+        RequestObserver.removeObserver(this, "http-event");
 
         this.registered = false;
     },
