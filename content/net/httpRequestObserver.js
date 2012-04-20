@@ -96,7 +96,7 @@ var HttpRequestObserver =
             // xxxHonza
             //var context = connection.getContextByWindow(win);
             //var context = HttpMonitor.tabWatcher.getContextByWindow(win);
-            var context = Firebug.currentContext;
+            var context = Chrome.currentContext;
             if (!context || context.window != Win.getRootWindow(win))
             {
                 //FBTrace.sysout("This request doesn't come from selected tab  " +

@@ -67,7 +67,7 @@ var Chrome =
             var rep = this.reps[i];
             try
             {
-                if (rep.supportsObject(object, type, (context?context:Firebug.currentContext) ))
+                if (rep.supportsObject(object, type, (context?context:Chrome.currentContext) ))
                 {
                     //if (FBTrace.DBG_DOM)
                     //    FBTrace.sysout("getRep type: "+type+" object: "+object, rep);

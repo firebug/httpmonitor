@@ -3,9 +3,10 @@
 define([
     "lib/trace",
     "lib/dom",
-    "lib/url"
+    "lib/url",
+    "chrome/chrome",
 ],
-function(FBTrace, Dom, Url) {
+function(FBTrace, Dom, Url, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -49,7 +50,7 @@ Fonts.getFonts = function(node)
 Fonts.getFontInfo = function(context, win, identifier)
 {
     if (!context)
-        context = Firebug.currentContext;
+        context = Chrome.currentContext;
 
     var doc = win ? win.document : context.window.document;
     if (!doc)

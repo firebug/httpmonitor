@@ -3,8 +3,9 @@
 define([
     "lib/trace",
     "lib/http",
+    "chrome/chrome",
 ],
-function(FBTrace, Http) {
+function(FBTrace, Http, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -82,7 +83,7 @@ Win.getTabIdForWindow = function(win)
 
 Win.getTabBrowser = function()
 {
-    var context = Firebug.currentContext;
+    var context = Chrome.currentContext;
     if (!context)
         return;
 

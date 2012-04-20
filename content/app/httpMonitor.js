@@ -16,9 +16,11 @@ define([
     "chrome/localProxy",
     "remote/proxy",
     "chrome/chrome",
+    "net/netMonitor",
 ],
 function(FBTrace, TabWatcher, Menu, Arr, Css, Locale, Events, Dom, Options,
-    DefaultPrefs, TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy, Chrome) {
+    DefaultPrefs, TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy, Chrome,
+    NetMonitor) {
 
 // ********************************************************************************************* //
 // Constants
@@ -107,6 +109,24 @@ var HttpMonitor =
         {
             TabListMenu.updateUI();
         });
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // UI Commands
+
+    clear: function()
+    {
+        NetMonitor.clear(Chrome.currentContext);
+    },
+
+    togglePersist: function()
+    {
+        Firebug.NetMonitor.togglePersist(Chrome.currentContext);
+    },
+
+    onToggleFilter: function(filter)
+    {
+        NetMonitor.onToggleFilter(Chrome.currentContext, filter);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -8,8 +8,9 @@ define([
     "chrome/tabContext",
     "net/netMonitor",
     "lib/array",
+    "chrome/chrome",
 ],
-function(FBTrace, Firebug, Options, Obj, TabContext, NetMonitor, Arr) {
+function(FBTrace, Firebug, Options, Obj, TabContext, NetMonitor, Arr, Chrome) {
 
 // ********************************************************************************************* //
 // Globals
@@ -68,7 +69,7 @@ NetworkMonitorActor.prototype =
             this.context = new TabContext(this.tab);
 
             // xxxHonza, hack, the global must go away.
-            Firebug.currentContext = this.context;
+            Chrome.currentContext = this.context;
 
             // Initialize NetMonitor module
             NetMonitor.initialize();
@@ -106,7 +107,7 @@ NetworkMonitorActor.prototype =
             this.context = null;
 
             // xxxHonza, hack, the global must go away.
-            Firebug.currentContext = null;
+            Chrome.currentContext = null;
         }
 
         return {"unsubscribe": this.actorID};

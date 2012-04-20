@@ -5,8 +5,9 @@ define([
     "chrome/tabContext",
     "net/netMonitor",
     "lib/window",
+    "chrome/chrome",
 ],
-function(FBTrace, TabContext, NetMonitor, Win) {
+function(FBTrace, TabContext, NetMonitor, Win, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -43,7 +44,7 @@ TabWatcher.prototype =
         this.context = new TabContext(tab, this.persistedState);
 
         // xxxHonza, hack, the global must go away.
-        Firebug.currentContext = this.context;
+        Chrome.currentContext = this.context;
 
         // Attach to the selected tab.
         proxy.attach(this.context, callback);
@@ -66,7 +67,7 @@ TabWatcher.prototype =
         this.context = null;
 
         // xxxHonza, hack, the global must go away.
-        Firebug.currentContext = null;
+        Chrome.currentContext = null;
     },
 
     getContextByWindow: function(win)

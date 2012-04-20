@@ -16,8 +16,8 @@
 
     <!-- Commands -->
     <commandset id="mainCommandSet">
-        <command id="cmd_clearNet" oncommand="Firebug.NetMonitor.clear(Firebug.currentContext)"/>
-        <command id="cmd_togglePersistNet" oncommand="Firebug.NetMonitor.togglePersist(Firebug.currentContext)"/>
+        <command id="cmd_clearNet" oncommand="HttpMonitor.clear()"/>
+        <command id="cmd_togglePersistNet" oncommand="HttpMonitor.togglePersist()"/>
         <command id="cmd_httpMonitorConnect" oncommand="HttpMonitor.ConnectionMenu.connect()"/>
         <command id="cmd_httpMonitorDisconnect" oncommand="HttpMonitor.ConnectionMenu.disconnect()"/>
     </commandset>
@@ -58,42 +58,42 @@
                         type="radio"
                         class="toolbar-text-button fbInternational"
                         group="firebugNetFilter" checked="true"
-                        oncommand="Firebug.NetMonitor.onToggleFilter(Firebug.currentContext, 'all')"/>
+                        oncommand="HttpMonitor.onToggleFilter('all')"/>
                     <toolbarbutton id="fbNetFilter-html"
                         label="HTML" type="radio"
                         class="toolbar-text-button"
                         group="firebugNetFilter"
-                        oncommand="Firebug.NetMonitor.onToggleFilter(Firebug.currentContext, 'html')"/>
+                        oncommand="HttpMonitor.onToggleFilter('html')"/>
                     <toolbarbutton id="fbNetFilter-css" label="CSS"
                         type="radio"
                         class="toolbar-text-button"
                         group="firebugNetFilter"
-                        oncommand="Firebug.NetMonitor.onToggleFilter(Firebug.currentContext, 'css')"/>
+                        oncommand="HttpMonitor.onToggleFilter('css')"/>
                     <toolbarbutton id="fbNetFilter-js" label="JS"
                         type="radio"
                         class="toolbar-text-button"
                         group="firebugNetFilter"
-                        oncommand="Firebug.NetMonitor.onToggleFilter(Firebug.currentContext, 'js')"/>
+                        oncommand="HttpMonitor.onToggleFilter('js')"/>
                     <toolbarbutton id="fbNetFilter-xhr" label="XHR"
                         type="radio"
                         tooltiptext="XMLHttpRequest"
                         class="toolbar-text-button" group="firebugNetFilter"
-                        oncommand="Firebug.NetMonitor.onToggleFilter(Firebug.currentContext, 'xhr')"/>
+                        oncommand="HttpMonitor.onToggleFilter('xhr')"/>
                     <toolbarbutton id="fbNetFilter-image"
                         label="firebug.Images" type="radio"
                         class="toolbar-text-button fbInternational"
                         group="firebugNetFilter"
-                        oncommand="Firebug.NetMonitor.onToggleFilter(Firebug.currentContext, 'image')"/>
+                        oncommand="HttpMonitor.onToggleFilter('image')"/>
                     <toolbarbutton id="fbNetFilter-flash"
                         label="firebug.Flash" type="radio"
                         class="toolbar-text-button fbInternational"
                         group="firebugNetFilter"
-                        oncommand="Firebug.NetMonitor.onToggleFilter(Firebug.currentContext, 'flash')"/>
+                        oncommand="HttpMonitor.onToggleFilter('flash')"/>
                     <toolbarbutton id="fbNetFilter-media"
                         label="net.filter.Media" type="radio"
                         class="toolbar-text-button fbInternational"
                         group="firebugNetFilter"
-                        oncommand="Firebug.NetMonitor.onToggleFilter(Firebug.currentContext, 'media')"/>
+                        oncommand="HttpMonitor.onToggleFilter('media')"/>
                 </hbox>
             </hbox>
 

@@ -186,7 +186,7 @@ var TabCacheModel = Obj.extend(Module,
 
     registerStreamListener: function(request, win)
     {
-        var context = Firebug.currentContext;
+        var context = Chrome.currentContext;
         if (!context)
             return;
 
@@ -299,7 +299,7 @@ ChannelListenerProxy.prototype =
             // xxxHonza
             //return HttpMonitor.tabWatcher.context;
             //return Firebug.connection.getContextByWindow(this.window);
-            return Firebug.currentContext;
+            return Chrome.currentContext;
         }
         catch (e)
         {

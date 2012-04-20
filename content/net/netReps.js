@@ -1919,7 +1919,7 @@ Firebug.NetMonitor.SizeInfoTip = domplate(Rep,
 
     render: function(file, parentNode)
     {
-        var postText = NetUtils.getPostText(file, Firebug.currentContext, true);
+        var postText = NetUtils.getPostText(file, Chrome.currentContext, true);
         postText = postText ? postText : "";
 
         var sizeInfo = [];

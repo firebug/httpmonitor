@@ -1366,10 +1366,10 @@ NetPanel.prototype = Obj.extend(Panel,
             return;
 
         // xxxHonza
-        /*if (!Firebug.currentContext)
+        /*if (!Chrome.currentContext)
         {
             if (FBTrace.DBG_ERRORS)
-                FBTrace.sysout("net.updateHRefLabelWidth; Firebug.currentContext == NULL");
+                FBTrace.sysout("net.updateHRefLabelWidth; Chrome.currentContext == NULL");
             return;
         }*/
 
