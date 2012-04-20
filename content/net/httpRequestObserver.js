@@ -94,7 +94,7 @@ var HttpRequestObserver =
             }
 
             // xxxHonza
-            //var context = Firebug.connection.getContextByWindow(win);
+            //var context = connection.getContextByWindow(win);
             //var context = HttpMonitor.tabWatcher.getContextByWindow(win);
             var context = Firebug.currentContext;
             if (!context || context.window != Win.getRootWindow(win))
@@ -159,7 +159,7 @@ var HttpRequestObserver =
             // We need to track the request now since the activity observer is not used in case
             // the response comes from BF cache. If it's a regular HTTP request the timing
             // is properly overridden by the activity observer (ACTIVITY_SUBTYPE_REQUEST_HEADER).
-            // Even if the Firebug.netShowBFCacheResponses is false now, the user could
+            // Even if the netShowBFCacheResponses is false now, the user could
             // switch it on later.
             var xhr = Http.isXHR(request);
             networkContext.post(requestedFile, [request, NetUtils.now(), win, xhr]);

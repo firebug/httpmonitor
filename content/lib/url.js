@@ -291,8 +291,6 @@ Url.makeURI = function(urlString)
     }
     catch (exc)
     {
-        //var explain = {message: "Firebug.lib.makeURI FAILS", url: urlString, exception: exc};
-        // todo convert explain to json and then to data url
         if (FBTrace.DBG_ERRORS)
             FBTrace.sysout("makeURI FAILS for \""+urlString+"\" ", exc);
 

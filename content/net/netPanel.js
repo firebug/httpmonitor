@@ -30,7 +30,7 @@ define([
 ],
 function(FBTrace, Obj, Firebug, Domplate, Xpcom, Locale, Events, Options, Url, Http,
     Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache,
-    Panel, Chrome, InfoTip) {
+    Panel, Chrome, InfoTip, NetMonitor) {
 
 with (Domplate) {
 
@@ -43,7 +43,7 @@ const Cr = Components.results;
 
 var layoutInterval = 300;
 var panelName = "net";
-var NetRequestEntry = Firebug.NetMonitor.NetRequestEntry;
+var NetRequestEntry = NetMonitor.NetRequestEntry;
 
 // ********************************************************************************************* //
 
@@ -153,7 +153,7 @@ NetPanel.prototype = Obj.extend(Panel,
         var lastRow = this.summaryRow.previousSibling;
         if (files.length)
         {
-            var pageRow = Firebug.NetMonitor.NetPage.pageTag.insertRows({page: state}, lastRow)[0];
+            var pageRow = NetMonitor.NetPage.pageTag.insertRows({page: state}, lastRow)[0];
             pageRow.files = files;
 
             lastRow = this.summaryRow.previousSibling;
@@ -161,7 +161,7 @@ NetPanel.prototype = Obj.extend(Panel,
 
         // Insert a separator tag at the end of page-load-history entry list.
         if (this.table.getElementsByClassName("netPageRow").item(0))
-            Firebug.NetMonitor.NetPage.separatorTag.insertRows({}, lastRow);
+            NetMonitor.NetPage.separatorTag.insertRows({}, lastRow);
 
         Dom.scrollToBottom(this.panelNode);
     },
@@ -219,10 +219,10 @@ NetPanel.prototype = Obj.extend(Panel,
     {
         if (name == "netFilterCategory")
         {
-            Firebug.NetMonitor.syncFilterButtons();
+            NetMonitor.syncFilterButtons();
             /*Firebug.connection.eachContext(function syncFilters(context)
             {
-                Firebug.NetMonitor.onToggleFilter(context, value);
+                NetMonitor.onToggleFilter(context, value);
             });*/
         }
         else if (name == "netShowBFCacheResponses")
@@ -275,7 +275,7 @@ NetPanel.prototype = Obj.extend(Panel,
     {
         var header = Dom.getAncestorByClass(target, "netHeaderRow");
         if (header)
-            return Firebug.NetMonitor.NetRequestTable;
+            return NetMonitor.NetRequestTable;
 
         return Panel.getPopupObject.apply(this, arguments);
     },
@@ -545,7 +545,7 @@ NetPanel.prototype = Obj.extend(Panel,
     getEditor: function(target, value)
     {
         if (!this.conditionEditor)
-            this.conditionEditor = new Firebug.NetMonitor.ConditionEditor(this.document);
+            this.conditionEditor = new NetMonitor.ConditionEditor(this.document);
 
         return this.conditionEditor;
     },
@@ -618,13 +618,13 @@ NetPanel.prototype = Obj.extend(Panel,
 
     populateTimeInfoTip: function(infoTip, file)
     {
-        Firebug.NetMonitor.TimeInfoTip.render(this.context, file, infoTip);
+        NetMonitor.TimeInfoTip.render(this.context, file, infoTip);
         return true;
     },
 
     populateSizeInfoTip: function(infoTip, file)
     {
-        Firebug.NetMonitor.SizeInfoTip.render(file, infoTip);
+        NetMonitor.SizeInfoTip.render(file, infoTip);
         return true;
     },
 
@@ -632,7 +632,7 @@ NetPanel.prototype = Obj.extend(Panel,
     {
         var totalSizeLabel = row.getElementsByClassName("netTotalSizeLabel").item(0);
         var file = {size: totalSizeLabel.getAttribute("totalSize")};
-        Firebug.NetMonitor.SizeInfoTip.tag.replace({file: file}, infoTip);
+        NetMonitor.SizeInfoTip.tag.replace({file: file}, infoTip);
         return true;
     },
 
@@ -749,7 +749,7 @@ NetPanel.prototype = Obj.extend(Panel,
 
         var rightNow = NetUtils.now();
         this.updateRowData(rightNow);
-        this.updateLogLimit(Firebug.NetMonitor.maxQueueRequests);
+        this.updateLogLimit(NetMonitor.maxQueueRequests);
         this.updateTimeline(rightNow);
         this.updateSummaries(rightNow);
     },
@@ -764,9 +764,9 @@ NetPanel.prototype = Obj.extend(Panel,
                     [Options.prefDomain+".net.logLimit"])
             };
 
-            this.table = Firebug.NetMonitor.NetRequestTable.tableTag.append({}, this.panelNode);
+            this.table = NetMonitor.NetRequestTable.tableTag.append({}, this.panelNode);
             var tbody = this.table.querySelector(".netTableBody");
-            this.limitRow = Firebug.NetMonitor.NetLimit.createRow(tbody, limitInfo);
+            this.limitRow = NetMonitor.NetLimit.createRow(tbody, limitInfo);
             this.summaryRow = NetRequestEntry.summaryTag.insertRows({}, this.table.lastChild.lastChild)[0];
 
             NetRequestEntry.footerTag.insertRows({}, this.summaryRow);
@@ -835,7 +835,7 @@ NetPanel.prototype = Obj.extend(Panel,
 
             // Allow customization of request entries in the list. A row is represented
             // by <TR> HTML element.
-            Events.dispatch(Firebug.NetMonitor.NetRequestTable.fbListeners,
+            Events.dispatch(NetMonitor.NetRequestTable.fbListeners,
                 "onCreateRequestEntry", [this, row]);
 
             row = row.nextSibling;
@@ -926,7 +926,7 @@ NetPanel.prototype = Obj.extend(Panel,
             if (Css.hasClass(row, "opened"))
             {
                 var netInfoBox = row.nextSibling.getElementsByClassName("netInfoBody").item(0);
-                Firebug.NetMonitor.NetInfoBody.updateInfo(netInfoBox, file, this.context);
+                NetMonitor.NetInfoBody.updateInfo(netInfoBox, file, this.context);
             }
         }
     },
@@ -1227,7 +1227,7 @@ NetPanel.prototype = Obj.extend(Panel,
 
         this.limitRow.limitInfo.totalCount++;
 
-        Firebug.NetMonitor.NetLimit.updateCounter(this.limitRow);
+        NetMonitor.NetLimit.updateCounter(this.limitRow);
 
         //if (netProgress.currentPhase == file.phase)
         //  netProgress.currentPhase = null;
@@ -1482,7 +1482,7 @@ var NetPanelSearch = function(panel, rowFinder)
 
             var netInfoRow = this.currentRow.nextSibling;
             var netInfoBox = netInfoRow.getElementsByClassName("netInfoBody").item(0);
-            Firebug.NetMonitor.NetInfoBody.selectTabByName(netInfoBox, "Response");
+            NetMonitor.NetInfoBody.selectTabByName(netInfoBox, "Response");
 
             // Before the search is started, the new content must be properly
             // layouted within the page. The layout is executed by reading
@@ -1530,13 +1530,13 @@ var NetPanelSearch = function(panel, rowFinder)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-Firebug.NetMonitor.ConditionEditor = function(doc)
+NetMonitor.ConditionEditor = function(doc)
 {
     Firebug.Breakpoint.ConditionEditor.apply(this, arguments);
 }
 
 // xxxHonza
-/*Firebug.NetMonitor.ConditionEditor.prototype = domplate(Firebug.Breakpoint.ConditionEditor.prototype,
+/*NetMonitor.ConditionEditor.prototype = domplate(Firebug.Breakpoint.ConditionEditor.prototype,
 {
     endEditing: function(target, value, cancel)
     {

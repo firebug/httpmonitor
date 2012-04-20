@@ -147,7 +147,7 @@ HttpActivityObserver.prototype =
         if (this.context.window != Win.getRootWindow(win))
             return;
 
-        //var context = Firebug.connection.getContextByWindow(win);
+        //var context = connection.getContextByWindow(win);
         // xxxHonza
         //var context = HttpMonitor.tabWatcher.context;
         //var tabId = Win.getWindowProxyIdForWindow(win);
@@ -157,7 +157,7 @@ HttpActivityObserver.prototype =
             return;
         }
 
-        //var networkContext = Firebug.NetMonitor.contexts[tabId];
+        //var networkContext = NetMonitor.contexts[tabId];
         //if (!networkContext)
         var networkContext = this.context.netProgress;
         if (!networkContext)

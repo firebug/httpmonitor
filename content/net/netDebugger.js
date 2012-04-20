@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/domplate",
     "lib/locale",
     "lib/events",
@@ -15,8 +14,7 @@ define([
     "base/rep",
     "chrome/chrome",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Url, Css, Dom, Arr, NetUtils, Rep,
-    Chrome) {
+function(FBTrace, Obj, Domplate, Locale, Events, Url, Css, Dom, Arr, NetUtils, Rep, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -35,7 +33,7 @@ function NetBreakpointGroup()
     this.breakpoints = [];
 }
 
-NetBreakpointGroup.prototype = Obj.extend(new Firebug.Breakpoint.BreakpointGroup(),
+NetBreakpointGroup.prototype = Obj.extend(new Breakpoint.BreakpointGroup(),
 {
     name: "netBreakpoints",
     title: Locale.$STR("net.label.XHR Breakpoints"),
@@ -94,7 +92,7 @@ Breakpoint.prototype =
             // The callbacks will set this if the condition is true or if the eval faults.
             delete context.breakingCause;
 
-            var rc = Firebug.CommandLine.evaluate(expr, context, null, context.window,
+            var rc = CommandLine.evaluate(expr, context, null, context.window,
                 this.onEvaluateSucceeds, this.onEvaluateFails );
 
             if (FBTrace.DBG_NET)

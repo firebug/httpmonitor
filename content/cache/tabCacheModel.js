@@ -78,7 +78,7 @@ var contentTypes =
  * observer so, HTTP communication can be intercepted and all incoming data stored within
  * a cache.
  */
-Firebug.TabCacheModel = Obj.extend(Module,
+var TabCacheModel = Obj.extend(Module,
 {
     dispatchName: "tabCache",
     contentTypes: contentTypes,
@@ -311,7 +311,7 @@ ChannelListenerProxy.prototype =
     {
         try
         {
-            return Firebug.TabCacheModel.shouldCacheRequest(request)
+            return TabCacheModel.shouldCacheRequest(request)
         }
         catch (err)
         {
@@ -323,9 +323,9 @@ ChannelListenerProxy.prototype =
 // ********************************************************************************************* //
 // Registration
 
-Chrome.registerModule(Firebug.TabCacheModel);
+Chrome.registerModule(TabCacheModel);
 
-return Firebug.TabCacheModel;
+return TabCacheModel;
 
 // ********************************************************************************************* //
 });
