@@ -24,12 +24,13 @@ define([
     "net/browserCache",
     "base/panel",
     "chrome/chrome",
+    "chrome/infoTip",
     "net/netMonitor",
     "net/netReps",
 ],
 function(FBTrace, Obj, Firebug, Domplate, Xpcom, Locale, Events, Options, Url, Http,
     Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache,
-    Panel, Chrome) {
+    Panel, Chrome, InfoTip) {
 
 with (Domplate) {
 
@@ -607,7 +608,7 @@ NetPanel.prototype = Obj.extend(Panel,
                     return true;
 
                 this.infoTipURL = infoTipURL;
-                return Firebug.InfoTip.populateImageInfoTip(infoTip, row.repObject.href);
+                return InfoTip.populateImageInfoTip(infoTip, row.repObject.href);
             }
         }
 

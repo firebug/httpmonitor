@@ -62,9 +62,9 @@ var Chrome =
         if (type == 'object' && object instanceof String)
             type = 'string';
 
-        for (var i = 0; i < reps.length; ++i)
+        for (var i = 0; i < this.reps.length; ++i)
         {
-            var rep = reps[i];
+            var rep = this.reps[i];
             try
             {
                 if (rep.supportsObject(object, type, (context?context:Firebug.currentContext) ))
@@ -79,8 +79,8 @@ var Chrome =
                 if (FBTrace.DBG_ERRORS)
                 {
                     FBTrace.sysout("firebug.getRep FAILS: "+ exc, exc);
-                    FBTrace.sysout("firebug.getRep reps["+i+"/"+reps.length+"]: "+
-                        (typeof(reps[i])), reps[i]);
+                    FBTrace.sysout("firebug.getRep reps["+i+"/"+this.reps.length+"]: "+
+                        (typeof(this.reps[i])), this.reps[i]);
                 }
             }
         }
@@ -88,7 +88,8 @@ var Chrome =
         //if (FBTrace.DBG_DOM)
         //    FBTrace.sysout("getRep default type: "+type+" object: "+object, rep);
 
-        return (type == "function") ? defaultFuncRep : defaultRep;
+        // xxxHonza: do we need default reps?
+        //return (type == "function") ? defaultFuncRep : defaultRep;
     },
 
     getRepObject: function(node)
