@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/domplate",
     "lib/locale",
     "lib/events",
@@ -23,11 +22,15 @@ define([
     "base/listener",
     "base/rep",
     "chrome/chrome",
+    "viewers/xmlViewer",    //xxxHonza: viewers shouldn't be here
+    "viewers/svgViewer",
+    "viewers/jsonViewer",
     "viewers/fontViewer",
+    "net/netMonitor",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
+function(FBTrace, Obj, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
     Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener, Rep, Chrome,
-    FontViewer) {
+    XMLViewer, SVGViewer, JSONViewer, FontViewer, NetMonitor) {
 
 with (Domplate) {
 
@@ -47,7 +50,7 @@ const reSplitIP = /^(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)$/;
 /**
  * @domplate Represents a template that is used to render basic content of the net panel.
  */
-Firebug.NetMonitor.NetRequestTable = domplate(Rep, new Listener(),
+NetMonitor.NetRequestTable = domplate(Rep, new Listener(),
 {
     inspectable: false,
 
@@ -387,7 +390,7 @@ Firebug.NetMonitor.NetRequestTable = domplate(Rep, new Listener(),
 /**
  * @domplate Represents a template that is used to render net panel entries.
  */
-Firebug.NetMonitor.NetRequestEntry = domplate(Rep, new Listener(),
+NetMonitor.NetRequestEntry = domplate(Rep, new Listener(),
 {
     fileTag:
         FOR("file", "$files",
@@ -548,16 +551,15 @@ Firebug.NetMonitor.NetRequestEntry = domplate(Rep, new Listener(),
         {
             var netInfoRow = this.netInfoTag.insertRows({file: file}, row)[0];
             var netInfoCol = netInfoRow.getElementsByClassName("netInfoCol").item(0);
-            var netInfoBox = Firebug.NetMonitor.NetInfoBody.tag.replace({file: file}, netInfoCol);
+            var netInfoBox = NetMonitor.NetInfoBody.tag.replace({file: file}, netInfoCol);
 
             // Notify listeners so additional tabs can be created.
-            Events.dispatch(Firebug.NetMonitor.NetInfoBody.fbListeners, "initTabBody",
+            Events.dispatch(NetMonitor.NetInfoBody.fbListeners, "initTabBody",
                 [netInfoBox, file]);
 
             // Select "Headers" tab by default, if no other tab is selected already.
-            // (e.g. by a third party Firebug extension in 'initTabBody' event)
             if (!netInfoBox.selectedTab)
-                Firebug.NetMonitor.NetInfoBody.selectTabByName(netInfoBox, "Headers");
+                NetMonitor.NetInfoBody.selectTabByName(netInfoBox, "Headers");
 
             var category = NetUtils.getFileCategory(row.repObject);
             if (category)
@@ -569,7 +571,7 @@ Firebug.NetMonitor.NetRequestEntry = domplate(Rep, new Listener(),
             var netInfoRow = row.nextSibling;
             var netInfoBox = netInfoRow.getElementsByClassName("netInfoBody").item(0);
 
-            Events.dispatch(Firebug.NetMonitor.NetInfoBody.fbListeners, "destroyTabBody",
+            Events.dispatch(NetMonitor.NetInfoBody.fbListeners, "destroyTabBody",
                 [netInfoBox, file]);
 
             row.parentNode.removeChild(netInfoRow);
@@ -709,7 +711,7 @@ Firebug.NetMonitor.NetRequestEntry = domplate(Rep, new Listener(),
 
 // ********************************************************************************************* //
 
-Firebug.NetMonitor.NetPage = domplate(Rep,
+NetMonitor.NetPage = domplate(Rep,
 {
     separatorTag:
         TR({"class": "netRow netPageSeparatorRow"},
@@ -773,7 +775,7 @@ Firebug.NetMonitor.NetPage = domplate(Rep,
  * @domplate Represents a template that is used to render detailed info about a request.
  * This template is rendered when a request is expanded.
  */
-Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
+NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
 {
     tag:
         DIV({"class": "netInfoBody", _repObject: "$file"},
@@ -880,7 +882,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
     getParamName: function(param)
     {
         var name = param.name;
-        var limit = Firebug.netParamNameLimit;
+        var limit = Options.get("netParamNameLimit");
         if (limit <= 0)
             return name;
 
@@ -1138,7 +1140,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
         }
 
         // Notify listeners about update so, content of custom tabs can be updated.
-        Events.dispatch(Firebug.NetMonitor.NetInfoBody.fbListeners, "updateTabBody",
+        Events.dispatch(NetMonitor.NetInfoBody.fbListeners, "updateTabBody",
             [netInfoBox, file, context]);
     },
 
@@ -1156,7 +1158,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
     {
         var newHeight = (this.startHeight + newPos.y);
         this.htmlPreview.style.height = newHeight + "px";
-        Options.setPref(Firebug.prefDomain, "netHtmlPreviewHeight", newHeight);
+        Options.set("netHtmlPreviewHeight", newHeight);
     },
 
     onDrop: function(tracker)
@@ -1171,7 +1173,7 @@ Firebug.NetMonitor.NetInfoBody = domplate(Rep, new Listener(),
     {
         // Get response text and make sure it doesn't exceed the max limit.
         var text = NetUtils.getResponseText(file, context);
-        var limit = Firebug.netDisplayedResponseLimit + 15;
+        var limit = Options.get("netDisplayedResponseLimit") + 15;
         var limitReached = text ? (text.length > limit) : false;
         if (limitReached)
             text = text.substr(0, limit) + "...";
@@ -1361,7 +1363,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
 
     getParamValueIterator: function(param)
     {
-        return Firebug.NetMonitor.NetInfoBody.getParamValueIterator(param);
+        return NetMonitor.NetInfoBody.getParamValueIterator(param);
     },
 
     render: function(context, parentNode, file)
@@ -1388,13 +1390,13 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         var contentType = NetUtils.findHeader(file.requestHeaders, "content-type");
 
         // xxxHonza: there should be APIs for registering viewersw.
-        if (Firebug.JSONViewerModel.isJSON(contentType, text))
+        if (JSONViewer.isJSON(contentType, text))
             this.insertJSON(parentNode, file, context);
 
-        if (Firebug.XMLViewerModel.isXML(contentType))
+        if (XMLViewer.isXML(contentType))
             this.insertXML(parentNode, file, context);
 
-        if (Firebug.SVGViewerModel.isSVG(contentType))
+        if (SVGViewer.isSVG(contentType))
             this.insertSVG(parentNode, file, context);
 
         if (FontViewer.isFont(contentType, file.href, text))
@@ -1417,7 +1419,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         var paramTable = this.paramsTable.append(null, parentNode);
         var row = paramTable.getElementsByClassName("netInfoPostParamsTitle").item(0);
 
-        Firebug.NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: params}, row);
+        NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: params}, row);
     },
 
     insertParts: function(parentNode, data)
@@ -1428,7 +1430,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         var partsTable = this.partsTable.append(null, parentNode);
         var row = partsTable.getElementsByClassName("netInfoPostPartsTitle").item(0);
 
-        Firebug.NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: data.params}, row);
+        NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: data.params}, row);
     },
 
     insertJSON: function(parentNode, file, context)
@@ -1444,8 +1446,9 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         if (!this.toggles)
             this.toggles = new ToggleBranch.ToggleBranch();
 
-        Firebug.DOMPanel.DirTable.tag.replace(
-            {object: data, toggles: this.toggles}, jsonBody);
+        //xxxHonza: DOMPanel is not part of HTTP Monitor, should it be ported?
+        //DOMPanel.DirTable.tag.replace(
+        //    {object: data, toggles: this.toggles}, jsonBody);
     },
 
     insertXML: function(parentNode, file, context)
@@ -1455,7 +1458,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         var jsonTable = this.xmlTable.append(null, parentNode);
         var jsonBody = jsonTable.getElementsByClassName("netInfoPostXMLBody").item(0);
 
-        Firebug.XMLViewerModel.insertXML(jsonBody, text);
+        XMLViewer.insertXML(jsonBody, text);
     },
 
     insertSVG: function(parentNode, file, context)
@@ -1465,7 +1468,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         var jsonTable = this.svgTable.append(null, parentNode);
         var jsonBody = jsonTable.getElementsByClassName("netInfoPostSVGBody").item(0);
 
-        Firebug.SVGViewerModel.insertSVG(jsonBody, text);
+        SVGViewer.insertSVG(jsonBody, text);
     },
 
     insertFont: function(parentNode, file, context)
@@ -1630,7 +1633,7 @@ var NetInfoHeaders = domplate(Rep, new Listener(),
                 return a.name > b.name ? 1 : -1;
             });
 
-            Firebug.NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: headers}, tbody);
+            NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: headers}, tbody);
 
             var titleRow = Dom.getChildByClass(headersTable, "netInfo" + rowName + "Title");
             Css.removeClass(titleRow, "collapsed");
@@ -1670,7 +1673,7 @@ var NetInfoHeaders = domplate(Rep, new Listener(),
  * @domplate Represents a template for popup tip that displays detailed timing info about
  * a network request.
  */
-Firebug.NetMonitor.TimeInfoTip = domplate(Rep,
+NetMonitor.TimeInfoTip = domplate(Rep,
 {
     tableTag:
         TABLE({"class": "timeInfoTip", "id": "fbNetTimeInfoTip"},
@@ -1764,7 +1767,7 @@ Firebug.NetMonitor.TimeInfoTip = domplate(Rep,
 
     render: function(context, file, parentNode)
     {
-        var infoTip = Firebug.NetMonitor.TimeInfoTip.tableTag.replace({}, parentNode);
+        var infoTip = NetMonitor.TimeInfoTip.tableTag.replace({}, parentNode);
 
         var elapsed = file.loaded ? file.endTime - file.startTime :
             file.phase.phaseEndTime - file.startTime;
@@ -1866,7 +1869,7 @@ Firebug.NetMonitor.TimeInfoTip = domplate(Rep,
 /**
  * @domplate Represents a template for a pupup tip with detailed size info.
  */
-Firebug.NetMonitor.SizeInfoTip = domplate(Rep,
+NetMonitor.SizeInfoTip = domplate(Rep,
 {
     tag:
         TABLE({"class": "sizeInfoTip", "id": "fbNetSizeInfoTip", role:"presentation"},
@@ -1945,7 +1948,7 @@ Firebug.NetMonitor.SizeInfoTip = domplate(Rep,
 
 // ********************************************************************************************* //
 
-Firebug.NetMonitor.NetLimit = domplate(Rep,
+NetMonitor.NetLimit = domplate(Rep,
 {
     collapsed: true,
 
@@ -2045,9 +2048,9 @@ var ResponseSizeLimit = domplate(Rep,
 // ********************************************************************************************* //
 // Registration
 
-Chrome.registerRep(Firebug.NetMonitor.NetRequestTable);
+Chrome.registerRep(NetMonitor.NetRequestTable);
 
-return Firebug.NetMonitor.NetRequestTable;
+return NetMonitor.NetRequestTable;
 
 // ********************************************************************************************* //
 }});

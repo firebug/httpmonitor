@@ -13,8 +13,10 @@ define([
     "net/netUtils",
     "base/module",
     "base/rep",
+    "net/netMonitor",
 ],
-function(FBTrace, Obj, Firebug, Chrome, Domplate, Locale, Xpcom, Css, Http, NetUtils, Module, Rep) {
+function(FBTrace, Obj, Firebug, Chrome, Domplate, Locale, Xpcom, Css, Http, NetUtils,
+    Module, Rep, NetMonitor) {
 
 // ********************************************************************************************* //
 // Constants
@@ -38,10 +40,10 @@ var xmlContentTypes =
 /**
  * @module Implements viewer for XML based network responses. In order to create a new
  * tab wihin network request detail, a listener is registered into
- * <code>Firebug.NetMonitor.NetInfoBody</code> object.
+ * <code>NetMonitor.NetInfoBody</code> object.
  */
-Firebug.XMLViewerModel = Obj.extend(Module,
-/** lends Firebug.XMLViewerModel */
+var XMLViewer = Obj.extend(Module,
+/** lends XMLViewer */
 {
     dispatchName: "xmlViewer",
 
@@ -49,14 +51,14 @@ Firebug.XMLViewerModel = Obj.extend(Module,
     {
         Module.initialize.apply(this, arguments);
 
-        Firebug.NetMonitor.NetInfoBody.addListener(this);
+        NetMonitor.NetInfoBody.addListener(this);
     },
 
     shutdown: function()
     {
         Module.shutdown.apply(this, arguments);
 
-        Firebug.NetMonitor.NetInfoBody.removeListener(this);
+        NetMonitor.NetInfoBody.removeListener(this);
     },
 
     /**
@@ -70,7 +72,7 @@ Firebug.XMLViewerModel = Obj.extend(Module,
         // If the response is XML let's display a pretty preview.
         if (this.isXML(Http.safeGetContentType(file.request)))
         {
-            Firebug.NetMonitor.NetInfoBody.appendTab(infoBox, "XML",
+            NetMonitor.NetInfoBody.appendTab(infoBox, "XML",
                 Locale.$STR("xmlviewer.tab.XML"));
 
             if (FBTrace.DBG_XMLVIEWER)
@@ -106,6 +108,8 @@ Firebug.XMLViewerModel = Obj.extend(Module,
 
     insertXML: function(parentNode, text)
     {
+        return;
+
         var parser = Xpcom.CCIN("@mozilla.org/xmlextras/domparser;1", "nsIDOMParser");
         var doc = parser.parseFromString(text, "text/xml");
         var root = doc.documentElement;
@@ -127,11 +131,11 @@ Firebug.XMLViewerModel = Obj.extend(Module,
         // Override getHidden in these templates. The parsed XML documen is
         // hidden, but we want to display it using 'visible' styling.
         var templates = [
-            Firebug.HTMLPanel.CompleteElement,
-            Firebug.HTMLPanel.Element,
-            Firebug.HTMLPanel.TextElement,
-            Firebug.HTMLPanel.EmptyElement,
-            Firebug.HTMLPanel.XEmptyElement,
+            HTMLPanel.CompleteElement,
+            HTMLPanel.Element,
+            HTMLPanel.TextElement,
+            HTMLPanel.EmptyElement,
+            HTMLPanel.XEmptyElement,
         ];
 
         var originals = [];
@@ -144,7 +148,7 @@ Firebug.XMLViewerModel = Obj.extend(Module,
         }
 
         // Generate XML preview.
-        Firebug.HTMLPanel.CompleteElement.tag.replace({object: doc.documentElement}, parentNode);
+        HTMLPanel.CompleteElement.tag.replace({object: doc.documentElement}, parentNode);
 
         for (var i=0; i<originals.length; i++)
             templates[i].getHidden = originals[i];
@@ -156,10 +160,10 @@ Firebug.XMLViewerModel = Obj.extend(Module,
 
 /**
  * @domplate Represents a template for displaying XML parser errors. Used by
- * <code>Firebug.XMLViewerModel</code>.
+ * <code>XMLViewer</code>.
  */
 with (Domplate) {
-Firebug.XMLViewerModel.ParseError = domplate(Rep,
+XMLViewer.ParseError = domplate(Rep,
 {
     tag:
         DIV({"class": "xmlInfoError"},
@@ -190,9 +194,9 @@ Firebug.XMLViewerModel.ParseError = domplate(Rep,
 // ********************************************************************************************* //
 // Registration
 
-Chrome.registerModule(Firebug.XMLViewerModel);
+Chrome.registerModule(XMLViewer);
 
-return Firebug.XMLViewerModel;
+return XMLViewer;
 
 // ********************************************************************************************* //
 });

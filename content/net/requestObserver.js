@@ -22,7 +22,7 @@ var categoryManager = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICate
 // HTTP Request Observer implementation
 
 /**
- * @service This service is intended as the only HTTP observer registered by Firebug.
+ * @service This service is intended as the only HTTP observer registered.
  * All FB extensions and Firebug itself should register a listener within this
  * service in order to listen for http-on-modify-request, http-on-examine-response and
  * http-on-examine-cached-response events.

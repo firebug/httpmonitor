@@ -220,7 +220,7 @@ NetPanel.prototype = Obj.extend(Panel,
         if (name == "netFilterCategory")
         {
             NetMonitor.syncFilterButtons();
-            /*Firebug.connection.eachContext(function syncFilters(context)
+            /*connection.eachContext(function syncFilters(context)
             {
                 NetMonitor.onToggleFilter(context, value);
             });*/
@@ -434,7 +434,7 @@ NetPanel.prototype = Obj.extend(Panel,
                 label: "net.label.Resend",
                 tooltiptext: "net.tip.Resend",
                 id: "fbNetResend",
-                command: Obj.bindFixed(Firebug.Spy.XHR.resend, Firebug.Spy.XHR, file, this.context)
+                command: Obj.bindFixed(Spy.XHR.resend, Spy.XHR, file, this.context)
             }
         );*/
 
@@ -526,11 +526,11 @@ NetPanel.prototype = Obj.extend(Panel,
         if (!bp)
             return;
 
-        this.editBreakpointCondition(file);
+       // this.editBreakpointCondition(file);
         Events.cancelEvent(event);
     },
 
-    editBreakpointCondition: function(file)
+    /*editBreakpointCondition: function(file)
     {
         var bp = this.context.netProgress.breakpoints.findBreakpoint(file.getFileURL());
         if (!bp)
@@ -539,8 +539,8 @@ NetPanel.prototype = Obj.extend(Panel,
         var condition = bp ? bp.condition : "";
 
         this.selectedSourceBox = this.panelNode;
-        Firebug.Editor.startEditing(file.row, condition);
-    },
+        Editor.startEditing(file.row, condition);
+    },*/
 
     getEditor: function(target, value)
     {
@@ -640,13 +640,13 @@ NetPanel.prototype = Obj.extend(Panel,
     getSearchOptionsMenuItems: function()
     {
         return [
-            Firebug.Search.searchOptionMenu("search.Case_Sensitive", "searchCaseSensitive",
+            Search.searchOptionMenu("search.Case_Sensitive", "searchCaseSensitive",
                 "search.tip.Case_Sensitive"),
-            //Firebug.Search.searchOptionMenu("search.net.Headers", "netSearchHeaders"),
-            //Firebug.Search.searchOptionMenu("search.net.Parameters", "netSearchParameters"),
-            Firebug.Search.searchOptionMenu("search.Use_Regular_Expression",
+            //Search.searchOptionMenu("search.net.Headers", "netSearchHeaders"),
+            //Search.searchOptionMenu("search.net.Parameters", "netSearchParameters"),
+            Search.searchOptionMenu("search.Use_Regular_Expression",
                 "searchUseRegularExpression", "search.tip.Use_Regular_Expression"),
-            Firebug.Search.searchOptionMenu("search.net.Response_Bodies", "netSearchResponseBody",
+            Search.searchOptionMenu("search.net.Response_Bodies", "netSearchResponseBody",
                 "search.net.tip.Response_Bodies")
         ];
     },
@@ -663,12 +663,12 @@ NetPanel.prototype = Obj.extend(Panel,
         var row;
         if (this.currentSearch && text == this.currentSearch.text)
         {
-            row = this.currentSearch.findNext(true, false, reverse, Firebug.Search.isCaseSensitive(text));
+            row = this.currentSearch.findNext(true, false, reverse, Search.isCaseSensitive(text));
         }
         else
         {
             this.currentSearch = new NetPanelSearch(this);
-            row = this.currentSearch.find(text, reverse, Firebug.Search.isCaseSensitive(text));
+            row = this.currentSearch.find(text, reverse, Search.isCaseSensitive(text));
         }
 
         if (row)
@@ -1376,7 +1376,7 @@ NetPanel.prototype = Obj.extend(Panel,
         var maxWidth = netHrefCol.clientWidth;
 
         // This call must precede all getCSSStyleRules calls  FIXME not needed after 3.6
-        //Firebug.CSSModule.cleanupSheets(hrefLabel.ownerDocument, this.context);
+        //CSSModule.cleanupSheets(hrefLabel.ownerDocument, this.context);
         var rules = Dom.domUtils.getCSSStyleRules(hrefLabel);
         for (var i = 0; i < rules.Count(); ++i)
         {
@@ -1474,7 +1474,7 @@ var NetPanelSearch = function(panel, rowFinder)
         if (!file)
             return;
 
-        var scanRE = Firebug.Search.getTestingRegex(this.text);
+        var scanRE = Search.getTestingRegex(this.text);
         if (scanRE.test(file.responseText))
         {
             if (!Css.hasClass(this.currentRow, "opened"))
@@ -1532,11 +1532,11 @@ var NetPanelSearch = function(panel, rowFinder)
 
 NetMonitor.ConditionEditor = function(doc)
 {
-    Firebug.Breakpoint.ConditionEditor.apply(this, arguments);
+    Breakpoint.ConditionEditor.apply(this, arguments);
 }
 
 // xxxHonza
-/*NetMonitor.ConditionEditor.prototype = domplate(Firebug.Breakpoint.ConditionEditor.prototype,
+/*NetMonitor.ConditionEditor.prototype = domplate(Breakpoint.ConditionEditor.prototype,
 {
     endEditing: function(target, value, cancel)
     {

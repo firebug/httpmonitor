@@ -146,7 +146,9 @@ var HttpRequestObserver =
             // New page loaded, clear UI if 'Persist' isn't active.
             if (!Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
             {
-                Firebug.NetMonitor.clear(context);
+                var panel = context.getPanel("net");
+                if (panel)
+                    panel.clear();
             }
         }
 

@@ -51,6 +51,9 @@ var DefaultPrefs =
 // Server
     "serverMode": false,
     "postDataTimeout": 600,
+
+// Search
+    "searchUseRegularExpression": false
 }
 
 // ********************************************************************************************* //

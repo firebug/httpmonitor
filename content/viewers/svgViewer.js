@@ -13,8 +13,10 @@ define([
     "net/netUtils",
     "base/module",
     "base/rep",
+    "net/netMonitor",
 ],
-function(FBTrace, Obj, Firebug, Chrome, Domplate, Locale, Xpcom, Css, Http, NetUtils, Module, Rep) {
+function(FBTrace, Obj, Firebug, Chrome, Domplate, Locale, Xpcom, Css, Http, NetUtils,
+    Module, Rep, NetMonitor) {
 
 // ********************************************************************************************* //
 // Constants
@@ -31,10 +33,10 @@ var contentTypes =
 /**
  * @module Implements viewer for SVG based network responses. In order to create a new
  * tab wihin network request detail, a listener is registered into
- * <code>Firebug.NetMonitor.NetInfoBody</code> object.
+ * <code>NetMonitor.NetInfoBody</code> object.
  */
-Firebug.SVGViewerModel = Obj.extend(Module,
-/** lends Firebug.SVGViewerModel */
+var SVGViewer = Obj.extend(Module,
+/** lends SVGViewer */
 {
     dispatchName: "svgViewer",
 
@@ -42,14 +44,14 @@ Firebug.SVGViewerModel = Obj.extend(Module,
     {
         Module.initialize.apply(this, arguments);
 
-        Firebug.NetMonitor.NetInfoBody.addListener(this);
+        NetMonitor.NetInfoBody.addListener(this);
     },
 
     shutdown: function()
     {
         Module.shutdown.apply(this, arguments);
 
-        Firebug.NetMonitor.NetInfoBody.removeListener(this);
+        NetMonitor.NetInfoBody.removeListener(this);
     },
 
     /**
@@ -63,7 +65,7 @@ Firebug.SVGViewerModel = Obj.extend(Module,
         // If the response is SVG let's display a pretty preview.
         if (this.isSVG(Http.safeGetContentType(file.request)))
         {
-            Firebug.NetMonitor.NetInfoBody.appendTab(infoBox, "SVG",
+            NetMonitor.NetInfoBody.appendTab(infoBox, "SVG",
                 Locale.$STR("svgviewer.tab.SVG"));
 
             if (FBTrace.DBG_SVGVIEWER)
@@ -99,6 +101,8 @@ Firebug.SVGViewerModel = Obj.extend(Module,
 
     insertSVG: function(parentNode, text)
     {
+        return;
+
         var parser = Xpcom.CCIN("@mozilla.org/xmlextras/domparser;1", "nsIDOMParser");
         var doc = parser.parseFromString(text, "text/xml");
         var root = doc.documentElement;
@@ -120,11 +124,11 @@ Firebug.SVGViewerModel = Obj.extend(Module,
         // Override getHidden in these templates. The parsed SVG document is
         // hidden, but we want to display it using 'visible' styling.
         var templates = [
-            Firebug.HTMLPanel.CompleteElement,
-            Firebug.HTMLPanel.Element,
-            Firebug.HTMLPanel.TextElement,
-            Firebug.HTMLPanel.EmptyElement,
-            Firebug.HTMLPanel.XEmptyElement,
+            HTMLPanel.CompleteElement,
+            HTMLPanel.Element,
+            HTMLPanel.TextElement,
+            HTMLPanel.EmptyElement,
+            HTMLPanel.XEmptyElement,
         ];
 
         var originals = [];
@@ -137,7 +141,7 @@ Firebug.SVGViewerModel = Obj.extend(Module,
         }
 
         // Generate SVG preview.
-        Firebug.HTMLPanel.CompleteElement.tag.replace({object: doc.documentElement}, parentNode);
+        HTMLPanel.CompleteElement.tag.replace({object: doc.documentElement}, parentNode);
 
         for (var i=0; i<originals.length; i++)
             templates[i].getHidden = originals[i];
@@ -149,10 +153,10 @@ Firebug.SVGViewerModel = Obj.extend(Module,
 
 /**
  * @domplate Represents a template for displaying SVG parser errors. Used by
- * <code>Firebug.SVGViewerModel</code>.
+ * <code>SVGViewer</code>.
  */
 with (Domplate) {
-Firebug.SVGViewerModel.ParseError = domplate(Rep,
+SVGViewer.ParseError = domplate(Rep,
 {
     tag:
         DIV({"class": "svgInfoError"},
@@ -183,9 +187,9 @@ Firebug.SVGViewerModel.ParseError = domplate(Rep,
 // ********************************************************************************************* //
 // Registration
 
-Chrome.registerModule(Firebug.SVGViewerModel);
+Chrome.registerModule(SVGViewer);
 
-return Firebug.SVGViewerModel;
+return SVGViewer;
 
 // ********************************************************************************************* //
 });

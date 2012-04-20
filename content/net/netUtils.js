@@ -10,9 +10,10 @@ define([
     "lib/http",
     "lib/string",
     "lib/xml",
-    "lib/window"
+    "lib/window",
+    "lib/options",
 ],
-function(FBTrace, Firebug, Locale, Events, Url, Xpcom, Http, Str, Xml, Win) {
+function(FBTrace, Firebug, Locale, Events, Url, Xpcom, Http, Str, Xml, Win, Options) {
 
 // ********************************************************************************************* //
 // Constants
@@ -179,7 +180,7 @@ var NetUtils =
         if (!file.postText)
             return file.postText;
 
-        var limit = Firebug.netDisplayedPostBodyLimit;
+        var limit = Options.get("netDisplayedPostBodyLimit");
         if (file.postText.length > limit && !noLimit)
         {
             return Str.cropString(file.postText, limit,
@@ -305,8 +306,9 @@ var NetUtils =
 
                 if (context)
                 {
-                    // Response haeaders are available now, dispatch an event to listeners
-                    Events.dispatch(Firebug.NetMonitor.fbListeners, "onResponseHeaders",
+                    // xxxHonza: is there a better place? This require dep on NetMonitor
+                    // Response headers are available now, dispatch an event to listeners
+                    Events.dispatch(context.netProgress.fbListeners, "onResponseHeaders",
                         [context, file]);
                 }
             }

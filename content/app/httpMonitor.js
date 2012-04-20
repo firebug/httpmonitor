@@ -121,7 +121,7 @@ var HttpMonitor =
 
     togglePersist: function()
     {
-        Firebug.NetMonitor.togglePersist(Chrome.currentContext);
+        NetMonitor.togglePersist(Chrome.currentContext);
     },
 
     onToggleFilter: function(filter)

@@ -8,7 +8,7 @@ define([
     "lib/string",
     "net/httpActivityObserver",
     "net/httpRequestObserver",
-    "net/netProgress",
+    "net/netProgress",          //xxxHonza: this dep doesn't have to be here.
     "net/netUtils",
     "lib/events",
     "net/netCacheListener",
@@ -40,7 +40,7 @@ var contentLoad = NetProgress.prototype.contentLoad;
  * This allows to avoid (performance) expensive features if the functionality is not necessary
  * for the user.
  */
-Firebug.NetMonitor = Obj.extend(Module,
+var NetMonitor = Obj.extend(Module,
 {
     dispatchName: "netMonitor",
     maxQueueRequests: 500,
@@ -60,7 +60,7 @@ Firebug.NetMonitor = Obj.extend(Module,
         Module.initializeUI.apply(this, arguments);
 
         // Initialize max limit for logged requests.
-        Firebug.NetMonitor.updateMaxLimit();
+        NetMonitor.updateMaxLimit();
 
         // Synchronize buttons with the current filter.
         this.syncFilterButtons();
@@ -83,7 +83,7 @@ Firebug.NetMonitor = Obj.extend(Module,
         this.initNetContext(context);
         this.attachObservers(context);
 
-        //xxxHonza: Should be done everty time the page is reloaded.
+        //xxxHonza: Should be done every time the page is reloaded.
         //this.registerLoadListeners(context);
 
         var netProgress = context.netProgress;
@@ -119,7 +119,10 @@ Firebug.NetMonitor = Obj.extend(Module,
         if (context.netProgress)
             return;
 
-        var netProgress = new NetProgress(context);
+        if (!this.fbListeners)
+            this.fbListeners = [];
+
+        var netProgress = new NetProgress(context, this.fbListeners);
         context.netProgress = netProgress;
     },
 
@@ -275,9 +278,9 @@ Firebug.NetMonitor = Obj.extend(Module,
 // ********************************************************************************************* //
 // Registration
 
-Chrome.registerModule(Firebug.NetMonitor);
+Chrome.registerModule(NetMonitor);
 
-return Firebug.NetMonitor;
+return NetMonitor;
 
 // ********************************************************************************************* //
 });

@@ -11,7 +11,7 @@ define([
     "lib/url",
     "lib/http",
     "lib/string",
-    "viewers/jsonViewer",
+    "viewers/jsonViewer",       //xxxHonza: this dep should not be here
     "lib/window",
     "base/module",
     "chrome/chrome",
@@ -298,7 +298,7 @@ ChannelListenerProxy.prototype =
         {
             // xxxHonza
             //return HttpMonitor.tabWatcher.context;
-            //return Firebug.connection.getContextByWindow(this.window);
+            //return connection.getContextByWindow(this.window);
             return Chrome.currentContext;
         }
         catch (e)

@@ -3,7 +3,6 @@
 define([
     "lib/trace",
     "lib/object",
-    "app/firebug",
     "lib/domplate",
     "lib/locale",
     "lib/events",
@@ -18,9 +17,10 @@ define([
     "lib/options",
     "base/module",
     "chrome/chrome",
+    "net/netMonitor",
 ],
-function(FBTrace, Obj, Firebug, Domplate, Locale, Events, Css, Dom, Http, Str, Json,
-    ToggleBranch, Arr, System, Options, Module, Chrome) {
+function(FBTrace, Obj, Domplate, Locale, Events, Css, Dom, Http, Str, Json,
+    ToggleBranch, Arr, System, Options, Module, Chrome, NetMonitor) {
 
 // ********************************************************************************************* //
 
@@ -42,7 +42,7 @@ var contentTypes =
 // ********************************************************************************************* //
 // Model implementation
 
-Firebug.JSONViewerModel = Obj.extend(Module,
+var JSONViewer = Obj.extend(Module,
 {
     dispatchName: "jsonViewer",
     contentTypes: contentTypes,
@@ -51,7 +51,7 @@ Firebug.JSONViewerModel = Obj.extend(Module,
     {
         Module.initialize.apply(this, arguments);
 
-        Firebug.NetMonitor.NetInfoBody.addListener(this);
+        NetMonitor.NetInfoBody.addListener(this);
         Chrome.registerUIListener(this);
     },
 
@@ -59,7 +59,7 @@ Firebug.JSONViewerModel = Obj.extend(Module,
     {
         Module.shutdown.apply(this, arguments);
 
-        Firebug.NetMonitor.NetInfoBody.removeListener(this);
+        NetMonitor.NetInfoBody.removeListener(this);
         Chrome.unregisterUIListener(this);
     },
 
@@ -110,7 +110,7 @@ Firebug.JSONViewerModel = Obj.extend(Module,
         // The jsonObject is created so, the JSON tab can be displayed.
         if (file.jsonObject && Obj.hasProperties(file.jsonObject))
         {
-            Firebug.NetMonitor.NetInfoBody.appendTab(infoBox, "JSON",
+            NetMonitor.NetInfoBody.appendTab(infoBox, "JSON",
                 Locale.$STR("jsonviewer.tab.JSON"));
 
             if (FBTrace.DBG_JSONVIEWER)
@@ -169,7 +169,7 @@ Firebug.JSONViewerModel = Obj.extend(Module,
 // ********************************************************************************************* //
 
 with (Domplate) {
-Firebug.JSONViewerModel.Preview = domplate(
+JSONViewer.Preview = domplate(
 {
     bodyTag:
         DIV({"class": "jsonPreview", _repObject: "$file"},
@@ -192,7 +192,7 @@ Firebug.JSONViewerModel.Preview = domplate(
         Events.cancelEvent(event);
 
         Css.toggleClass(sortLink, "sorted");
-        Options.set("sortJsonPreview", !Firebug.sortJsonPreview);
+        Options.set("sortJsonPreview", !Options.get("sortJsonPreview"));
 
         var preview = Dom.getAncestorByClass(sortLink, "jsonPreview");
         var body = Dom.getAncestorByClass(sortLink, "netInfoJSONText");
@@ -219,7 +219,7 @@ Firebug.JSONViewerModel.Preview = domplate(
         if (!body.jsonTree)
             body.jsonTree = new JSONTreePlate();
 
-        var input = {file: file, sorted: Firebug.sortJsonPreview};
+        var input = {file: file, sorted: Options.get("sortJsonPreview")};
         parentNode = this.bodyTag.replace(input, body, this);
         parentNode = parentNode.getElementsByClassName("jsonPreviewBody").item(0);
 
@@ -231,14 +231,13 @@ Firebug.JSONViewerModel.Preview = domplate(
 
 /*function JSONTreePlate()
 {
-    // Used by Firebug.DOMPanel.DirTable domplate.
+    // Used by DOMPanel.DirTable domplate.
     this.toggles = new ToggleBranch.ToggleBranch();
 }
 
-// xxxHonza: this object is *not* a panel (using Firebug terminology), but
 // there is no other way how to subclass the DOM Tree than to derive from the DOMBasePanel.
 // Better solution would be to have a middle object between DirTablePlate and DOMBasePanel.
-JSONTreePlate.prototype = Obj.extend(Firebug.DOMBasePanel.prototype,
+JSONTreePlate.prototype = Obj.extend(DOMBasePanel.prototype,
 {
     dispatchName: "JSONTreePlate",
 
@@ -276,7 +275,7 @@ JSONTreePlate.prototype = Obj.extend(Firebug.DOMBasePanel.prototype,
         function sortName(a, b) { return a.name > b.name ? 1 : -1; }
 
         // Sort only if it isn't an array (issue 4382).
-        if (Firebug.sortJsonPreview && !Arr.isArray(object, context.window))
+        if (Options.get("sortJsonPreview") && !Arr.isArray(object, context.window))
             members.sort(sortName);
 
         return members;
@@ -286,9 +285,9 @@ JSONTreePlate.prototype = Obj.extend(Firebug.DOMBasePanel.prototype,
 // ********************************************************************************************* //
 // Registration
 
-Chrome.registerModule(Firebug.JSONViewerModel);
+Chrome.registerModule(JSONViewer);
 
-return Firebug.JSONViewerModel;
+return JSONViewer;
 
 // ********************************************************************************************* //
 });

@@ -14,7 +14,7 @@ define([
     "lib/array",
     "lib/system",
     "net/netUtils",
-    "net/browserCache"
+    "net/browserCache",
 ],
 function(FBTrace, Obj, Firebug, Locale, Events, Url, Http, Css, Win, Str,
     Arr, System, NetUtils, BrowserCache) {
@@ -41,12 +41,14 @@ var gSerialNumber = 0;
 // ********************************************************************************************* //
 // Net Progress
 
-function NetProgress(context)
+function NetProgress(context, listeners)
 {
     this.context = context;
 
     // Initialization
     this.clear();
+
+    this.fbListeners = listeners;
 }
 
 NetProgress.prototype =
@@ -74,7 +76,7 @@ NetProgress.prototype =
 
                 // If the panel isn't currently visible, make sure the limit is up to date.
                 //if (!this.panel.layoutInterval)
-                //    this.panel.updateLogLimit(Firebug.NetMonitor.maxQueueRequests);
+                //    this.panel.updateLogLimit(maxQueueRequests);
 
                 return file;
             }
@@ -140,7 +142,7 @@ NetProgress.prototype =
 
             this.requestedFile(request, time, win, xhr);
 
-            Events.dispatch(Firebug.NetMonitor.fbListeners, "onRequest", [this.context, file]);
+            Events.dispatch(this.fbListeners, "onRequest", [this.context, file]);
         }
     },
 
@@ -226,7 +228,7 @@ NetProgress.prototype =
         // breakOnXHR flag.
         this.context.breakOnXHR = false;
 
-        Firebug.Breakpoint.breakNow(this.context.getPanel(panelName, true));
+        Breakpoint.breakNow(this.context.getPanel(panelName, true));
     },*/
 
     respondedHeaderFile: function respondedHeaderFile(request, time, extraStringData)
@@ -271,7 +273,7 @@ NetProgress.prototype =
 
     respondedFile: function respondedFile(request, time, info)
     {
-        Events.dispatch(Firebug.NetMonitor.fbListeners, "onExamineResponse", [this.context, request]);
+        Events.dispatch(this.fbListeners, "onExamineResponse", [this.context, request]);
 
         var file = this.getRequestFile(request);
         if (file)
@@ -331,21 +333,21 @@ NetProgress.prototype =
             this.endLoad(file);
 
             // If there is a network error, log it into the Console panel.
-            /*if (Firebug.showNetworkErrors && Firebug.NetMonitor.NetRequestEntry.isError(file))
+            /*if (showNetworkErrors && NetRequestEntry.isError(file))
             {
-                Firebug.Errors.increaseCount(this.context);
-                var message = "NetworkError: " + Firebug.NetMonitor.NetRequestEntry.getStatus(file) + " - "+file.href;
-                Firebug.Console.log(message, this.context, "error", null, true, file.getFileLink(message));
+                Errors.increaseCount(this.context);
+                var message = "NetworkError: " + NetRequestEntry.getStatus(file) + " - "+file.href;
+                Console.log(message, this.context, "error", null, true, file.getFileLink(message));
             }*/
 
-            Events.dispatch(Firebug.NetMonitor.fbListeners, "onResponse", [this.context, file]);
+            Events.dispatch(this.fbListeners, "onResponse", [this.context, file]);
             return file;
         }
     },
 
     respondedCacheFile: function respondedCacheFile(request, time, info)
     {
-        Events.dispatch(Firebug.NetMonitor.fbListeners, "onExamineCachedResponse",
+        Events.dispatch(this.fbListeners, "onExamineCachedResponse",
             [this.context, request]);
 
         var file = this.getRequestFile(request, null, true);
@@ -389,8 +391,7 @@ NetProgress.prototype =
 
             this.endLoad(file);
 
-            Events.dispatch(Firebug.NetMonitor.fbListeners, "onCachedResponse",
-                [this.context, file]);
+            Events.dispatch(this.fbListeners, "onCachedResponse", [this.context, file]);
 
             return file;
         }
@@ -924,7 +925,7 @@ NetProgress.prototype =
             // If the new request has been started within a "phaseInterval" after the
             // previous reqeust has been started, associate it with the current phase;
             // otherwise create a new phase.
-            var phaseInterval = 1000; // xxxHonza Firebug.netPhaseInterval;
+            var phaseInterval = 1000; // xxxHonza netPhaseInterval;
             var lastStartTime = this.currentPhase.lastStartTime;
             if (phaseInterval > 0 && this.loaded && file.startTime - lastStartTime >= phaseInterval)
                 this.startPhase(file);

@@ -63,7 +63,7 @@ NetCacheListener.prototype =
         if (file)
             file.responseText = responseText;
 
-        Events.dispatch(Firebug.NetMonitor.fbListeners, "onResponseBody", [context, file]);
+        Events.dispatch(context.netProgress.fbListeners, "onResponseBody", [context, file]);
     }
 }
 

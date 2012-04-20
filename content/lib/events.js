@@ -289,15 +289,6 @@ Events.removeEventListener = function(parent, eventId, listener, capturing)
     }
 }
 
-if (FBTrace.DBG_EVENTLISTENERS && typeof(Firebug) != "undefined")
-{
-    Firebug.Events = {};
-    Firebug.Events.getRegisteredListeners = function()
-    {
-        return listeners;
-    }
-}
-
 // ********************************************************************************************* //
 
 return Events;
