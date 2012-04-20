@@ -370,7 +370,7 @@ NetPanel.prototype = Obj.extend(Panel,
             "-",
             {
                 label: "OpenInTab",
-                tooltiptext: "firebug.tip.Open_In_Tab",
+                tooltiptext: "tip.Open_In_Tab",
                 command: Obj.bindFixed(this.openRequestInTab, this, file)
             }
         );

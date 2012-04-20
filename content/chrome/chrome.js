@@ -78,8 +78,8 @@ var Chrome =
             {
                 if (FBTrace.DBG_ERRORS)
                 {
-                    FBTrace.sysout("firebug.getRep FAILS: "+ exc, exc);
-                    FBTrace.sysout("firebug.getRep reps["+i+"/"+this.reps.length+"]: "+
+                    FBTrace.sysout("getRep FAILS: "+ exc, exc);
+                    FBTrace.sysout("getRep reps["+i+"/"+this.reps.length+"]: "+
                         (typeof(this.reps[i])), this.reps[i]);
                 }
             }

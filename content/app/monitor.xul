@@ -48,9 +48,9 @@
                 <toolbarbutton id="fbNetClear" label="Clear"
                     class="toolbar-text-button fbInternational"
                     tooltiptext="net.tip.Clear" command="cmd_clearNet"/>
-                <toolbarbutton id="fbNetPersist" label="firebug.console.Persist"
+                <toolbarbutton id="fbNetPersist" label="Persist"
                     class="toolbar-text-button fbInternational"
-                    tooltiptext="firebug.console.Do_Not_Clear_On_Reload2"
+                    tooltiptext="Do_Not_Clear_On_Reload"
                     command="cmd_togglePersistNet"/>
                 <hbox id="fbNetButtonsFilter" class="noTabStop">
                     <toolbarseparator/>

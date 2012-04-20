@@ -135,9 +135,9 @@ var InfoTip = Obj.extend(Module,
 
             // Display an error in the caption (instead of dimensions).
             if (Str.hasPrefix(img.src, "moz-filedata"))
-                caption.innerHTML = Locale.$STR("firebug.failedToPreviewObjectURL");
+                caption.innerHTML = Locale.$STR("failedToPreviewObjectURL");
             else
-                caption.innerHTML = Locale.$STR("firebug.failedToPreviewImageURL");
+                caption.innerHTML = Locale.$STR("failedToPreviewImageURL");
 
             var innerBox = img.parentNode;
             Css.removeClass(innerBox, "infoTipLoading");

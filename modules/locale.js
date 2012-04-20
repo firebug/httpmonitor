@@ -36,28 +36,28 @@ var Locale = {};
  * $STRP - intended for localization of a string with dynamically plural forms.
  *
  * Notes:
- * 1) Name with _ in place of spaces is the key in the firebug.properties file.
+ * 1) Name with _ in place of spaces is the key in the *.properties file.
  * 2) If the specified key isn't localized for particular language, both methods use
  *    the part after the last dot (in the specified name) as the return value.
  *
  * Examples:
- * $STR("Label"); - search for key "Label" within the firebug.properties file
+ * $STR("Label"); - search for key "Label" within the *.properties file
  *                 and returns its value. If the key doesn't exist returns "Label".
  *
- * $STR("Button Label"); - search for key "Button_Label" withing the firebug.properties
+ * $STR("Button Label"); - search for key "Button_Label" withing the *.properties
  *                        file. If the key doesn't exist returns "Button Label".
  *
  * $STR("net.Response Header"); - search for key "net.Response_Header". If the key doesn't
  *                               exist returns "Response Header".
  *
- * firebug.properties:
+ * *.properties:
  * net.timing.Request_Time=Request Time: %S [%S]
  *
  * var param1 = 10;
  * var param2 = "ms";
  * $STRF("net.timing.Request Time", param1, param2);  -> "Request Time: 10 [ms]"
  *
- * - search for key "net.timing.Request_Time" within the firebug.properties file. Parameters
+ * - search for key "net.timing.Request_Time" within the *.properties file. Parameters
  *   are inserted at specified places (%S) in the same order as they are passed. If the
  *   key doesn't exist the method returns "Request Time".
  */
@@ -238,7 +238,7 @@ Locale.getDefaultStringBundle = function()
         var chromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"].
             getService(Ci.nsIChromeRegistry);
 
-        var uri = Services.io.newURI("chrome://httpmonitor/locale/firebug.properties", "UTF-8", null);
+        var uri = Services.io.newURI("chrome://httpmonitor/locale/httpmonitor.properties", "UTF-8", null);
         var fileURI = chromeRegistry.convertChromeURL(uri).spec;
         var parts = fileURI.split("/");
         parts[parts.length - 2] = "en-US";
