@@ -14,7 +14,9 @@ var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cu = Components.utils;
 
-// xxxHonza: elements need to be removed on uninstall.
+// Elements dynamically inserted into the browser window (browser.xul scope) must be
+// remembered so, they can be removed when the extension is uninstalled.
+// Note that this happens for every browser window independently.
 var nodesToRemove = [];
 
 // ********************************************************************************************* //
@@ -48,8 +50,7 @@ function $menupopupOverlay(parent, children)
 
         parent.insertBefore(child, beforeEl);
 
-        // Mark the inserted node to remove it when Firebug is uninstalled.
-        child.setAttribute("monitorRootNode", true);
+        nodesToRemove.push(child);
     }
 }
 
@@ -98,8 +99,7 @@ function $el(name, attributes, children, parent)
         else
             parent.appendChild(el);
 
-        // Mark to remove when Firebug is uninstalled.
-        el.setAttribute("monitorRootNode", true);
+        nodesToRemove.push(el);
     }
 
     return el;
@@ -241,6 +241,16 @@ top.HttpMonitorOverlay =
     {
         // xxxHonza: TODO
     },
+
+    shutdown: function()
+    {
+        for (var i=0; i<nodesToRemove.length; i++)
+        {
+            var el = nodesToRemove[i];
+            if (el && el.parentNode)
+                el.parentNode.removeChild(el);
+        }
+    }
 }
 
 // ********************************************************************************************* //

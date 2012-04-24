@@ -16,7 +16,7 @@ Cu.import("resource://gre/modules/AddonManager.jsm");
 // ********************************************************************************************* //
 // Bootstrap API
 
-var global = this;
+var FBTrace;
 
 function startup(data, reason)
 {
@@ -24,6 +24,8 @@ function startup(data, reason)
         QueryInterface(Ci.nsIResProtocolHandler);
 
     resource.setSubstitution("httpmonitor", data.resourceURI);
+
+    FBTrace = Cu.import("resource://httpmonitor/modules/fbtrace.js").FBTrace;
 
     // Load server. It'll be launched only if "extensions.httpmonitor.serverMode"
     // preference is set to true.
@@ -47,6 +49,19 @@ function shutdown(data, reason)
         QueryInterface(Ci.nsIResProtocolHandler);
 
     resource.setSubstitution("httpmonitor", null);
+
+    // Unload Monitor UI from all existing browser windows.
+    var enumerator = Services.wm.getEnumerator("navigator:browser");
+    while (enumerator.hasMoreElements())
+        unloadBrowserOverlay(enumerator.getNext());
+
+    // Remove "new window" listener.
+    Services.ww.unregisterNotification(windowWatcher);
+
+    // xxxHonza: close the XUL window if it's opened.
+    // xxxHonza: shutdown the server (in case we are in server mode)
+    // xxxHonza: remove all default preferences
+    // xxxHonza: remove all loaded *.jsm modules (those from modules directory)
 }
 
 function install(data, reason)
@@ -87,7 +102,7 @@ function loadBrowserOverlay(win)
 
 function unloadBrowserOverlay(win)
 {
-    // xxxHonza: TODO
+    win.HttpMonitorOverlay.shutdown();
 }
 
 // ********************************************************************************************* //
