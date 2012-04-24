@@ -52,7 +52,7 @@ Protocol.prototype =
 
     unselectTab: function(tabActor)
     {
-        self.onTabUnselected(tabActor);
+        this.onTabUnselected(tabActor);
     },
 
     getCurrentTab: function()
