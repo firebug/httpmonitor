@@ -1,4 +1,4 @@
-content httpmonitor     content/
+content httpmonitor     content/httpmonitor/
 skin    httpmonitor     classic/1.0 skin/classic/
 skin    httpmonitor-os  classic/1.0 skin/classic/win/
 locale  httpmonitor     en-US       locale/en-US/
