@@ -32,7 +32,7 @@ const Ci = Components.interfaces;
 // Implementation
 
 /**
- * HttpMonitor object represents the entir application.
+ * HttpMonitor object represents the entire application.
  */
 var HttpMonitor = 
 {
@@ -63,7 +63,7 @@ var HttpMonitor =
         Options.registerDefaultPrefs(DefaultPrefs);
 
         // Initialize modules. Modules represent independent application
-        // components that are registered during apppliation load and
+        // components that are registered during application load and
         // their life cycle is maintained here.
         Events.dispatch(Chrome.modules, "initialize");
         Events.dispatch(Chrome.modules, "initializeUI");
@@ -133,7 +133,7 @@ var HttpMonitor =
     // Context Menu
 
     /**
-     * Dynamically construct a context mene if the user clicks anywhere within the content
+     * Dynamically construct a context menu if the user clicks anywhere within the content
      * area (content of the application window/panel)
      */
     onContextShowing: function(event)
