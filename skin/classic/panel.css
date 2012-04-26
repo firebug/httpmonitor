@@ -1,12 +1,6 @@
 /* See license.txt for terms of usage */
 
 @import "chrome://httpmonitor/skin/panelbase.css";
-@import "chrome://httpmonitor/skin/breakpoint.css";
-@import "chrome://httpmonitor/skin/console.css";
 @import "chrome://httpmonitor/skin/net.css";
-@import "chrome://httpmonitor/skin/jsonViewer.css";
-@import "chrome://httpmonitor/skin/fontViewer.css";
 @import "chrome://httpmonitor/skin/debugger.css";
-@import "chrome://httpmonitor/skin/dom.css";
-@import "chrome://httpmonitor/skin/tableRep.css";
 @import "chrome://httpmonitor-os/skin/panel.css";

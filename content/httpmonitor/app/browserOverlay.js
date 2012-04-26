@@ -198,11 +198,6 @@ $menupopupOverlay($("toolsPopup"), [
 $command("cmd_httpMonitorToggle", "HttpMonitorOverlay.toggle()");
 
 // ********************************************************************************************* //
-// Styles
-
-$stylesheet("chrome://httpmonitor/skin/browserOverlay.css");
-
-// ********************************************************************************************* //
 // Extension Object
 
 /**
