@@ -7,7 +7,7 @@
 .memberRow.hasChildren > .memberLabelCell > .memberLabel,
 .hasHeaders .netHrefLabel,
 .netPageRow > .netCol > .netPageTitle {
-    background-image: url(chrome://httpmonitor/skin/win/twistyClosed.png);
+    background-image: url(twistyClosed.png);
     background-repeat: no-repeat;
     background-position: 2px 2px;
     min-height: 12px;
@@ -18,7 +18,7 @@
 .nodeBox.open > .nodeLabel > .twisty,
 .netRow.opened > .netCol > .netHrefLabel,
 .netPageRow.opened > .netCol > .netPageTitle {
-    background-image: url(chrome://httpmonitor/skin/win/twistyOpen.png);
+    background-image: url(twistyOpen.png);
 }
 
 .twisty {

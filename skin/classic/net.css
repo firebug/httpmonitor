@@ -61,11 +61,11 @@
 
 .netHeaderSorted > .netHeaderCellBox {
     border-right-color: #6B7C93;
-    background: url(chrome://httpmonitor/skin/arrowDown.png) no-repeat right;
+    background: url(arrowDown.png) no-repeat right;
 }
 
 .netHeaderSorted.sortedAscending > .netHeaderCellBox {
-    background-image: url(chrome://httpmonitor/skin/arrowUp.png);
+    background-image: url(arrowUp.png);
 }
 
 .netHeaderSorted:hover:active {
@@ -95,11 +95,11 @@
 }
 
 .netRow[breakpoint="true"] .netRowHeader {
-    background-image: url(chrome://httpmonitor/skin/breakpoint.png);
+    background-image: url(breakpoint.png);
 }
 
 .netRow[breakpoint="true"][disabledBreakpoint="true"] .netRowHeader {
-    background-image: url(chrome://httpmonitor/skin/breakpointDisabled.png);
+    background-image: url(breakpointDisabled.png);
 }
 
 .netRow.category-xhr:hover .netRowHeader {
@@ -289,7 +289,7 @@
     width: 16px;
     height: 16px;
     background: transparent no-repeat 0 0;
-    background-image: url(chrome://httpmonitor/skin/loading_16.gif);
+    background-image: url(loading_16.gif);
     display:inline-block;
 }
 
@@ -775,7 +775,7 @@ body[resizingHtmlPreview="true"] .netInfoHtmlPreview {
 }
 
 .netActivationLabel {
-    background: url(chrome://httpmonitor/skin/infoIcon.png) no-repeat 3px 2px;
+    background: url(infoIcon.png) no-repeat 3px 2px;
     padding-left: 22px;
 }
 
