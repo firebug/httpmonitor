@@ -216,11 +216,11 @@ var NetMonitor = Obj.extend(Module,
 
     updateMaxLimit: function()
     {
-        //xxxHonza
-        //var value = Options.get("net.logLimit");
-        //this.maxQueueRequests = value ? value : this.maxQueueRequests;
+        var value = Options.get("net.logLimit");
+        this.maxQueueRequests = value ? value : this.maxQueueRequests;
     },
 
+    // xxxHonza: console.timeStamp() API implementation should here?
     addTimeStamp: function(context, time, label, color)
     {
         if (context.netProgress)
