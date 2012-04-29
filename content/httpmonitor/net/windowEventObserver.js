@@ -53,7 +53,7 @@ WindowEventObserver.prototype =
         // Paint events are optional.
         if (Options.get("netShowPaintEvents"))
         {
-            this.onPaintHandler = Obj.bind(this.onPaint);
+            this.onPaintHandler = Obj.bind(this.onPaint, this);
             this.context.addEventListener(appcontent, "MozAfterPaint", this.onPaintHandler, false);
         }
     },
@@ -104,7 +104,7 @@ WindowEventObserver.prototype =
         if (this.context.netProgress)
             this.context.netProgress.post(contentLoad, [win, NetUtils.now()]);
 
-        //this.context.removeEventListener(appcontent, "DOMContentLoaded", this.onContentLoadHandler, true);
+        this.context.removeEventListener(appcontent, "DOMContentLoaded", this.onContentLoadHandler, true);
         this.onContentLoadHandler = null;
     },
 
@@ -121,7 +121,7 @@ WindowEventObserver.prototype =
         if (this.context.netProgress)
             this.context.netProgress.post(windowLoad, [win, NetUtils.now()]);
 
-        //this.context.removeEventListener(appcontent, "load", this.onLoadHandler, true);
+        this.context.removeEventListener(appcontent, "load", this.onLoadHandler, true);
         this.onLoadHandler = null;
 
         // The paint listener is automatically removed when the window is loaded
