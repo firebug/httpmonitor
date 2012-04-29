@@ -58,6 +58,18 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         NetMonitor.destroyNetContext(this.context);
     },
 
+    sendRequest: function(file, callback)
+    {
+        var data = {
+            href: file.href,
+            method: file.method,
+            requestHeaders: file.requestHeaders,
+            postText: file.postText
+        }
+
+        this.protocol.sendRequest(data, callback);
+    },
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Listener
 

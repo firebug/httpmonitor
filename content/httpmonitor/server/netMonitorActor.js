@@ -50,6 +50,19 @@ NetworkMonitorActor.prototype =
         };
     },
 
+    disconnect: function()
+    {
+        if (FBTrace.DBG_NETACTOR)
+            FBTrace.sysout("networkMonitorActor.disconnet");
+
+        this.onUnsubscribe();
+
+        delete this.tab.networkMonitorActor;
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Actor Commands
+
     onPing: function(request)
     {
         if (FBTrace.DBG_NETACTOR)
@@ -112,14 +125,12 @@ NetworkMonitorActor.prototype =
         return {"unsubscribe": this.actorID};
     },
 
-    disconnect: function()
+    onSendRequest: function(request)
     {
-        if (FBTrace.DBG_NETACTOR)
-            FBTrace.sysout("networkMonitorActor.disconnet");
+        var file = request.data;
+        NetMonitor.sendRequest(this.context, file);
 
-        this.onUnsubscribe();
-
-        delete this.tab.networkMonitorActor;
+        return {"sendRequest": this.actorID};
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -179,7 +190,8 @@ NetworkMonitorActor.prototype.requestTypes =
 {
     "ping": NetworkMonitorActor.prototype.onPing,
     "subscribe": NetworkMonitorActor.prototype.onSubscribe,
-    "unsubscribe": NetworkMonitorActor.prototype.onUnsubscribe
+    "unsubscribe": NetworkMonitorActor.prototype.onUnsubscribe,
+    "sendRequest": NetworkMonitorActor.prototype.onSendRequest,
 };
 
 // ********************************************************************************************* //

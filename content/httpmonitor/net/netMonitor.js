@@ -13,9 +13,10 @@ define([
     "httpmonitor/net/netCacheListener",
     "httpmonitor/base/module",
     "httpmonitor/chrome/chrome",
+    "httpmonitor/lib/window",
 ],
 function(FBTrace, Obj, Options, Str, HttpActivityObserver, HttpRequestObserver,
-    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome) {
+    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win) {
 
 // ********************************************************************************************* //
 // Constants
@@ -225,6 +226,38 @@ var NetMonitor = Obj.extend(Module,
     {
         if (context.netProgress)
             context.netProgress.post(timeStamp, [context.window, time, label, color]);
+    },
+
+    /**
+     * Used to resend an existing requests.
+     *
+     * @param {Object} file The structure representing an existing request.
+     */
+    sendRequest: function(context, file)
+    {
+        if (FBTrace.DBG_NET)
+            FBTrace.sysout("net.sendRequest;", file);
+
+        try
+        {
+            var win = Win.unwrap(context.window);
+            var request = new win.XMLHttpRequest();
+            request.open(file.method, file.href, true);
+
+            var headers = file.requestHeaders;
+            for (var i=0; headers && i<headers.length; i++)
+            {
+                var header = headers[i];
+                request.setRequestHeader(header.name, header.value);
+            }
+
+            request.send(file.postText);
+        }
+        catch (err)
+        {
+            if (FBTrace.DBG_ERRORS)
+                FBTrace.sysout("netMonitor.sendRequest; EXCEPTION " + err, err);
+        }
     }
 });
 

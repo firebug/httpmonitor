@@ -313,6 +313,9 @@ NetPanel.prototype = Obj.extend(Panel,
         };
     },
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Context Menu
+
     getContextMenuItems: function(nada, target)
     {
         var items = [];
@@ -426,22 +429,21 @@ NetPanel.prototype = Obj.extend(Panel,
             }*/
         }
 
-        //items.push("-");
+        items.push("-");
 
-        // xxxHonza
-        /*items.push(
-            {
-                label: "net.label.Resend",
-                tooltiptext: "net.tip.Resend",
-                id: "fbNetResend",
-                command: Obj.bindFixed(Spy.XHR.resend, Spy.XHR, file, this.context)
-            }
-        );*/
+        items.push({
+            label: "net.label.Resend",
+            tooltiptext: "net.tip.Resend",
+            id: "fbNetResend",
+            command: Obj.bindFixed(this.resend, this, file)
+        });
 
         return items;
     },
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Context menu commands
+
     copyParams: function(file)
     {
         var text = NetUtils.getPostText(file, this.context, true);
@@ -478,6 +480,26 @@ NetPanel.prototype = Obj.extend(Panel,
         }
     },
 
+    stopLoading: function(file)
+    {
+        const NS_BINDING_ABORTED = 0x804b0002;
+
+        file.request.cancel(NS_BINDING_ABORTED);
+    },
+
+    resend: function(file)
+    {
+        var proxy = HttpMonitor.proxy; // We should get the proxy from the context.
+        proxy.sendRequest(file, function(packet)
+        {
+            //if (FBTrace.DBG_REMOTEBUG)
+                FBTrace.sysout("netPanel; Request sent: " + packet.from, packet);
+        });
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Support for XHR debugging
+
     breakOnRequest: function(file)
     {
         if (!file.isXHR)
@@ -504,14 +526,6 @@ NetPanel.prototype = Obj.extend(Panel,
         })
     },
 
-    stopLoading: function(file)
-    {
-        const NS_BINDING_ABORTED = 0x804b0002;
-
-        file.request.cancel(NS_BINDING_ABORTED);
-    },
-
-    // Support for xhr breakpoint conditions.
     onContextMenu: function(event)
     {
         if (!Css.hasClass(event.target, "sourceLine"))
@@ -565,7 +579,9 @@ NetPanel.prototype = Obj.extend(Panel,
         return (enabled ? Locale.$STR("net.Disable Break On XHR") : Locale.$STR("net.Break On XHR"));
     },
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Support for info tips.
+
     showInfoTip: function(infoTip, target, x, y)
     {
         var row = Dom.getAncestorByClass(target, "netRow");
@@ -636,7 +652,9 @@ NetPanel.prototype = Obj.extend(Panel,
         return true;
     },
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Support for search within the panel.
+
     getSearchOptionsMenuItems: function()
     {
         return [

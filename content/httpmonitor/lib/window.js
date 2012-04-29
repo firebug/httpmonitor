@@ -152,6 +152,14 @@ Win.iterateBrowserTabs = function(browserWindow, callback)
 }
 
 // ********************************************************************************************* //
+// Wrappers
+
+Win.unwrap = function(win)
+{
+    return win.wrappedJSObject ? win.wrappedJSObject : win;
+}
+
+// ********************************************************************************************* //
 
 return Win;
 

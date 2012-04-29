@@ -59,12 +59,18 @@ LocalProxy.prototype = Obj.extend(Proxy,
 
     detach: function()
     {
-        if (!this.context) 
+        if (!this.context)
             return;
 
         NetMonitor.destroyContext(this.context);
 
         this.context = null;
+    },
+
+    sendRequest: function(file, callback)
+    {
+        NetMonitor.sendRequest(this.context, file);
+        callback();
     }
 });
 

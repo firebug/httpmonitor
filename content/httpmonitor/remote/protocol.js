@@ -72,11 +72,11 @@ Protocol.prototype =
 
     subscribe: function(netActor, callback)
     {
-        if (this.currentSubscription)
-            this.unsubscribe(this.currentSubscription);
+        if (this.currentNetActor)
+            this.unsubscribe(this.currentNetActor);
 
         this.connection.sendPacket(netActor, "subscribe", false, callback);
-        this.currentSubscription = netActor;
+        this.currentNetActor = netActor;
     },
 
     unsubscribe: function(netActor)
@@ -88,6 +88,11 @@ Protocol.prototype =
                 FBTrace.sysout("remotenet; Unsubscribed from: " + packet.from);
             return;
         });
+    },
+
+    sendRequest: function(data, callback)
+    {
+        this.connection.sendPacket(this.currentNetActor, "sendRequest", true, callback, data);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

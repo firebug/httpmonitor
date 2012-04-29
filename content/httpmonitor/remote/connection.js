@@ -36,29 +36,14 @@ function Connection(onConnect, onDisconnect)
 
 Connection.prototype =
 {
-    open: function(host, port)
-    {
-        this.transport = debuggerSocketConnect(host ? host : "localhost", port);
-        this.transport.hooks = this;
-        this.transport.ready();
-        this.connecting = true;
-    },
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Private Methods
 
-    close: function()
-    {
-        this.transport.close();
-    },
-
-    isConnected: function()
-    {
-        return this.connected;
-    },
-
-    isConnecting: function()
-    {
-        return this.connecting;
-    },
-
+    /**
+     * A packet received from the server.
+     *
+     * @param {Object} packet
+     */
     onPacket: function(packet)
     {
         if (FBTrace.DBG_REMOTEBUG)
@@ -83,7 +68,7 @@ Connection.prototype =
 
         // Execute registered callback (one shot) by type.
         if (packet.from)
-            this.onCallback(packet);
+            this.onHandlePacket(packet);
     },
 
     /**
@@ -117,16 +102,17 @@ Connection.prototype =
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Packet Handler
 
-    onCallback: function(packet)
+    onHandlePacket: function(packet)
     {
         var from = packet.from;
-        var handler = this.callbacks[from];
+        var handler = this.getCallback(from);
         if (handler)
         {
             var callback = handler.callback;
             if (handler.oneShot)
-                delete this.callbacks[from];
+                this.removeCallback(from);
 
             try
             {
@@ -143,6 +129,9 @@ Connection.prototype =
             FBTrace.sysout("remotebug; No callback registered for: " + from, packet);
     },
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Callback Management
+
     /**
      * Registers a callback for response from specified actor
      * @param {String} from specified actor ID.
@@ -151,11 +140,12 @@ Connection.prototype =
      */
     addCallback: function(from, callback, oneShot)
     {
-        if (this.callbacks[from])
+        var prevCallback = this.getCallback(from);
+        if (prevCallback)
         {
-            if (FBTrace.DBG_REMOTEBUG || FBTrace.DBG_ERROR)
-                FBTrace.sysout("remotebug; Add callback ERROR: existing callback not finished! " +
-                    from);
+            if (FBTrace.DBG_REMOTEBUG)
+                FBTrace.sysout("connection.addCallback: Callback not registered to not " +
+                    "overwrite an existing callback. " + from, prevCallback);
             return;
         }
 
@@ -167,11 +157,46 @@ Connection.prototype =
 
     removeCallback: function(from)
     {
+        var callbacks = this.callbacks[from];
+        if (!callbacks)
+        {
+            FBTrace.sysout("connection.removeCallback ERROR; Removing unknown callback! " + from);
+            return;
+        }
+
         delete this.callbacks[from];
+    },
+
+    getCallback: function(from)
+    {
+        return this.callbacks[from];
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Public Methods
+
+    open: function(host, port)
+    {
+        this.transport = debuggerSocketConnect(host ? host : "localhost", port);
+        this.transport.hooks = this;
+        this.transport.ready();
+        this.connecting = true;
+    },
+
+    close: function()
+    {
+        this.transport.close();
+    },
+
+    isConnected: function()
+    {
+        return this.connected;
+    },
+
+    isConnecting: function()
+    {
+        return this.connecting;
+    },
 
     /**
      * Use this method to implement panel-specific remote protocol APIs
@@ -181,13 +206,17 @@ Connection.prototype =
      * @param {Boolean} oneShot Set to true if the callback should be removed after the response
      *      is received, otherwise false (e.g. for subsriptions type packets)
      * @param {Function} callback Callback function called when response received
+     * @param {Object} Optional data to be appended to the packet.
      */
-    sendPacket: function(actor, type, oneShot, callback)
+    sendPacket: function(actor, type, oneShot, callback, data)
     {
         var packet = {
             to: actor,
             type: type,
         }
+
+        if (data)
+            packet.data = data;
 
         this.addCallback(actor, callback, oneShot);
         this.transport.send(packet);
