@@ -7,7 +7,7 @@ define([
     "httpmonitor/lib/string",
     "httpmonitor/net/httpActivityObserver",
     "httpmonitor/net/httpRequestObserver",
-    "httpmonitor/net/netProgress",          //xxxHonza: this dep doesn't have to be here.
+    "httpmonitor/net/netProgress",          //xxxHonza:is this dep correct?.
     "httpmonitor/net/netUtils",
     "httpmonitor/lib/events",
     "httpmonitor/net/netCacheListener",
@@ -81,9 +81,6 @@ var NetMonitor = Obj.extend(Module,
 
         this.initNetContext(context);
         this.attachObservers(context);
-
-        //xxxHonza: Should be done every time the page is reloaded.
-        //this.registerLoadListeners(context);
 
         var netProgress = context.netProgress;
         netProgress.loaded = true;
@@ -159,49 +156,6 @@ var NetMonitor = Obj.extend(Module,
         // Remove cache listener. Safe to call multiple times.
         netProgress.cacheListener.unregister();
         delete netProgress.cacheListener;
-    },
-
-    registerLoadListeners: function(context)
-    {
-        var win = context.window;
-
-        var onWindowPaintHandler = function()
-        {
-            if (context.netProgress)
-                context.netProgress.post(windowPaint, [win, NetUtils.now()]);
-        }
-
-        if (Options.get("netShowPaintEvents"))
-        {
-            context.addEventListener(win, "MozAfterPaint", onWindowPaintHandler, false);
-        }
-
-        // Register "load" listener in order to track window load time.
-        var onWindowLoadHandler = function()
-        {
-            if (context.netProgress)
-                context.netProgress.post(windowLoad, [win, NetUtils.now()]);
-            context.removeEventListener(win, "load", onWindowLoadHandler, true);
-
-            context.setTimeout(function()
-            {
-                if (win && !win.closed)
-                {
-                    context.removeEventListener(win, "MozAfterPaint", onWindowPaintHandler, false);
-                }
-            }, 2000); //xxxHonza: this should be customizable using preferences.
-        }
-        context.addEventListener(win, "load", onWindowLoadHandler, true);
-
-        // Register "DOMContentLoaded" listener to track timing.
-        var onContentLoadHandler = function()
-        {
-            if (context.netProgress)
-                context.netProgress.post(contentLoad, [win, NetUtils.now()]);
-            context.removeEventListener(win, "DOMContentLoaded", onContentLoadHandler, true);
-        }
-
-        context.addEventListener(win, "DOMContentLoaded", onContentLoadHandler, true);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

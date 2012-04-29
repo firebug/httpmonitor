@@ -10,8 +10,10 @@ define([
     "httpmonitor/lib/string",
     "httpmonitor/net/netProgress",
     "httpmonitor/chrome/chrome",
+    "httpmonitor/net/windowEventObserver",
 ],
-function(FBTrace, Win, Http, NetUtils, RequestObserver, Xpcom, Str, NetProgress, Chrome) {
+function(FBTrace, Win, Http, NetUtils, RequestObserver, Xpcom, Str, NetProgress, Chrome,
+    WindowEventObserver) {
 
 // ********************************************************************************************* //
 // Constants
@@ -147,6 +149,12 @@ var HttpRequestObserver =
                 var panel = context.getPanel("net");
                 if (panel)
                     panel.clear();
+
+                if (this.eventObserver)
+                    this.eventObserver.unregisterListeners();
+
+                this.eventObserver = new WindowEventObserver(context);
+                this.eventObserver.registerListeners();
             }
         }
 
