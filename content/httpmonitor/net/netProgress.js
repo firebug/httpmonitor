@@ -68,15 +68,7 @@ NetProgress.prototype =
         {
             var file = method.apply(this, args);
             if (file)
-            {
                 this.handler.updateFile(file);
-
-                // If the panel isn't currently visible, make sure the limit is up to date.
-                //if (!this.panel.layoutInterval)
-                //    this.panel.updateLogLimit(maxQueueRequests);
-
-                return file;
-            }
         }
         else
         {

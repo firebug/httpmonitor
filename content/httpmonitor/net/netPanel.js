@@ -1169,13 +1169,6 @@ NetPanel.prototype = Obj.extend(Panel,
     {
         var netProgress = this.context.netProgress;
 
-        if (!netProgress)  // XXXjjb Honza, please check, I guess we are getting here with the context not setup
-        {
-            if (FBTrace.DBG_NET)
-                FBTrace.sysout("net.updateLogLimit; NO NET CONTEXT for: " + this.context.getName());
-            return;
-        }
-
         // Must be positive number;
         limit = Math.max(0, limit);
 
@@ -1528,7 +1521,7 @@ var NetPanelSearch = function(panel, rowFinder)
     }
 };
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 NetMonitor.ConditionEditor = function(doc)
 {
