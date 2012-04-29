@@ -107,7 +107,7 @@ TabContext.prototype =
         // Destroy all panels in this context.
         this.destroyNetPanel(state)
 
-        if (FBTrace.DBG_INITIALIZE)
+        if (FBTrace.DBG_CONTEXT)
             FBTrace.sysout("tabContext.destroy " + this.getName() + " set state ", state);
     },
 
@@ -261,9 +261,12 @@ TabContext.prototype =
                 l.capturing == capturing)
             {
                 this.listeners.splice(i, 1);
-                break;
+                return;
             }
         }
+
+        if (FBTrace.DBG_ERRORS)
+            FBTrace.sysout("tabContext.removeEventListener; Unknown listener " + eventId);
     },
 
     /**

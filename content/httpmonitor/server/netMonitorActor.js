@@ -127,6 +127,8 @@ NetworkMonitorActor.prototype =
 
     updateFile: function(file)
     {
+        // xxxHonza: Sent data should be removed from the original file object so,
+        // they are not sent to the client again.
         this.files[file.serial] = file.clone();
         this.flush();
     },

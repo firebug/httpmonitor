@@ -8,8 +8,8 @@ function() {
 // Default Preferences
 
 /**
- * HTTP Monitor extension is restartless and so, we need to define default preference
- * manually (defaults/prefeneces dir doesn't work in this case)
+ * HTTP Monitor extension is restart-less and so, we need to define default preference
+ * manually (defaults/preferences directory doesn't work in this case)
  */
 var DefaultPrefs =
 {
