@@ -87,6 +87,9 @@ WindowEventObserver.prototype =
 
     onPaint: function()
     {
+        if (FBTrace.DBG_WINDOW_EVENT_OBSERVER)
+            FBTrace.sysout("windowEventObserver.onPaint;");
+
         if (this.context.netProgress)
             this.context.netProgress.post(windowPaint, [this.context.window, NetUtils.now()]);
     },
@@ -95,6 +98,9 @@ WindowEventObserver.prototype =
     {
         if (event.originalTarget != this.context.window.document)
             return;
+
+        if (FBTrace.DBG_WINDOW_EVENT_OBSERVER)
+            FBTrace.sysout("windowEventObserver.onContentLoad;");
 
         var doc = this.context.browser.ownerDocument;
         var appcontent = doc.getElementById("appcontent");
@@ -112,6 +118,9 @@ WindowEventObserver.prototype =
     {
         if (event.originalTarget != this.context.window.document)
             return;
+
+        if (FBTrace.DBG_WINDOW_EVENT_OBSERVER)
+            FBTrace.sysout("windowEventObserver.onLoad;");
 
         var doc = this.context.browser.ownerDocument;
         var appcontent = doc.getElementById("appcontent");

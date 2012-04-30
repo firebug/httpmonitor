@@ -822,8 +822,8 @@ NetProgress.prototype =
         this.files.push(file);
 
         if (FBTrace.DBG_NET_EVENTS)
-            FBTrace.sysout("net.createFile; " + Http.safeGetRequestName(request) +
-                "(" + this.files.length + ")");
+            FBTrace.sysout("net.createFile; " + Http.safeGetRequestName(request) + " " +
+                "(" + this.files.length + ")", file);
 
         return file;
     },
