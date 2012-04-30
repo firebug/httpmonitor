@@ -104,6 +104,15 @@ NetPhase.prototype =
         };
 
         this.timeStamps.push(timeStamp);
+
+        // Store phase timing info also into the first phase file so, it can be sent
+        // over the network (in case of remote) if necessary. Only files are sent to the client.
+        var firstFile = this.files[0];
+        if (!firstFile.timeStamps)
+            firstFile.timeStamps = [];
+
+        firstFile.timeStamps.push(timeStamp);
+
         return timeStamp;
     }
 };

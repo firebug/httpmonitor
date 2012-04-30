@@ -891,6 +891,10 @@ NetProgress.prototype =
             if (file.phase.files[0] == file)
                 file.phase.startTime = file.startTime;
 
+            // Synchronize timeStamps in the first file with the phase.
+            if (file.timeStamps)
+                file.phase.timeStamps = file.timeStamps;
+
             // Since the request order can be wrong (see above) we need to iterate all files
             // in this phase and find the one that actually executed first.
             // In some cases, the waterfall can display a request executed before another,
@@ -903,35 +907,40 @@ NetProgress.prototype =
                 if (file.startTime > 0 && phase.startTime > file.startTime)
                     phase.startTime = file.startTime;
             }
-            return;
-        }
-
-        if (this.currentPhase)
-        {
-            //xxxHonza: this.loaded must be set in window 'load' handler
-            // new phase can't start till the window  is loaded
-            this.loaded = true;
-
-            // If the new request has been started within a "phaseInterval" after the
-            // previous reqeust has been started, associate it with the current phase;
-            // otherwise create a new phase.
-            var phaseInterval = 1000; // xxxHonza netPhaseInterval;
-            var lastStartTime = this.currentPhase.lastStartTime;
-            if (phaseInterval > 0 && this.loaded && file.startTime - lastStartTime >= phaseInterval)
-                this.startPhase(file);
-            else
-                this.currentPhase.addFile(file);
         }
         else
         {
-            // If there is no phase yet, just create it.
-            this.startPhase(file);
+            if (this.currentPhase)
+            {
+                //xxxHonza: this.loaded must be set in window 'load' handler
+                // new phase can't start till the window  is loaded
+                this.loaded = true;
+
+                // If the new request has been started within a "phaseInterval" after the
+                // previous reqeust has been started, associate it with the current phase;
+                // otherwise create a new phase.
+                var phaseInterval = 1000; // xxxHonza netPhaseInterval;
+                var lastStartTime = this.currentPhase.lastStartTime;
+                if (phaseInterval > 0 && this.loaded && file.startTime - lastStartTime >= phaseInterval)
+                    this.startPhase(file);
+                else
+                    this.currentPhase.addFile(file);
+            }
+            else
+            {
+                // If there is no phase yet, just create it.
+                this.startPhase(file);
+            }
+
+            // Update phase's lastFinishedFile in case of long time downloads.
+            // This forces the timeline to have proper extent.
+            if (file.phase && file.phase.endTime < file.endTime)
+                file.phase.lastFinishedFile = file;
         }
 
-        // Update phase's lastFinishedFile in case of long time downloads.
-        // This forces the timeline to have proper extent.
-        if (file.phase && file.phase.endTime < file.endTime)
-            file.phase.lastFinishedFile = file;
+        // Synchronize time stamps (they could come over the network)
+        if (file.timeStamps)
+            file.phase.timeStamps = file.timeStamps;
     },
 
     startPhase: function(file)
