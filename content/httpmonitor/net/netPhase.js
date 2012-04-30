@@ -114,6 +114,16 @@ NetPhase.prototype =
         firstFile.timeStamps.push(timeStamp);
 
         return timeStamp;
+    },
+
+    getTimeStamp: function(label)
+    {
+        for (var i=0; i<this.timeStamps.length; i++)
+        {
+            var timeStamp = this.timeStamps[i];
+            if (timeStamp.label == label)
+                return timeStamp;
+        }
     }
 };
 

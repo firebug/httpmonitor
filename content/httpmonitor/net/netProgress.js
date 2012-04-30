@@ -941,6 +941,12 @@ NetProgress.prototype =
         // Synchronize time stamps (they could come over the network)
         if (file.timeStamps)
             file.phase.timeStamps = file.timeStamps;
+
+        // xxxHonza: phase.windowLoadTime field should be removed. Only generic timeStamps
+        // array should be used instead.
+        var windowLoadStamp = file.phase.getTimeStamp("load");
+        if (windowLoadStamp)
+            file.phase.windowLoadTime = windowLoadStamp.time;
     },
 
     startPhase: function(file)
