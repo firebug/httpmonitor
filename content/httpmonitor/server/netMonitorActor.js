@@ -33,7 +33,7 @@ function NetworkMonitorActor(tab)
     this.files = {};
 
     if (FBTrace.DBG_NETACTOR)
-        FBTrace.sysout("networkMonitorActor.constructor; " + this.actorID + ", " + this.conn);
+        FBTrace.sysout("networkMonitorActor.constructor;");
 }
 
 NetworkMonitorActor.prototype =
