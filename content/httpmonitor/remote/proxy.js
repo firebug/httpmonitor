@@ -91,6 +91,9 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         var netPanel = this.context.getPanel("net", true);
         if (netPanel)
             netPanel.clear();
+
+        // Clear the underlying data structure.
+        this.context.netProgress.clear();
     },
 
     onNetworkEvent: function(packet)
