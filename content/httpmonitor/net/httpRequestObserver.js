@@ -146,13 +146,18 @@ var HttpRequestObserver =
             // New page loaded, clear UI if 'Persist' isn't active.
             if (!Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
             {
+                // Clear the UI
                 var panel = context.getPanel("net");
                 if (panel)
                     panel.clear();
 
+                // Clear the underlying data structure.
+                context.netProgress.clear();
+
                 if (this.eventObserver)
                     this.eventObserver.unregisterListeners();
 
+                // Register an observer for window events (load, paint, etc.)
                 this.eventObserver = new WindowEventObserver(context);
                 this.eventObserver.registerListeners();
             }
