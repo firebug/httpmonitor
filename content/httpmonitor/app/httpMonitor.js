@@ -14,7 +14,7 @@ define([
     "httpmonitor/app/tabListMenu",
     "httpmonitor/remote/connectionMenu",
     "httpmonitor/chrome/localProxy",
-    "httpmonitor/remote/proxy",
+    "httpmonitor/remote/remoteProxy",
     "httpmonitor/chrome/chrome",
     "httpmonitor/net/netMonitor",
 ],
