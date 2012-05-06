@@ -133,6 +133,8 @@ WindowEventObserver.prototype =
         this.context.removeEventListener(appcontent, "load", this.onLoadHandler, true);
         this.onLoadHandler = null;
 
+        this.context.loaded = true;
+
         // The paint listener is automatically removed when the window is loaded
         // We don't want to see further paint events on the net view since it would
         // shrink the waterfall diagram to unreadable minimum. But do it after a small

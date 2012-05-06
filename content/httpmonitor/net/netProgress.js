@@ -912,10 +912,6 @@ NetProgress.prototype =
         {
             if (this.currentPhase)
             {
-                //xxxHonza: this.loaded must be set in window 'load' handler
-                // new phase can't start till the window  is loaded
-                this.loaded = true;
-
                 // If the new request has been started within a "phaseInterval" after the
                 // previous reqeust has been started, associate it with the current phase;
                 // otherwise create a new phase.
