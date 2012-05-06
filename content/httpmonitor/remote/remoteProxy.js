@@ -55,8 +55,9 @@ RemoteProxy.prototype = Obj.extend(Proxy,
 
     detach: function()
     {
-        Proxy.detach.apply(this, arguments);
         NetMonitor.destroyNetContext(this.context);
+
+        Proxy.detach.apply(this, arguments);
     },
 
     sendRequest: function(file, callback)
