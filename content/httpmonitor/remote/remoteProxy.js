@@ -44,7 +44,7 @@ RemoteProxy.prototype = Obj.extend(Proxy,
 
     attach: function(context, callback)
     {
-        this.context = context;
+        Proxy.attach.apply(this, arguments);
 
         // Initializes network context (netProgress), we don't want to observe
         // Local HTTP event in remote scenario.
@@ -53,8 +53,9 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         this.protocol.selectTab(context.tab, callback);
     },
 
-    detach: function(tabId, callback)
+    detach: function()
     {
+        Proxy.detach.apply(this, arguments);
         NetMonitor.destroyNetContext(this.context);
     },
 

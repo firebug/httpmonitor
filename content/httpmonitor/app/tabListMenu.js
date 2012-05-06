@@ -49,7 +49,11 @@ var TabListMenu = Obj.extend(Module,
         });
 
         var self = this;
-        var proxy = this.getProxy();
+
+        // Context is not available at this moment, it's going to be created
+        // by selecting a tab though this menu so, use the proxy from global
+        // HttpMonitor (application) object.
+        var proxy = top.HttpMonitor.proxy;
 
         proxy.getTabs(function(tabs)
         {
@@ -86,10 +90,9 @@ var TabListMenu = Obj.extend(Module,
     {
         var menu = Chrome.$("httpMonitorTabListMenu");
 
-        var proxy = this.getProxy();
-
         var label = "Select Tab";
-        var tab = proxy.context ? proxy.context.tab : null;
+        var context = Chrome.currentContext;
+        var tab = context ? context.tab : null;
         if (tab)
             label = Str.cropString(tab.label, 100);
 
@@ -121,15 +124,6 @@ var TabListMenu = Obj.extend(Module,
     selectTab: function(tab)
     {
         Events.dispatch(this.fbListeners, "onSelectTab", [tab]);
-    },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Globals
-
-    getProxy: function()
-    {
-        //xxxHonza: Could we get the proxy without using the app singleton?
-        return top.HttpMonitor.proxy;
     },
 });
 

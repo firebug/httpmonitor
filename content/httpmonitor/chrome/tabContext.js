@@ -284,6 +284,14 @@ TabContext.prototype =
         }
 
         this.listeners = null;
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Proxy
+
+    getProxy: function()
+    {
+        return this.proxy;
     }
 }
 

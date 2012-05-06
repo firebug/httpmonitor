@@ -489,10 +489,10 @@ NetPanel.prototype = Obj.extend(Panel,
 
     resend: function(file)
     {
-        var proxy = HttpMonitor.proxy; // We should get the proxy from the context.
+        var proxy = Chrome.currentContext.getProxy();
         proxy.sendRequest(file, function(packet)
         {
-            //if (FBTrace.DBG_REMOTEBUG)
+            if (FBTrace.DBG_REMOTEBUG)
                 FBTrace.sysout("netPanel; Request sent: " + packet.from, packet);
         });
     },
