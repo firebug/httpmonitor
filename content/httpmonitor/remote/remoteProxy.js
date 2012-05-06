@@ -46,11 +46,19 @@ RemoteProxy.prototype = Obj.extend(Proxy,
     {
         Proxy.attach.apply(this, arguments);
 
-        // Initializes network context (netProgress), we don't want to observe
-        // Local HTTP event in remote scenario.
+        // Initialize only the network context (netProgress). Do not initialize the
+        // network monitor now since we don't want to observe local HTTP events in
+        // remote scenario.
         NetMonitor.initNetContext(context);
 
-        this.protocol.selectTab(context.tab, callback);
+        // Before selecting a remote tab, attach to the remote tracing actor.
+        // This allows to get all logs from the server side and display them
+        // within client side tracing console.
+        var self = this;
+        this.protocol.attachTrace(function(packet)
+        {
+            self.protocol.selectTab(context.tab, callback);
+        });
     },
 
     detach: function()
@@ -125,6 +133,11 @@ RemoteProxy.prototype = Obj.extend(Proxy,
             // Update UI
             netPanel.updateFile(file);
         }
+    },
+
+    onTraceEvent: function(packet)
+    {
+        FBTrace.sysout("Server: " + packet.message, packet.object);
     }
 });
 

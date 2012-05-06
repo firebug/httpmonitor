@@ -199,10 +199,9 @@ NetworkMonitorActor.prototype.requestTypes =
 
 function networkMonitorActorHandler(tab, request)
 {
-    //xxxHonza: Just a left over from DCamp's example?
     // Reuse a previously-created actor, if any.
-    //if (tab.sampleContextActor)
-    //    return tab.sampleContextActor;
+    if (tab.networkMonitorActor)
+        return tab.networkMonitorActor;
 
     var actor = new NetworkMonitorActor(tab);
     tab.networkMonitorActor = actor;
