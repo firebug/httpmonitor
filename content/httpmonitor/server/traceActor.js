@@ -14,6 +14,8 @@ var Cu = Components.utils;
 
 Cu.import("resource:///modules/devtools/dbg-server.jsm");
 
+var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+
 // ********************************************************************************************* //
 // Trace Actor Implementation
 
@@ -48,13 +50,18 @@ TraceActor.prototype =
 
     onAttach: function(request)
     {
+        // Track all FBTrace as well as all Firefox Console messages
         FBTrace.addListener(this);
+        consoleService.registerListener(this);
+
         return {"attach": this.actorID};
     },
 
     onDetach: function(request)
     {
         FBTrace.removeListener(this);
+        consoleService.unregisterListener(this);
+
         return {"detach": this.actorID};
     },
 
@@ -63,14 +70,41 @@ TraceActor.prototype =
 
     sysout: function(message, obj)
     {
+        var lines = [];
+        for (var frame = Components.stack; frame; frame = frame.caller)
+            lines.push("@" + frame.filename + ":" + frame.lineNumber);
+
+        try
+        {
+            // Just try to convert to JSON
+            JSON.stringify(obj);
+        }
+        catch (err)
+        {
+            var newObj = {};
+            for (var p in obj)
+                newObj[p] = obj[p] + "";
+            obj = newObj;
+        }
+
         var packet = {
             "type": "sysout",
             "from": this.actorID,
-            "message": message
+            "message": message,
+            "stack": lines.join("\n"),
+            "object": obj,
         };
 
         this.conn.send(packet);
     },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // nsIConsoleListener
+
+    observe: function(message)
+    {
+        this.sysout(message.message);
+    }
 };
 
 /**

@@ -137,7 +137,13 @@ RemoteProxy.prototype = Obj.extend(Proxy,
 
     onTraceEvent: function(packet)
     {
-        FBTrace.sysout("Server: " + packet.message, packet.object);
+        if (!packet.message)
+            return;
+
+        if (packet.object && packet.stack)
+            packet.object.stack = packet.stack;
+
+        FBTrace.sysout("--> Server: " + packet.message, packet.object);
     }
 });
 
