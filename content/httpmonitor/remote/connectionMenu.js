@@ -74,11 +74,7 @@ var ConnectionMenu = Obj.extend(Module,
     connect: function()
     {
         if (this.isConnected())
-        {
-            if (FBTrace.DBG_REMOTEBUG)
-                FBTrace.sysout("remotebug; Already connected!");
-            return;
-        }
+            this.disconnect();
 
         var host = Options.get("serverHost");
         var port = Options.get("serverPort");
@@ -197,7 +193,10 @@ var ConnectionMenu = Obj.extend(Module,
     updateOption: function(name, value)
     {
         if (name == "serverHost" || name == "serverPort")
+        {
             this.updateUI();
+            this.connect();
+        }
     }
 });
 
