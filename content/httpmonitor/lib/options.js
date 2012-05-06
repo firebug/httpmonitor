@@ -339,41 +339,6 @@ var Options =
             }
         }
     },
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Firebug UI text zoom
-
-    changeTextSize: function(amt)
-    {
-        var textSize = Options.get("textSize");
-        var newTextSize = textSize + amt;
-        if ((newTextSize < 0 && Math.abs(newTextSize) < this.negativeZoomFactors.length) ||
-            (newTextSize >= 0 && textSize+amt < this.positiveZoomFactors.length))
-        {
-            this.setTextSize(textSize+amt);
-        }
-    },
-
-    setTextSize: function(value)
-    {
-        var setValue = value;
-        if (value >= this.positiveZoomFactors.length)
-            setValue = this.positiveZoomFactors[this.positiveZoomFactors.length-1];
-        else if (value < 0 && Math.abs(value) >= this.negativeZoomFactors.length)
-            setValue = this.negativeZoomFactors[this.negativeZoomFactors.length-1];
-        this.set("textSize", setValue);
-    },
-
-    positiveZoomFactors: [1, 1.1, 1.2, 1.3, 1.5, 2, 3],
-    negativeZoomFactors: [1, 0.95, 0.8, 0.7, 0.5],
-
-    getZoomByTextSize: function(value)
-    {
-        var zoom = value >= 0 ? this.positiveZoomFactors[value] :
-            this.negativeZoomFactors[Math.abs(value)];
-
-        return zoom;
-    },
 };
 
 // ********************************************************************************************* //
