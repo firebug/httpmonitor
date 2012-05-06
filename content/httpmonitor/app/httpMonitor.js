@@ -17,6 +17,19 @@ define([
     "httpmonitor/remote/remoteProxy",
     "httpmonitor/chrome/chrome",
     "httpmonitor/net/netMonitor",
+
+    // These are independent modules. We don't actually need to reference them, but
+    // they need to be loaded.
+    "httpmonitor/chrome/infotip",
+    "httpmonitor/net/netPanel",
+    "httpmonitor/cache/tabCacheModel",
+
+    // Request/response body viewers are loaded here.
+    // xxxHonza: there should be API for creating new viewers in extensions.
+    "httpmonitor/viewers/xmlViewer",
+    "httpmonitor/viewers/svgViewer",
+    "httpmonitor/viewers/jsonViewer",
+    "httpmonitor/viewers/fontViewer",
 ],
 function(FBTrace, TabWatcher, Menu, Arr, Css, Locale, Events, Dom, Options,
     DefaultPrefs, TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy, Chrome,
@@ -32,9 +45,12 @@ const Ci = Components.interfaces;
 // Implementation
 
 /**
- * HttpMonitor object represents the entire application.
+ * {@HttpMonitor} object represents the entire application. This module also represents
+ * the main root that must be loaded. All the other modules are specified as (direct or
+ * indirect) dependencies.
  */
 var HttpMonitor = 
+/** @lends HttpMonitor */
 {
     initialize: function(win)
     {

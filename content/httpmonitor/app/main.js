@@ -8,32 +8,22 @@ var config = {};
 config.baseUrl = "resource://httpmonitor/content";
 
 /**
- * Load entire application. Modules specified here represent roots (except of tracing).
+ * The entire application is represented by "httpmonitor/app/httpMonitor" module so, load it.
+ * Any other necessary modules must be specified insde 'httpMonitor' module as a dependency.
+ *
+ * The "httpmonitor/lib/trace" is here only for tracing.
  */
 require(config, [
     "httpmonitor/lib/trace",
     "httpmonitor/app/httpMonitor",
-    "httpmonitor/chrome/infotip",
-    "httpmonitor/net/netPanel",
-    "httpmonitor/cache/tabCacheModel",
-    "httpmonitor/viewers/xmlViewer",
-    "httpmonitor/viewers/svgViewer",
-    "httpmonitor/viewers/jsonViewer",
-    "httpmonitor/viewers/fontViewer",
 ],
 function(FBTrace, HttpMonitor) {
 
 // ********************************************************************************************* //
 
-// Request/response body viewers are loaded here.
-// xxxHonza: there should be API for creating new viewers in extensions.
-
 // This is the only application global (within monitor.xul window)
 top.HttpMonitor = HttpMonitor;
 
-/**
- * Maintain application life-cycle. {@HttpMonitor} object represents the application.
- */
 function initialize()
 {
     window.removeEventListener("load", initialize, false);
