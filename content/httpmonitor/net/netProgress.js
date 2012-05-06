@@ -10,6 +10,7 @@ define([
     "httpmonitor/lib/css",
     "httpmonitor/lib/window",
     "httpmonitor/lib/string",
+    "httpmonitor/lib/options",
     "httpmonitor/lib/array",
     "httpmonitor/lib/system",
     "httpmonitor/net/netUtils",
@@ -17,7 +18,7 @@ define([
     "httpmonitor/net/netFile",
     "httpmonitor/net/netPhase",
 ],
-function(FBTrace, Obj, Locale, Events, Url, Http, Css, Win, Str,
+function(FBTrace, Obj, Locale, Events, Url, Http, Css, Win, Str, Options,
     Arr, System, NetUtils, BrowserCache, NetFile, NetPhase) {
 
 // ********************************************************************************************* //
@@ -915,7 +916,7 @@ NetProgress.prototype =
                 // If the new request has been started within a "phaseInterval" after the
                 // previous reqeust has been started, associate it with the current phase;
                 // otherwise create a new phase.
-                var phaseInterval = 1000; // xxxHonza netPhaseInterval;
+                var phaseInterval = Options.get("netPhaseInterval");
                 var lastStartTime = this.currentPhase.lastStartTime;
                 if (phaseInterval > 0 && this.loaded && file.startTime - lastStartTime >= phaseInterval)
                     this.startPhase(file);
