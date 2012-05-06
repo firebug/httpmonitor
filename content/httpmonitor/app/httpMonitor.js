@@ -12,7 +12,7 @@ define([
     "httpmonitor/lib/options",
     "httpmonitor/chrome/defaultPrefs",
     "httpmonitor/app/tabListMenu",
-    "httpmonitor/remote/connectionMenu",
+    "httpmonitor/app/connectionMenu",
     "httpmonitor/chrome/localProxy",
     "httpmonitor/remote/remoteProxy",
     "httpmonitor/chrome/chrome",
