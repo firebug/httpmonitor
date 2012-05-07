@@ -133,7 +133,13 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         if (!packet.message)
             return;
 
-        if (packet.object && packet.stack)
+        // xxxHonza: this is a bit hacky, but the only way how to pass the original
+        // stack trace to FBTrace console is through the object.
+        // This needs changes on FBTrace side.
+        if (!packet.object && packet.stack)
+            packet.object = {};
+
+        if (packet.stack)
             packet.object.stack = packet.stack;
 
         FBTrace.sysout("--> Server: " + packet.message, packet.object);
