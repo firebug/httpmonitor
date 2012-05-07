@@ -19,9 +19,10 @@ var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsol
 // ********************************************************************************************* //
 // Trace Actor Implementation
 
-function TraceActor()
+function TraceActor(rootActor)
 {
     this.entries = {};
+    this.rootActor = rootActor;
 }
 
 TraceActor.prototype =
@@ -38,6 +39,8 @@ TraceActor.prototype =
     disconnect: function()
     {
         this.onDetach();
+
+        delete this.rootActor.traceActor;
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -128,7 +131,7 @@ function traceActorHandler(rootActor, request)
 {
     // Reuse a previously-created actor, if any.
     if (rootActor.traceActor)
-        return rootActor.traceActor;
+        return rootActor.traceActor.grip();
 
     var actor = new TraceActor(rootActor);
     rootActor.traceActor = actor;

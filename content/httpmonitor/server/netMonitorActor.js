@@ -201,11 +201,15 @@ function networkMonitorActorHandler(tab, request)
 {
     // Reuse a previously-created actor, if any.
     if (tab.networkMonitorActor)
-        return tab.networkMonitorActor;
+        return tab.networkMonitorActor.grip();
 
     var actor = new NetworkMonitorActor(tab);
     tab.networkMonitorActor = actor;
-    tab.contextActorPool.addActor(actor);
+
+    // xxxHonza: this needs to be reviewed by Panos
+    // If it's added into the tabActorPool, disconnect is not executed for the actor.
+    //tab.tabActorPool.addActor(actor);
+    tab.conn.addActor(actor);
 
     if (FBTrace.DBG_NETACTOR)
         FBTrace.sysout("networkMonitorActorHandler ", {tab: tab, request: request});
