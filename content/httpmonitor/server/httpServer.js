@@ -47,7 +47,6 @@ var HttpServer =
             if (typeof(RemoteDebugger) != "undefined")
             {
                 RemoteDebugger._start();
-                dump("--> httpServer; RemoteDebugger started at: " + RemoteDebugger._getPort());
             }
             // Otherwise initialize the browser debugger.
             else if (!DebuggerServer.initialized)
@@ -81,6 +80,10 @@ var HttpServer =
 
     shutdown: function()
     {
+        FBTrace.sysout("HttpServer; shutdown");
+
+        // xxxHonza: what if there are other tools sharing the connection?
+        DebuggerServer.closeListener();
     },
 }
 

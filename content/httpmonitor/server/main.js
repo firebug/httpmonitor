@@ -1,6 +1,6 @@
 /* See license.txt for terms of usage */
 
-(function() {
+(function(scope) {
 
 // ********************************************************************************************* //
 
@@ -42,6 +42,9 @@ try
     ], function() {
         consoleService.logStringMessage("HttpServer; Running at port: 2929");
     });
+
+    // Set back-reference for the bootstrap.js so, shutdown can be sent to HttpServer object.
+    scope.HttpServer = HttpServer;
 }
 catch (e)
 {
@@ -49,4 +52,4 @@ catch (e)
 }
 
 // ********************************************************************************************* //
-})})();
+})})(this);
