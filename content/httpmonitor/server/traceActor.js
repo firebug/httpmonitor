@@ -70,9 +70,14 @@ TraceActor.prototype =
 
     sysout: function(message, obj)
     {
-        var lines = [];
-        for (var frame = Components.stack; frame; frame = frame.caller)
-            lines.push("@" + frame.filename + ":" + frame.lineNumber);
+        var stack = obj ? obj.stack : null;
+        if (!stack)
+        {
+            var lines = [];
+            for (var frame = Components.stack; frame; frame = frame.caller)
+                lines.push("@" + frame.filename + ":" + frame.lineNumber);
+            stack = lines.join("\n");
+        }
 
         try
         {
@@ -91,7 +96,7 @@ TraceActor.prototype =
             "type": "sysout",
             "from": this.actorID,
             "message": message,
-            "stack": lines.join("\n"),
+            "stack": stack,
             "object": obj,
         };
 
