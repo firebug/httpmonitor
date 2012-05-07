@@ -105,10 +105,19 @@ var HttpMonitor =
         this.proxy = new RemoteProxy(this.ConnectionMenu.connection);
 
         TabListMenu.updateUI();
+
+        // Attach to the remote Tracing service.
+        this.proxy.protocol.attachTrace(function(packet)
+        {
+            FBTrace.sysout("HTTPMonitor.onConnect; Remote Tracing attached", packet);
+        });
     },
 
     onDisconnect: function()
     {
+        // Remote tracing is detached automatically in TraceActor.disconnect()
+        // when the connection is closed
+
         this.tabWatcher.unwatchTab(this.proxy);
 
         this.proxy = new LocalProxy();

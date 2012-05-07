@@ -33,9 +33,13 @@ Protocol.prototype =
         });
     },
 
-    detachTrace: function(traceActor, callback)
+    detachTrace: function(callback)
     {
-        this.connection.sendPacket(traceActor.id, "detach", true, callback);
+        this.connection.sendPacket(this.currentTraceActor.id, "detach", true, function()
+        {
+            this.currentTraceActor = null;
+            callback();
+        });
     },
 
     onTraceEvent: function(packet)

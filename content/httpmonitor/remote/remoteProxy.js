@@ -51,14 +51,7 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         // remote scenario.
         NetMonitor.initNetContext(context);
 
-        // Before selecting a remote tab, attach to the remote tracing actor.
-        // This allows to get all logs from the server side and display them
-        // within client side tracing console.
-        var self = this;
-        this.protocol.attachTrace(function(packet)
-        {
-            self.protocol.selectTab(context.tab, callback);
-        });
+        this.protocol.selectTab(context.tab, callback);
     },
 
     detach: function()
