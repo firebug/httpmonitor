@@ -21,7 +21,7 @@ FBTrace.removeListener = function(listener)
 {
     for (var i=0; i<listeners.length; ++i)
     {
-        if (listeners[i] == item)
+        if (listeners[i] == listener)
         {
             listeners.splice(i, 1);
             return true;
