@@ -10,6 +10,12 @@ var spawn = require("child_process").spawn;
 var shell = require("shelljs");
 
 // ********************************************************************************************* //
+// Command Line Arguments
+
+var args = process.argv;
+var autoInstall = (args.length == 3 && args[2] === "install")
+
+// ********************************************************************************************* //
 // Clean Up
 
 // Helper for the target release directory.
@@ -83,11 +89,12 @@ copy({
 //console.log(project.report());
 
 // Compress main.js file (all extension modules)
-copy({
+//xxxHonza: uncomment for now (the stack trace is not much useful if there is just one line.
+/*copy({
     source: release + "/content/httpmonitor/app/main.js",
     filter: copy.filter.uglifyjs,
     dest: release + "/content/httpmonitor/app/main.js"
-});
+});*/
 
 // ********************************************************************************************* //
 // Copy Skin
@@ -172,7 +179,20 @@ else
 zip.on("exit", function()
 {
     shell.rm("-rf", "release");
-    console.log(xpiFileName + " is ready in release directory");
+    console.log(xpiFileName + " is ready");
+
+    // This feature requires 'Extension Auto-Installer' extension installed
+    // on the server side. It sends the xpi to the server, which installs it
+    // and automatically restarts the browser if necessary.
+    // https://addons.mozilla.org/cs/firefox/addon/autoinstaller/
+    // You also need 'wget' in your path.
+    if (autoInstall)
+    {
+        var params = "--post-file=httpmonitor-0.5.0.xpi http://127.0.0.1:8888/";
+        zip = spawn("wget", params.split(" "), {});
+
+        console.log(xpiFileName + " auto installed");
+    }
 });
 
 // ********************************************************************************************* //
