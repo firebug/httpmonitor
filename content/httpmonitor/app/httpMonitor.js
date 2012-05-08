@@ -107,10 +107,8 @@ var HttpMonitor =
         TabListMenu.updateUI();
 
         // Attach to the remote Tracing service.
-        this.proxy.protocol.attachTrace(function(packet)
-        {
-            FBTrace.sysout("HTTPMonitor.onConnect; Remote Tracing attached", packet);
-        });
+        if (Options.get("remoteTrace"))
+            this.proxy.attachTrace();
     },
 
     onDisconnect: function()

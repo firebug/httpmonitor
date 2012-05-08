@@ -128,6 +128,17 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         }
     },
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Remote Tracing
+
+    attachTrace: function()
+    {
+        this.protocol.attachTrace(function(packet)
+        {
+            FBTrace.sysout("remoteProxy.attachTrace; Remote Tracing attached", packet);
+        });
+    },
+
     onTraceEvent: function(packet)
     {
         if (!packet.message)
