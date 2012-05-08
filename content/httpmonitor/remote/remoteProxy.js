@@ -85,9 +85,19 @@ RemoteProxy.prototype = Obj.extend(Proxy,
             return;
         }
 
+        // xxxHonza: the same logic is duplicated in HttpRequestObserver.onModifyRequest.
+        // There shuld be just one place that resets the context (probably in the context?).
+
+        // Since new top document starts loading we need to reset some context flags.
+        // loaded: is set as soon as 'load' even is fired
+        // currentPhase: ensure that new phase is created.
+        this.context.netProgress.loaded = false;
+        this.context.netProgress.currentPhase = null;
+
         // New page loaded, bail out if 'Persist' is active.
-        //xxxHonza: Fix me
-        if (Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
+        var persist = Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked");
+        persist = (persist == "true");
+        if (persist)
             return;
 
         // Clear the UI.

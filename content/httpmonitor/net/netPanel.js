@@ -953,13 +953,15 @@ NetPanel.prototype = Obj.extend(Panel,
     {
         var tbody = this.table.querySelector(".netTableBody");
 
-        // XXXjoe Don't update rows whose phase is done and layed out already
+        // xxxHonza: Don't update rows whose phase is done and layed out already
+        // This optimalization should be effective especially when the Persist
+        // options is on.
         var phase;
         for (var row = tbody.firstChild; row; row = row.nextSibling)
         {
             var file = row.repObject;
 
-            // Some rows aren't associated with a file (e.g. header, sumarry).
+            // Some rows aren't associated with a file (e.g. header and summary).
             if (!file)
                 continue;
 
@@ -1020,8 +1022,6 @@ NetPanel.prototype = Obj.extend(Panel,
 
     calculateFileTimes: function(file, phase, rightNow)
     {
-        var phases = this.context.netProgress.phases;
-
         if (phase != file.phase)
         {
             phase = file.phase;

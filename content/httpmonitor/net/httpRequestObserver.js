@@ -132,8 +132,11 @@ var HttpRequestObserver =
             request.loadGroup && request.loadGroup.groupObserver &&
             win == win.parent && !isRedirect)
         {
+            var persist = Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked");
+            persist = (persist == "true");
+
             // New page loaded, clear UI if 'Persist' isn't active.
-            if (!Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
+            if (!persist)
             {
                 // Clear the UI
                 var panel = context.getPanel("net");
@@ -142,14 +145,23 @@ var HttpRequestObserver =
 
                 // Clear the underlying data structure.
                 context.netProgress.clear();
-
-                if (this.eventObserver)
-                    this.eventObserver.unregisterListeners();
-
-                // Register an observer for window events (load, paint, etc.)
-                this.eventObserver = new WindowEventObserver(context);
-                this.eventObserver.registerListeners();
             }
+
+            // Since new top document starts loading we need to reset some context flags.
+            // loaded: is set as soon as 'load' even is fired
+            // currentPhase: ensure that new phase is created.
+            context.netProgress.loaded = false;
+            context.netProgress.currentPhase = null;
+
+            if (this.eventObserver)
+                this.eventObserver.unregisterListeners();
+
+            // Register an observer for window events (load, paint, etc.)
+            this.eventObserver = new WindowEventObserver(context);
+            this.eventObserver.registerListeners();
+
+            if (FBTrace.DBG_NET)
+                FBTrace.sysout("httpRequestObserver.onModifyRequest; Top document loading...");
         }
 
         var networkContext = context ? context.netProgress : null;

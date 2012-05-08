@@ -25,6 +25,7 @@ function(FBTrace, Arr) {
  * for each phase starts from the beginning of the graph.
  */
 function NetPhase(file)
+/** @lends NetPhase */
 {
     // Start time of the phase. Remains the same, even if the file
     // is removed from the log (due to a max limit of entries).
