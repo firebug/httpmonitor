@@ -107,23 +107,12 @@ var HttpRequestObserver =
             // The context doesn't have to exist yet. In such cases a temp Net context is
             // created within onModifyRequest.
 
-            // Some requests are not associated with any page (e.g. favicon).
-            // These are ignored as Net panel shows only page requests.
-            var tabId = win ? Win.getTabIdForWindow(win) : null;
-            if (!tabId)
-            {
-                if (FBTrace.DBG_NET)
-                    FBTrace.sysout("net.observe NO TAB " + Http.safeGetRequestName(subject) +
-                        ", " + tabId + ", " + win);
-                return;
-            }
-
             if (topic == "http-on-modify-request")
-                this.onModifyRequest(subject, win, tabId, context);
+                this.onModifyRequest(subject, win, context);
             else if (topic == "http-on-examine-response")
-                this.onExamineResponse(subject, win, tabId, context);
+                this.onExamineResponse(subject, win, context);
             else if (topic == "http-on-examine-cached-response")
-                this.onExamineCachedResponse(subject, win, tabId, context);
+                this.onExamineCachedResponse(subject, win, context);
         }
         catch (err)
         {
@@ -132,7 +121,7 @@ var HttpRequestObserver =
         }
     },
 
-    onModifyRequest: function(request, win, tabId, context)
+    onModifyRequest: function(request, win, context)
     {
         var name = request.URI.asciiSpec;
         var origName = request.originalURI.asciiSpec;
@@ -179,7 +168,7 @@ var HttpRequestObserver =
         }
     },
 
-    onExamineResponse: function(request, win, tabId, context)
+    onExamineResponse: function(request, win, context)
     {
         var networkContext = context ? context.netProgress : null;
 
@@ -207,7 +196,7 @@ var HttpRequestObserver =
         //TabCacheModel.registerStreamListener(request, win, true);
     },
 
-    onExamineCachedResponse: function(request, win, tabId, context)
+    onExamineCachedResponse: function(request, win, context)
     {
         var networkContext = context ? context.netProgress : null;
 
