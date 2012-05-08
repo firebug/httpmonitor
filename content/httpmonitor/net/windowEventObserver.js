@@ -39,15 +39,7 @@ WindowEventObserver.prototype =
 
     registerListeners: function()
     {
-        var doc = this.context.browser.ownerDocument;
-        var appcontent = doc.getElementById("appcontent");
-
-        // xxxHonza: appcontent doesn't exist on Fennec. Also registering content
-        // listeners is different, see: https://wiki.mozilla.org/Content_Process_Event_Handlers
-        if (!appcontent)
-            return;
-
-        var win = this.context.window;
+        var appcontent = this.context.browser;
 
         this.onContentLoadHandler = Obj.bind(this.onContentLoad, this);
         this.onLoadHandler = Obj.bind(this.onLoad, this);
@@ -68,12 +60,7 @@ WindowEventObserver.prototype =
      */
     unregisterListeners: function()
     {
-        var doc = this.context.browser.ownerDocument;
-        var appcontent = doc.getElementById("appcontent");
-        if (!appcontent)
-            return;
-
-        var win = this.context.window;
+        var appcontent = this.context.browser;
 
         if (this.onPaintHandler)
             this.context.removeEventListener(appcontent, "MozAfterPaint", this.onPaintHandler, false);
@@ -109,14 +96,10 @@ WindowEventObserver.prototype =
         if (FBTrace.DBG_WINDOW_EVENT_OBSERVER)
             FBTrace.sysout("windowEventObserver.onContentLoad;");
 
-        var doc = this.context.browser.ownerDocument;
-        var appcontent = doc.getElementById("appcontent");
-
-        var win = this.context.window;
-
         if (this.context.netProgress)
-            this.context.netProgress.post(contentLoad, [win, NetUtils.now()]);
+            this.context.netProgress.post(contentLoad, [this.context.window, NetUtils.now()]);
 
+        var appcontent = this.context.browser;
         this.context.removeEventListener(appcontent, "DOMContentLoaded", this.onContentLoadHandler, true);
         this.onContentLoadHandler = null;
     },
@@ -129,8 +112,7 @@ WindowEventObserver.prototype =
         if (FBTrace.DBG_WINDOW_EVENT_OBSERVER)
             FBTrace.sysout("windowEventObserver.onLoad;");
 
-        var doc = this.context.browser.ownerDocument;
-        var appcontent = doc.getElementById("appcontent");
+        var appcontent = this.context.browser;
 
         var win = this.context.window;
 
