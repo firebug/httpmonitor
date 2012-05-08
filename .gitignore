@@ -28,3 +28,6 @@
 
 # Extensions
 httpmonitor@getfirebug.com
+
+# Various (e.g. build) tools
+*.exe
