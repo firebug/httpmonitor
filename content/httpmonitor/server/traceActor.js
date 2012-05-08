@@ -111,7 +111,7 @@ TraceActor.prototype =
 
     observe: function(message)
     {
-        this.sysout(message.message);
+        this.sysout("[From Error Console]" + message.message);
     }
 };
 
