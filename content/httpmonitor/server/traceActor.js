@@ -141,11 +141,14 @@ function traceActorHandler(rootActor, request)
 }
 
 // xxxHonza: I believe this should be part of dbg-browser-actor.js
-DebuggerServer.addRequest = function DS_addTabRequest(aName, aFunction) {
-  DebuggerServer.BrowserRootActor.prototype.requestTypes[aName] = function(aRequest) {
-    return aFunction(this, aRequest);
-  }
-};
+if (typeof(DebuggerServer.addRequest) == "undefined")
+{
+    DebuggerServer.addRequest = function DS_addRequest(aName, aFunction) {
+      DebuggerServer.BrowserRootActor.prototype.requestTypes[aName] = function(aRequest) {
+        return aFunction(this, aRequest);
+      }
+    };
+}
 
 DebuggerServer.addRequest("traceActor", traceActorHandler);
 
