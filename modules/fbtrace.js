@@ -70,5 +70,6 @@ FBTrace.DBG_ERRORS = true;
 //FBTrace.DBG_REMOTENETMONITOR = true;
 //FBTrace.DBG_REMOTEBUG = true;
 //FBTrace.DBG_NETACTOR = true;
+//FBTrace.DBG_WINDOW_EVENT_OBSERVER = true;
 
 // ********************************************************************************************* //

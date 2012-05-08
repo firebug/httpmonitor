@@ -42,6 +42,11 @@ WindowEventObserver.prototype =
         var doc = this.context.browser.ownerDocument;
         var appcontent = doc.getElementById("appcontent");
 
+        // xxxHonza: appcontent doesn't exist on Fennec. Also registering content
+        // listeners is different, see: https://wiki.mozilla.org/Content_Process_Event_Handlers
+        if (!appcontent)
+            return;
+
         var win = this.context.window;
 
         this.onContentLoadHandler = Obj.bind(this.onContentLoad, this);
@@ -65,6 +70,8 @@ WindowEventObserver.prototype =
     {
         var doc = this.context.browser.ownerDocument;
         var appcontent = doc.getElementById("appcontent");
+        if (!appcontent)
+            return;
 
         var win = this.context.window;
 
@@ -133,7 +140,13 @@ WindowEventObserver.prototype =
         this.context.removeEventListener(appcontent, "load", this.onLoadHandler, true);
         this.onLoadHandler = null;
 
-        this.context.loaded = true;
+        // Set a flag indicating that 'load' event has been fired. The flag is used e.g.
+        // when the net panel is grouping requests into a phase (a phase shares waterfall
+        // diagram, new phase starts its own waterfall). New phase is usually started
+        // when there is a gap between requests, but all requests executed till the 'load'
+        // event alwasy belong to the same phase. See {@NetPhase} for more details.
+        if (this.context.netProgress)
+            this.context.netProgress.loaded = true;
 
         // The paint listener is automatically removed when the window is loaded
         // We don't want to see further paint events on the net view since it would

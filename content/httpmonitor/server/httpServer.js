@@ -47,25 +47,12 @@ var HttpServer =
             if (typeof(RemoteDebugger) != "undefined")
             {
                 RemoteDebugger._start();
-                dump("--> httpServer; RemoteDebugger started at: " + RemoteDebugger._getPort());
             }
             // Otherwise initialize the browser debugger.
             else if (!DebuggerServer.initialized)
             {
+                // Initialize the server (e.g. appends script debugger actors)
                 DebuggerServer.init();
-
-                // xxxHonza: Fennec doesn't have RemoteDebugger yet, so we need to
-                // do yet another check
-                //var appInfo = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo);
-                //var fennec = (appInfo.name != "Firefox");
-
-                //dump("--> httpServer; Backend running on " + appInfo.name);
-
-                //var fennec = true;
-                //if (fennec)
-                //    DebuggerServer.addActors("chrome://browser/content/dbg-browser-actors.js");
-                //else
-                //    DebuggerServer.addBrowserActors();
 
                 try
                 {
@@ -79,13 +66,10 @@ var HttpServer =
                 }
 
                 // Open a TCP listener
-                // xxxHonza: what about a pref for the port number?
+                // xxxHonza: what about a pref for the port number and true/false for
+                // loopback device? What if the script debugger already opened that
+                // listener?
                 DebuggerServer.openListener(2929, false);
-                dump("--> httpServer; RemoteDebugger undefined, running on port: 2929");
-            }
-            else
-            {
-                dump("--> httpServer; RemoteDebugger and DebuggerServer already initialized");
             }
         }
         catch (ex)
@@ -96,6 +80,10 @@ var HttpServer =
 
     shutdown: function()
     {
+        FBTrace.sysout("HttpServer; shutdown");
+
+        // xxxHonza: what if there are other tools sharing the connection?
+        DebuggerServer.closeListener();
     },
 }
 

@@ -83,11 +83,9 @@ var NetMonitor = Obj.extend(Module,
         this.initNetContext(context);
         this.attachObservers(context);
 
-        var netProgress = context.netProgress;
-        netProgress.loaded = true;
-
         //xxxHonza: needed by NetExport, should be probably somewhere else.
         // Set Page title and id into all document objects.
+        var netProgress = context.netProgress;
         for (var i=0; i<netProgress.documents.length; i++)
         {
             var doc = netProgress.documents[i];
@@ -221,7 +219,7 @@ var NetMonitor = Obj.extend(Module,
         this.maxQueueRequests = value ? value : this.maxQueueRequests;
     },
 
-    // xxxHonza: console.timeStamp() API implementation should here?
+    // xxxHonza: console.timeStamp() API implementation should really be here?
     addTimeStamp: function(context, time, label, color)
     {
         if (context.netProgress)

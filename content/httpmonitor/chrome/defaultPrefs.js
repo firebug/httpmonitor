@@ -47,6 +47,7 @@ var DefaultPrefs =
 // Remoting
     "serverHost": "legoas",
     "serverPort": 2929,
+    "remoteTrace": false,
 
 // Server
     "serverMode": false,

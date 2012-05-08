@@ -105,10 +105,17 @@ var HttpMonitor =
         this.proxy = new RemoteProxy(this.ConnectionMenu.connection);
 
         TabListMenu.updateUI();
+
+        // Attach to the remote Tracing service.
+        if (Options.get("remoteTrace"))
+            this.proxy.attachTrace();
     },
 
     onDisconnect: function()
     {
+        // Remote tracing is detached automatically in TraceActor.disconnect()
+        // when the connection is closed
+
         this.tabWatcher.unwatchTab(this.proxy);
 
         this.proxy = new LocalProxy();

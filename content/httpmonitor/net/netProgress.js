@@ -104,6 +104,7 @@ NetProgress.prototype =
         this.documents = [];
         this.windows = [];
         this.currentPhase = null;
+        this.loaded = false;
 
         this.queue = [];
     },
@@ -740,8 +741,8 @@ NetProgress.prototype =
         if (!this.phases.length)
             return;
 
-        // Update all requests that belong to the first phase.
-        var firstPhase = this.phases[0];
+        // Update all requests that belong to the current phase.
+        var firstPhase = this.currentPhase;
 
         // Keep the information also in the phase for now, NetExport and other could need it.
         firstPhase.windowLoadTime = time;
@@ -763,8 +764,8 @@ NetProgress.prototype =
         if (!this.phases.length)
             return;
 
-        // Update all requests that belong to the first phase.
-        var firstPhase = this.phases[0];
+        // Update all requests that belong to the current phase.
+        var firstPhase = this.currentPhase;
 
         // Keep the information also in the phase for now, NetExport and other could need it.
         firstPhase.contentLoadTime = time;
@@ -918,7 +919,15 @@ NetProgress.prototype =
                 // otherwise create a new phase.
                 var phaseInterval = Options.get("netPhaseInterval");
                 var lastStartTime = this.currentPhase.lastStartTime;
-                if (phaseInterval > 0 && this.loaded && file.startTime - lastStartTime >= phaseInterval)
+
+                var interval = file.startTime - lastStartTime;
+                var startPhase = (phaseInterval > 0) && this.loaded && (interval >= phaseInterval);
+
+                //FBTrace.sysout("netProgress.extendPhase; " + startPhase +
+                //    ", loaded: " + this.loaded + ", interval: " + interval +
+                //    " (default: " + phaseInterval + ")", this.context);
+
+                if (startPhase)
                     this.startPhase(file);
                 else
                     this.currentPhase.addFile(file);

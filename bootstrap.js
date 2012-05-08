@@ -58,8 +58,14 @@ function shutdown(data, reason)
     // Remove "new window" listener.
     Services.ww.unregisterNotification(windowWatcher);
 
-    // xxxHonza: close the XUL window if it's opened.
-    // xxxHonza: shutdown the server (in case we are in server mode)
+    // Close all HTTP Monitor windows
+    var win;
+    while (win = Services.wm.getMostRecentWindow("HTTPMonitor"))
+        win.close();
+
+    // Shutdown the server (in case we are in server mode).
+    unloadServer();
+
     // xxxHonza: remove all default preferences
     // xxxHonza: remove all loaded *.jsm modules (those from modules directory)
 }
@@ -108,6 +114,8 @@ function unloadBrowserOverlay(win)
 // ********************************************************************************************* //
 // Server
 
+var serverScope = {};
+
 function loadServer()
 {
     var serverMode = false;
@@ -124,12 +132,22 @@ function loadServer()
     try
     {
         if (serverMode)
-            Services.scriptloader.loadSubScript("chrome://httpmonitor/content/server/main.js");
+        {
+            Services.scriptloader.loadSubScript(
+                "chrome://httpmonitor/content/server/main.js",
+                serverScope);
+        }
     }
     catch (e)
     {
         Cu.reportError(e);
     }
+}
+
+function unloadServer()
+{
+    if (serverScope.HttpServer)
+        serverScope.HttpServer.shutdown();
 }
 
 // ********************************************************************************************* //

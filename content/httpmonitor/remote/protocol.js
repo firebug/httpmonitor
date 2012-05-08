@@ -18,7 +18,37 @@ function Protocol(connection, listener)
 Protocol.prototype =
 {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    // Protocol API
+    // Trace API
+
+    attachTrace: function(callback)
+    {
+        var traceEvent = Obj.bind(this.onTraceEvent, this);
+
+        var self = this;
+        this.connection.sendPacket("root", "traceActor", true, function(packet)
+        {
+            self.currentTraceActor = packet.actor;
+            self.connection.sendPacket(packet.actor, "attach", false, traceEvent);
+            callback();
+        });
+    },
+
+    detachTrace: function(callback)
+    {
+        this.connection.sendPacket(this.currentTraceActor.id, "detach", true, function()
+        {
+            this.currentTraceActor = null;
+            callback();
+        });
+    },
+
+    onTraceEvent: function(packet)
+    {
+        this.listener.onTraceEvent(packet);
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Network Monitor API
 
     getTabList: function(callback)
     {

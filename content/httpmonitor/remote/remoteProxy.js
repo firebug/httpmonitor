@@ -46,8 +46,9 @@ RemoteProxy.prototype = Obj.extend(Proxy,
     {
         Proxy.attach.apply(this, arguments);
 
-        // Initializes network context (netProgress), we don't want to observe
-        // Local HTTP event in remote scenario.
+        // Initialize only the network context (netProgress). Do not initialize the
+        // network monitor now since we don't want to observe local HTTP events in
+        // remote scenario.
         NetMonitor.initNetContext(context);
 
         this.protocol.selectTab(context.tab, callback);
@@ -84,9 +85,19 @@ RemoteProxy.prototype = Obj.extend(Proxy,
             return;
         }
 
+        // xxxHonza: the same logic is duplicated in HttpRequestObserver.onModifyRequest.
+        // There shuld be just one place that resets the context (probably in the context?).
+
+        // Since new top document starts loading we need to reset some context flags.
+        // loaded: is set as soon as 'load' even is fired
+        // currentPhase: ensure that new phase is created.
+        this.context.netProgress.loaded = false;
+        this.context.netProgress.currentPhase = null;
+
         // New page loaded, bail out if 'Persist' is active.
-        //xxxHonza: Fix me
-        if (Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked"))
+        var persist = Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked");
+        persist = (persist == "true");
+        if (persist)
             return;
 
         // Clear the UI.
@@ -125,6 +136,34 @@ RemoteProxy.prototype = Obj.extend(Proxy,
             // Update UI
             netPanel.updateFile(file);
         }
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Remote Tracing
+
+    attachTrace: function()
+    {
+        this.protocol.attachTrace(function(packet)
+        {
+            FBTrace.sysout("remoteProxy.attachTrace; Remote Tracing attached", packet);
+        });
+    },
+
+    onTraceEvent: function(packet)
+    {
+        if (!packet.message)
+            return;
+
+        // xxxHonza: this is a bit hacky, but the only way how to pass the original
+        // stack trace to FBTrace console is through the object.
+        // This needs changes on FBTrace side.
+        if (!packet.object && packet.stack)
+            packet.object = {};
+
+        if (packet.stack)
+            packet.object.stack = packet.stack;
+
+        FBTrace.sysout("--> Server: " + packet.message, packet.object);
     }
 });
 
