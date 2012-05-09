@@ -1334,6 +1334,7 @@ NetPanel.prototype = Obj.extend(Panel,
 
     setFilter: function(filterCategory)
     {
+        FBTrace.sysout("net.setFilter " + filterCategory);
         this.filterCategory = filterCategory;
 
         var panelNode = this.panelNode;
