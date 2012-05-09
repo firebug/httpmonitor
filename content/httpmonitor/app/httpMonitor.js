@@ -75,8 +75,8 @@ var HttpMonitor =
         this.internationalizeUI(win.document);
 
         // Initialize options and pass in the pref domain for this application.
-        Options.initialize("extensions.httpmonitor");
-        Options.registerDefaultPrefs(DefaultPrefs);
+        //Options.initialize("extensions.httpmonitor");
+        //Options.registerDefaultPrefs(DefaultPrefs);
 
         // Initialize modules. Modules represent independent application
         // components that are registered during application load and

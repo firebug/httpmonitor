@@ -14,9 +14,10 @@ define([
     "httpmonitor/base/module",
     "httpmonitor/chrome/chrome",
     "httpmonitor/lib/window",
+    "httpmonitor/chrome/defaultPrefs",
 ],
 function(FBTrace, Obj, Options, Str, HttpActivityObserver, HttpRequestObserver,
-    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win) {
+    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win, DefaultPrefs) {
 
 // ********************************************************************************************* //
 // Constants
@@ -51,6 +52,10 @@ var NetMonitor = Obj.extend(Module,
     initialize: function()
     {
         Module.initialize.apply(this, arguments);
+
+        // Initialize options and pass in the pref domain for this application.
+        Options.initialize("extensions.httpmonitor");
+        Options.registerDefaultPrefs(DefaultPrefs);
 
         HttpRequestObserver.registerObserver();
     },
