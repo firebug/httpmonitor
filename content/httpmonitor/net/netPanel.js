@@ -77,6 +77,9 @@ NetPanel.prototype = Obj.extend(Panel,
 
     destroy: function(state)
     {
+        if (FBTrace.DBG_NET)
+            FBTrace.sysout("net.NetPanel.destroy; ", state);
+
         Panel.destroy.apply(this, arguments);
     },
 
@@ -212,7 +215,9 @@ NetPanel.prototype = Obj.extend(Panel,
         // xxxHonza: Netexport needs to see all requests in the UI (to export them).
         //panel.updateLayout();
 
-        this.context.netProgress.activate(null);
+        // xxxHonza:
+        if (this.context.netProgress)
+            this.context.netProgress.activate(null);
     },
 
     updateOption: function(name, value)
@@ -657,7 +662,9 @@ NetPanel.prototype = Obj.extend(Panel,
 
     getSearchOptionsMenuItems: function()
     {
-        return [
+        //xxxHonza
+        return [];
+        /*return [
             Search.searchOptionMenu("search.Case_Sensitive", "searchCaseSensitive",
                 "search.tip.Case_Sensitive"),
             //Search.searchOptionMenu("search.net.Headers", "netSearchHeaders"),
@@ -666,7 +673,7 @@ NetPanel.prototype = Obj.extend(Panel,
                 "searchUseRegularExpression", "search.tip.Use_Regular_Expression"),
             Search.searchOptionMenu("search.net.Response_Bodies", "netSearchResponseBody",
                 "search.net.tip.Response_Bodies")
-        ];
+        ];*/
     },
 
     search: function(text, reverse)
@@ -1327,6 +1334,7 @@ NetPanel.prototype = Obj.extend(Panel,
 
     setFilter: function(filterCategory)
     {
+        FBTrace.sysout("net.setFilter " + filterCategory);
         this.filterCategory = filterCategory;
 
         var panelNode = this.panelNode;
