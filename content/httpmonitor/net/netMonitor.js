@@ -15,12 +15,11 @@ define([
     "httpmonitor/base/module",
     "httpmonitor/chrome/chrome",
     "httpmonitor/lib/window",
-    "httpmonitor/chrome/defaultPrefs",
     "httpmonitor/net/documentLoadObserver",
     "httpmonitor/net/windowEventObserver",
 ],
 function(FBTrace, Obj, Options, Str, Http, HttpActivityObserver, HttpRequestObserver,
-    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win, DefaultPrefs,
+    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win,
     DocumentLoadObserver, WindowEventObserver) {
 
 // ********************************************************************************************* //
@@ -59,10 +58,6 @@ var NetMonitor = Obj.extend(Module,
     initialize: function()
     {
         Module.initialize.apply(this, arguments);
-
-        // Initialize options and pass in the pref domain for this application.
-        Options.initialize("extensions.httpmonitor");
-        Options.registerDefaultPrefs(DefaultPrefs);
 
         // Register document load observer to get notification about new top document
         // being requested to load.
