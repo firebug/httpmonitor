@@ -2,13 +2,8 @@
 
 define([
     "httpmonitor/lib/trace",
-    "httpmonitor/lib/url",
-    "httpmonitor/lib/options",
-    "httpmonitor/lib/window",
-    "httpmonitor/lib/xml",
-    "httpmonitor/lib/http",
 ],
-function(FBTrace, Url, Options, Win, Xml, Http) {
+function(FBTrace) {
 
 // ********************************************************************************************* //
 // Module Implementation
