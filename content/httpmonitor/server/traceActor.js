@@ -140,17 +140,7 @@ function traceActorHandler(rootActor, request)
     return actor.grip();
 }
 
-// xxxHonza: I believe this should be part of dbg-browser-actor.js
-if (typeof(DebuggerServer.addRequest) == "undefined")
-{
-    DebuggerServer.addRequest = function DS_addRequest(aName, aFunction) {
-      DebuggerServer.BrowserRootActor.prototype.requestTypes[aName] = function(aRequest) {
-        return aFunction(this, aRequest);
-      }
-    };
-}
-
-DebuggerServer.addRequest("traceActor", traceActorHandler);
+DebuggerServer.addGlobalActor("traceActor", TraceActor);
 
 // ********************************************************************************************* //
 });

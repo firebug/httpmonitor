@@ -217,7 +217,7 @@ function networkMonitorActorHandler(tab, request)
     return actor.grip();
 }
 
-DebuggerServer.addTabRequest("networkMonitorActor", networkMonitorActorHandler);
+DebuggerServer.addTabActor("networkMonitorActor", NetworkMonitorActor);
 
 // ********************************************************************************************* //
 });
