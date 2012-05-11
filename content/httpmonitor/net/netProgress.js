@@ -797,7 +797,8 @@ NetProgress.prototype =
 
         if (noCreate)
         {
-            FBTrace.sysout("no create", this.files);
+            FBTrace.sysout("netProgress.getRequestFile; No create file? " +
+                Http.safeGetRequestName(request), this.files);
             return null;
         }
 
