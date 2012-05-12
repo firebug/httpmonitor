@@ -12,9 +12,10 @@ define([
     "httpmonitor/lib/options",
     "httpmonitor/lib/events",
     "httpmonitor/lib/dom",
-    "httpmonitor/lib/array"
+    "httpmonitor/lib/array",
+    "httpmonitor/lib/string"
 ],
-function(FBTrace, Css, Obj, Domplate, Options, Events, Dom, Arr) {
+function(FBTrace, Css, Obj, Domplate, Options, Events, Dom, Arr, Str) {
 with (Domplate) {
 
 // ********************************************************************************************* //
@@ -50,7 +51,7 @@ var Rep = domplate(
                 return ctorName;
         }
 
-        var label = FBL.safeToString(object); // eg [object XPCWrappedNative [object foo]]
+        var label = Str.safeToString(object); // eg [object XPCWrappedNative [object foo]]
 
         const re =/\[object ([^\]]*)/;
         var m = re.exec(label);

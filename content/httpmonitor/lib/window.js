@@ -151,6 +151,34 @@ Win.iterateBrowserTabs = function(browserWindow, callback)
     return false;
 }
 
+Win.safeGetWindowLocation = function(window)
+{
+    try
+    {
+        if (window)
+        {
+            if (window.closed)
+                return "(window.closed)";
+            if ("location" in window)
+                return window.location+"";
+            else
+                return "(no window.location)";
+        }
+        else
+            return "(no context.window)";
+    }
+    catch (exc)
+    {
+        if (FBTrace.DBG_WINDOWS || FBTrace.DBG_ERRORS)
+        {
+            FBTrace.sysout("TabContext.getWindowLocation failed "+exc, exc);
+            FBTrace.sysout("TabContext.getWindowLocation failed window:", window);
+        }
+
+        return "(getWindowLocation: "+exc+")";
+    }
+};
+
 // ********************************************************************************************* //
 // Wrappers
 

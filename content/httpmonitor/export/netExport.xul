@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!-- See license.txt for terms of usage -->
+
+<?xml-stylesheet href="chrome://netexport/skin/netExport.css"?>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"> 
+    <script src="chrome://httpmonitor/content/export/json2.js" type="application/x-javascript"/>
+    <script src="chrome://httpmonitor/content/export/netExport.js" type="application/x-javascript"/>
+    <script src="chrome://httpmonitor/content/export/exporter.js" type="application/x-javascript"/>
+    <script src="chrome://httpmonitor/content/export/harBuilder.js" type="application/x-javascript"/>
+    <script src="chrome://httpmonitor/content/export/automation.js" type="application/x-javascript"/>
+    <script src="chrome://httpmonitor/content/export/pageLoader.js" type="application/x-javascript"/>
+    <script src="chrome://httpmonitor/content/export/harUploader.js" type="application/x-javascript"/>
+
+    <commandset id="mainCommandSet">
+        <command id="cmd_netExport" oncommand="Firebug.NetExport.exportData(Firebug.currentContext)"/>
+        <command id="cmd_netExportJsonp" oncommand="Firebug.NetExport.exportDataJsonp(Firebug.currentContext)"/>
+        <command id="cmd_netImport" oncommand="Firebug.NetExport.importData(Firebug.currentContext)"/>
+        <command id="cmd_netExportAuto" oncommand="Firebug.NetExport.toggleAutoExport(Firebug.currentContext)"/>
+        <command id="cmd_netExportSendTo" oncommand="Firebug.NetExport.sendTo(Firebug.currentContext)"/>
+        <command id="cmd_netExportScreenCopy" oncommand="Firebug.NetExport.screenCopy(Firebug.currentContext)"/>
+    </commandset>
+
+    <toolbar id="monitorToolbar">
+        <hbox id="fbNetButtons" collapsed="true">
+            <hbox id="fbNetButtonsFilter" class="noTabStop">
+
+                <!-- Export Net panel data as HAR -->
+                <toolbarbutton id="netExport"
+                    insertafter="fbNetPersist"
+                    label="netexport.button.label.Export"
+                    tooltiptext="netexport.button.tooltip.Export HTTP Tracing"
+                    type="menu"
+                    onpopupshowing="return Firebug.NetExport.onMenuShowing(this);">
+                    <menupopup>
+
+                        <!-- Various exports -->
+                        <menuitem id="netExportSaveAs" command="cmd_netExport"
+                            label="netexport.button.label.Save As"
+                            tooltiptext="netexport.button.tooltip.Save As"/>
+                        <menuitem id="netExportSaveAsJsonp" command="cmd_netExportJsonp"
+                            label="netexport.button.label.Save As JSONP"
+                            tooltiptext="netexport.button.tooltip.Save As JSONP"/>
+                        <menuitem id="netExportSendTo" collapsed="true"
+                            label="netexport.menu.label.Send To"
+                            tooltiptext="netexport.menu.tooltip.Send To"
+                            command="cmd_netExportSendTo" />
+                        <menuseparator id="netExportSeparator"/>
+
+                        <!-- Net panel content screen copy -->
+                        <menuitem id="netExportScreenCopy"
+                            label="netexport.menu.label.Copy As Image"
+                            tooltiptext="netexport.menu.tooltip.Copy As Image"
+                            command="cmd_netExportScreenCopy" />
+                        <menuseparator />
+
+                        <!-- Options -->
+                        <menu id="netExportOptions" label="netexport.menu.label.Options">
+                            <menupopup onpopupshowing="return Firebug.NetExport.onOptionsShowing(this);">
+                                <menuitem id="netExportAutoOption" type="checkbox"
+                                    label="netexport.menu.label.Auto Export"
+                                    command="cmd_netExportAuto" />
+                                <menuitem id="netExportCompress" type="checkbox"
+                                    label="netexport.menu.label.Compress"
+                                    tooltiptext="netexport.menu.tooltip.Compress"
+                                    oncommand="Firebug.NetExport.onToggleOption(event, this)"
+                                    option="netexport.compress" />
+                                <menuitem id="netExportShowPreview" type="checkbox"
+                                    label="netexport.menu.label.Show Preview"
+                                    tooltiptext="netexport.menu.tooltip.Show Preview"
+                                    oncommand="Firebug.NetExport.onToggleOption(event, this)"
+                                    option="netexport.showPreview" />
+                                <menuitem id="netExportSaveFiles" type="checkbox"
+                                    label="netexport.menu.label.Save Files"
+                                    tooltiptext="netexport.menu.tooltip.Save Files"
+                                    oncommand="Firebug.NetExport.onToggleOption(event, this)"
+                                    option="netexport.saveFiles" />
+                                <menuseparator />
+                                <menuitem id="netExportLogDir"
+                                    label="netexport.menu.label.Default Log Directory"
+                                    tooltiptext="netexport.menu.tooltip.Default Log Directory"
+                                    oncommand="Firebug.NetExport.Logger.onDefaultLogDirectory(event)" />
+                           </menupopup>
+                        </menu>
+                        <menuseparator id="netExportOptionsSeparator" />
+
+                        <menuitem id="netExportOpenLogDir"
+                            label="netexport.menu.label.OpenLogDir"
+                            tooltiptext="netexport.menu.tooltip.OpenLogDir"
+                            oncommand="Firebug.NetExport.onOpenLogDir(event)" />
+
+                        <!--<menuitem id="netRunPageSuite"
+                            label="netexport.menu.label.Run Automated Loads"
+                            tooltiptext="netexport.menu.tooltip.Run Automated Loads"
+                            oncommand="Firebug.NetExport.onRunPageSuite(event)" />
+                        <menuseparator />-->
+
+                        <menuitem id="netExportHelp"
+                            label="netexport.menu.label.Help"
+                            tooltiptext="netexport.menu.tooltip.Help"
+                            oncommand="Firebug.NetExport.onHelp(event)" />
+                        <menuitem id="netExportAbout"
+                            label="netexport.menu.label.About"
+                            tooltiptext="netexport.menu.tooltip.About"
+                            oncommand="Firebug.NetExport.onAbout(event, Firebug.currentContext)" />
+                    </menupopup>
+                </toolbarbutton>
+
+                <!-- Template for Upload progress metter. -->
+                <progressmeter id="netExportUploadProgressTempl"
+                    class="netExportUploadProgress"
+                    mode="determined" value="0" collapsed="true" />
+
+                <!-- Import xxxHonza: TODO
+                    <toolbarbutton label="Import" class="toolbar-text-button"
+                    insertbefore="fbNetFilter-all"
+                    tooltiptext="Import HTTP Tracing" command="cmd_netImport"/>-->
+
+                <!-- Export Automation -->
+                <toolbarbutton id="netExportAuto" command="cmd_netExportAuto"
+                    class="toolbarbutton-iconic"
+                    insertbefore="fbNetFilter-all"
+                    tooltiptext="netexport.menu.tooltip.Activate Auto Export" />
+                <toolbarseparator insertbefore="fbNetFilter-all"/>
+            </hbox>
+        </hbox>
+    </toolbar>
+
+    <popupset id="mainPopupSet">
+        <menupopup id="netExportUploadAbort" />
+    </popupset>
+</overlay>

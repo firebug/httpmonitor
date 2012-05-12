@@ -18,6 +18,9 @@ define([
     "httpmonitor/chrome/chrome",
     "httpmonitor/net/netMonitor",
 
+    // Export to HAR
+    "httpmonitor/export/exporter",
+
     // These are independent modules. We don't actually need to reference them, but
     // they need to be loaded.
     "httpmonitor/chrome/infotip",
@@ -33,7 +36,7 @@ define([
 ],
 function(FBTrace, TabWatcher, Menu, Arr, Css, Locale, Events, Dom, Options,
     DefaultPrefs, TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy, Chrome,
-    NetMonitor) {
+    NetMonitor, Exporter) {
 
 // ********************************************************************************************* //
 // Constants
@@ -150,6 +153,11 @@ var HttpMonitor =
     onToggleFilter: function(filter)
     {
         NetMonitor.onToggleFilter(Chrome.currentContext, filter);
+    },
+
+    onExport: function()
+    {
+        Exporter.exportData(Chrome.currentContext, false);
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

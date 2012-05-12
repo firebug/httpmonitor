@@ -94,7 +94,7 @@ var TabListMenu = Obj.extend(Module,
         var context = Chrome.currentContext;
         var tab = context ? context.tab : null;
         if (tab)
-            label = Str.cropString(tab.label, 100);
+            label = Str.cropString(tab.label, 40);
 
         menu.setAttribute("label", label + " ");
     },

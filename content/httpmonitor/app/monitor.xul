@@ -20,6 +20,7 @@
         <command id="cmd_togglePersistNet" oncommand="HttpMonitor.togglePersist()"/>
         <command id="cmd_httpMonitorConnect" oncommand="HttpMonitor.ConnectionMenu.connect()"/>
         <command id="cmd_httpMonitorDisconnect" oncommand="HttpMonitor.ConnectionMenu.disconnect()"/>
+        <command id="cmd_netExport" oncommand="HttpMonitor.onExport()"/>
     </commandset>
 
     <!-- Toolbar -->
@@ -52,6 +53,10 @@
                     class="toolbar-text-button fbInternational"
                     tooltiptext="Do_Not_Clear_On_Reload"
                     command="cmd_togglePersistNet"/>
+                <toolbarbutton id="fbNetExport" label="Export"
+                    class="toolbar-text-button fbInternational"
+                    tooltiptext="Export to HAR File"
+                    command="cmd_netExport"/>
                 <hbox id="fbNetButtonsFilter" class="noTabStop">
                     <toolbarseparator/>
                     <toolbarbutton id="fbNetFilter-all" label="filter.All"
