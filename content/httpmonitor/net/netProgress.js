@@ -818,7 +818,10 @@ NetProgress.prototype =
         if (isDocument)
         {
             fileDoc.documentFile = file;
-            file.ownDocument = fileDoc;
+
+            // xxxHonza: causes cyclic object value error when converting to JSON
+            // not used anywhere now, but JSON conversion could be improved.
+            //file.ownDocument = fileDoc;
         }
 
         file.request = request;
