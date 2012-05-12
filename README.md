@@ -19,7 +19,7 @@ You can also watch HTTP activity remotely. In such case you just need to install
 At the moment there is no UI for settings so be ready to use `about:config`
 
 * Install the extension on both machines (client/server)
-* Set `extensions.httpmonitor.serverMode` preference to `true` on the server side.
+* Set `extensions.httpmonitor.serverMode` preference to `true` on the server side (you need to restart the browser).
 * Set `extensions.httpmonitor.serverHost` preference (name/IP address) on the client side (to point to your server machine).
 * Run browsers on both sides. There is a new menu at the top left corner of the HTTP Monitor window. If it says *name:port* of the server - the connection has been properly established. It can also say *Connecting...*
 * After successful connection, pick a remote tab in *Select Tab* menu.
