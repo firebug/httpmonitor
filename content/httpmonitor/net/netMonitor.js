@@ -146,15 +146,8 @@ var NetMonitor = Obj.extend(Module,
         context.netProgress.loaded = false;
         context.netProgress.currentPhase = null;
 
-        if (this.eventObserver)
-            this.eventObserver.unregisterListeners();
-
-        // Register an observer for window events (load, paint, etc.)
-        this.eventObserver = new WindowEventObserver(context);
-        this.eventObserver.registerListeners();
-
         if (FBTrace.DBG_NET)
-            FBTrace.sysout("httpRequestObserver.onModifyRequest; Top document loading...");
+            FBTrace.sysout("netMonitor.onModifyRequest; Top document loading...");
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -170,6 +163,8 @@ var NetMonitor = Obj.extend(Module,
 
         var netProgress = new NetProgress(context, this.fbListeners);
         context.netProgress = netProgress;
+
+        return netProgress;
     },
 
     destroyNetContext: function(context)
@@ -185,17 +180,33 @@ var NetMonitor = Obj.extend(Module,
             return;
 
         // Register activity-distributor observer if available (#488270)
-        netProgress.httpActivityObserver = new HttpActivityObserver(context);
-        netProgress.httpActivityObserver.registerObserver();
+        if (!netProgress.httpActivityObserver)
+        {
+            netProgress.httpActivityObserver = new HttpActivityObserver(context);
+            netProgress.httpActivityObserver.registerObserver();
+        }
 
         // Register observer for HTTP events
-        netProgress.httpRequestObserver = new HttpRequestObserver(context);
-        netProgress.httpRequestObserver.registerObserver();
+        if (!netProgress.httpRequestObserver)
+        {
+            netProgress.httpRequestObserver = new HttpRequestObserver(context);
+            netProgress.httpRequestObserver.registerObserver();
+        }
 
         // Add cache listener so, net panel has always fresh responses.
         // Safe to call multiple times.
-        netProgress.cacheListener = new NetCacheListener(netProgress);
-        netProgress.cacheListener.register(context.sourceCache);
+        if (!netProgress.cacheListener && context.sourceCache)
+        {
+            netProgress.cacheListener = new NetCacheListener(netProgress);
+            netProgress.cacheListener.register(context.sourceCache);
+        }
+
+        // Register observer for window events (load, DOMContentLoaded)
+        if (!netProgress.windowObserver && context.uid)
+        {
+            netProgress.windowObserver = new WindowEventObserver(context);
+            netProgress.windowObserver.registerListeners();
+        }
     },
 
     detachObservers: function(context)
@@ -212,6 +223,9 @@ var NetMonitor = Obj.extend(Module,
 
         netProgress.cacheListener.unregister();
         delete netProgress.cacheListener;
+
+        netProgress.windowObserver.unregisterListeners();
+        delete netProgress.windowObserver;
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
