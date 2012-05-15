@@ -167,10 +167,10 @@ var NetMonitor = Obj.extend(Module,
 
     clear: function(context)
     {
-        // The user pressed a Clear button so, remove content of the panel...
-        var panel = context.getPanel(panelName, true);
-        if (panel)
-            panel.clear();
+        // The user pressed a Clear button so, remove all HTTP collected data. The Net panel
+        // is context handler and so the clear action will be automatically forwarded to it.
+        if (context.netProgress)
+            context.netProgress.clear();
     },
 
     onToggleFilter: function(context, filterCategory)

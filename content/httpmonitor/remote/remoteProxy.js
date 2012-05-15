@@ -100,11 +100,6 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         if (persist)
             return;
 
-        // Clear the UI.
-        var netPanel = this.context.getPanel("net", true);
-        if (netPanel)
-            netPanel.clear();
-
         // Clear the underlying data structure.
         this.context.netProgress.clear();
     },
@@ -127,6 +122,13 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         for (var i=0; i<packet.files.length; i++)
         {
             var dataFile = packet.files[i];
+            if (!dataFile.serial)
+            {
+                if (FBTrace.DBG_ERRORS)
+                    FBTrace.sysout("remoteProxy.onNetworkEvent; ERROR undefined serial!");
+                continue;
+            }
+
             var file = this.context.netProgress.getRequestFile(dataFile.serial);
 
             // Merge incoming data into the file object.

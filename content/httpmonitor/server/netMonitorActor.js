@@ -138,10 +138,26 @@ NetworkMonitorActor.prototype =
 
     updateFile: function(file)
     {
+        if (!file.serial)
+        {
+            if (FBTrace.DBG_ERRORS)
+                FBTrace.sysout("netMonitorActor.updateFile; ERROR No serial!");
+            return;
+        }
+
         // xxxHonza: Sent data should be removed from the original file object so,
         // they are not sent to the client again.
         this.files[file.serial] = file.clone();
         this.flush();
+    },
+
+    clear: function()
+    {
+        if (this.flushTimer)
+            this.flushTimer.cancel();
+
+        this.flushTimer = null;
+        this.files = [];
     },
 
     flush: function()
@@ -160,7 +176,8 @@ NetworkMonitorActor.prototype =
         //xxxHonza: data already sent to the client should not be send again
         // (especially not the response body)
         var data = Arr.values(this.files);
-        this.onFlushData(data);
+        if (data.length)
+            this.onFlushData(data);
 
         // Reset timer and data.
         this.flushTimer = null;

@@ -1357,9 +1357,6 @@ NetPanel.prototype = Obj.extend(Panel,
         this.queue = [];
         this.invalidPhases = false;
 
-        if (this.context.netProgress)
-            this.context.netProgress.clear();
-
         if (FBTrace.DBG_NET)
             FBTrace.sysout("net.panel.clear; " + this.context.getName());
     },
