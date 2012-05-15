@@ -15,9 +15,12 @@ define([
     "httpmonitor/chrome/chrome",
     "httpmonitor/lib/window",
     "httpmonitor/chrome/defaultPrefs",
+    "httpmonitor/net/documentLoadObserver",
+    "httpmonitor/net/windowEventObserver",
 ],
 function(FBTrace, Obj, Options, Str, HttpActivityObserver, HttpRequestObserver,
-    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win, DefaultPrefs) {
+    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win, DefaultPrefs,
+    DocumentLoadObserver, WindowEventObserver) {
 
 // ********************************************************************************************* //
 // Constants
@@ -46,6 +49,9 @@ var NetMonitor = Obj.extend(Module,
     dispatchName: "netMonitor",
     maxQueueRequests: 500,
 
+    // Observes document load.
+    loadObserver: new DocumentLoadObserver(),
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Module
 
@@ -57,7 +63,9 @@ var NetMonitor = Obj.extend(Module,
         Options.initialize("extensions.httpmonitor");
         Options.registerDefaultPrefs(DefaultPrefs);
 
-        HttpRequestObserver.registerObserver();
+        // Register document load observer to get notification about new top document
+        // being requested to load.
+        this.loadObserver.register(this);
     },
 
     initializeUI: function()
@@ -75,7 +83,7 @@ var NetMonitor = Obj.extend(Module,
     {
         Module.shutdown.apply(this, arguments);
 
-        HttpRequestObserver.unregisterObserver();
+        this.loadObserver.unregister();
     },
 
     initContext: function(context, persistedState)
@@ -112,6 +120,43 @@ var NetMonitor = Obj.extend(Module,
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Document Load Observer
+
+    onLoadDocument: function(request, win)
+    {
+        var context = Chrome.currentContext;
+        if (!context || context.window != Win.getRootWindow(win))
+        {
+            FBTrace.sysout("This request doesn't come from selected tab  " +
+                Http.safeGetRequestName(subject), context);
+            return;
+        }
+
+        var persist = Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked");
+        persist = (persist == "true");
+
+        // New page loaded, clear UI if 'Persist' isn't active.
+        if (!persist)
+            context.netProgress.clear();
+
+        // Since new top document starts loading we need to reset some context flags.
+        // loaded: is set as soon as 'load' even is fired
+        // currentPhase: ensure that new phase is created.
+        context.netProgress.loaded = false;
+        context.netProgress.currentPhase = null;
+
+        if (this.eventObserver)
+            this.eventObserver.unregisterListeners();
+
+        // Register an observer for window events (load, paint, etc.)
+        this.eventObserver = new WindowEventObserver(context);
+        this.eventObserver.registerListeners();
+
+        if (FBTrace.DBG_NET)
+            FBTrace.sysout("httpRequestObserver.onModifyRequest; Top document loading...");
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Activation
 
     initNetContext: function(context)
@@ -142,6 +187,10 @@ var NetMonitor = Obj.extend(Module,
         netProgress.httpActivityObserver = new HttpActivityObserver(context);
         netProgress.httpActivityObserver.registerObserver();
 
+        // Register observer for HTTP events
+        netProgress.httpRequestObserver = new HttpRequestObserver(context);
+        netProgress.httpRequestObserver.registerObserver();
+
         // Add cache listener so, net panel has always fresh responses.
         // Safe to call multiple times.
         netProgress.cacheListener = new NetCacheListener(netProgress);
@@ -157,7 +206,9 @@ var NetMonitor = Obj.extend(Module,
         netProgress.httpActivityObserver.unregisterObserver();
         delete netProgress.httpActivityObserver;
 
-        // Remove cache listener. Safe to call multiple times.
+        netProgress.httpRequestObserver.registerObserver();
+        delete netProgress.httpRequestObserver;
+
         netProgress.cacheListener.unregister();
         delete netProgress.cacheListener;
     },
