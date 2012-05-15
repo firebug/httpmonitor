@@ -5,6 +5,7 @@ define([
     "httpmonitor/lib/object",
     "httpmonitor/lib/options",
     "httpmonitor/lib/string",
+    "httpmonitor/lib/http",
     "httpmonitor/net/httpActivityObserver",
     "httpmonitor/net/httpRequestObserver",
     "httpmonitor/net/netProgress",          //xxxHonza:is this dep correct?.
@@ -18,7 +19,7 @@ define([
     "httpmonitor/net/documentLoadObserver",
     "httpmonitor/net/windowEventObserver",
 ],
-function(FBTrace, Obj, Options, Str, HttpActivityObserver, HttpRequestObserver,
+function(FBTrace, Obj, Options, Str, Http, HttpActivityObserver, HttpRequestObserver,
     NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win, DefaultPrefs,
     DocumentLoadObserver, WindowEventObserver) {
 
@@ -127,8 +128,8 @@ var NetMonitor = Obj.extend(Module,
         var context = Chrome.currentContext;
         if (!context || context.window != Win.getRootWindow(win))
         {
-            FBTrace.sysout("This request doesn't come from selected tab  " +
-                Http.safeGetRequestName(subject), context);
+            FBTrace.sysout("This request doesn't come from selected tab " +
+                Http.safeGetRequestName(request), context);
             return;
         }
 
