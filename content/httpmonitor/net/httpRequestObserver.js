@@ -137,15 +137,7 @@ var HttpRequestObserver =
 
             // New page loaded, clear UI if 'Persist' isn't active.
             if (!persist)
-            {
-                // Clear the UI
-                var panel = context.getPanel("net");
-                if (panel)
-                    panel.clear();
-
-                // Clear the underlying data structure.
                 context.netProgress.clear();
-            }
 
             // Since new top document starts loading we need to reset some context flags.
             // loaded: is set as soon as 'load' even is fired

@@ -40,7 +40,11 @@ var cacheSession = null;
 // ********************************************************************************************* //
 // Net Progress
 
+/**
+ * This object represents a document for all collected data related to HTTP traffic.
+ */
 function NetProgress(context, listeners)
+/** @lends NetProgress */
 {
     this.context = context;
 
@@ -48,6 +52,8 @@ function NetProgress(context, listeners)
     this.clear();
 
     this.fbListeners = listeners;
+
+    this.handler = null;
 }
 
 NetProgress.prototype =
@@ -107,6 +113,9 @@ NetProgress.prototype =
         this.loaded = false;
 
         this.queue = [];
+
+        if (this.handler)
+            this.handler.clear();
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -125,7 +134,7 @@ NetProgress.prototype =
 
     requestedHeaderFile: function requestedHeaderFile(request, time, win, xhr, extraStringData)
     {
-        var file = this.getRequestFile(request, win);
+        var file = this.getRequestFile(request, win, true);
         if (file)
         {
             logTime(file, "requestedHeaderFile", time);
@@ -142,7 +151,7 @@ NetProgress.prototype =
     // from requestHeaderFile (activity observer)
     requestedFile: function requestedFile(request, time, win, xhr)
     {
-        var file = this.getRequestFile(request, win);
+        var file = this.getRequestFile(request, win, true);
         if (file)
         {
             logTime(file, "requestedFile", time);
@@ -225,7 +234,7 @@ NetProgress.prototype =
 
     respondedHeaderFile: function respondedHeaderFile(request, time, extraStringData)
     {
-        var file = this.getRequestFile(request);
+        var file = this.getRequestFile(request, null, true);
         if (file)
         {
             logTime(file, "respondedHeaderFile", time);
@@ -236,7 +245,7 @@ NetProgress.prototype =
 
     bodySentFile: function bodySentFile(request, time)
     {
-        var file = this.getRequestFile(request);
+        var file = this.getRequestFile(request, null, true);
         if (file)
         {
             logTime(file, "bodySentFile", time);
@@ -247,7 +256,7 @@ NetProgress.prototype =
 
     responseStartedFile: function responseStartedFile(request, time)
     {
-        var file = this.getRequestFile(request);
+        var file = this.getRequestFile(request, null, true);
         if (file)
         {
             logTime(file, "responseStartedFile", time);
@@ -267,7 +276,7 @@ NetProgress.prototype =
     {
         Events.dispatch(this.fbListeners, "onExamineResponse", [this.context, request]);
 
-        var file = this.getRequestFile(request);
+        var file = this.getRequestFile(request, null, true);
         if (file)
         {
             logTime(file, "respondedFile", time);
@@ -646,7 +655,6 @@ NetProgress.prototype =
         var file = this.getRequestFile(request, null, true);
         if (file)
         {
-
             logTime(file, "stopFile", time);
 
             if (FBTrace.DBG_NET_EVENTS)
@@ -796,11 +804,7 @@ NetProgress.prototype =
         }
 
         if (noCreate)
-        {
-            FBTrace.sysout("netProgress.getRequestFile; No create file? " +
-                Http.safeGetRequestName(request), this.files);
             return null;
-        }
 
         // xxxHonza: is this really needed?
         // In case of files coming from the server the window is not available.
@@ -810,6 +814,9 @@ NetProgress.prototype =
             return;
         }*/
 
+        // xxxHonza: this is wrong. The request is just a number in case of a remote client
+        // since nsIHttpChannel can't be send over the wire. Check out remote/remoteProxy,
+        // line 130, onNetworkEvent
         var fileDoc = this.getRequestDocument(win);
         var isDocument = request.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI && fileDoc.parent;
         var doc = isDocument ? fileDoc.parent : fileDoc;
@@ -825,6 +832,7 @@ NetProgress.prototype =
         }
 
         file.request = request;
+
         this.requests.push(request);
         this.files.push(file);
 
@@ -969,6 +977,29 @@ NetProgress.prototype =
         this.currentPhase = phase;
         this.phases.push(phase);
     },
+};
+
+// ********************************************************************************************* //
+// Handler
+
+/**
+ * This is an example of net progress handler. The handler receives updates about new
+ * collected data and is also notified about when it should clear (reset) its state.
+ * There are two different handlers at the moment: the net-panel, which is directly
+ * updated in case of local (in process) monitoring and monitor-actor that is used
+ * instead of the net panel in case of remote monitoring. The actor is then responsible
+ * to send data over network. It's received by remote proxy on the client and forwarded
+ * to the net panel.
+ */
+var NetProgressHandler =
+{
+    updateFile: function(file)
+    {
+    },
+
+    clear: function()
+    {
+    }
 };
 
 // ********************************************************************************************* //
