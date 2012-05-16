@@ -5,7 +5,7 @@ define([], function() {
 // ********************************************************************************************* //
 // Constants
 
-var FBTrace = Components.utils.import("resource://httpmonitor/modules/fbtrace.js").FBTrace;
+var FBTrace = {};
 
 // ********************************************************************************************* //
 // Listeners
@@ -15,7 +15,7 @@ var listeners = [];
 FBTrace.addListener = function(listener)
 {
     listeners.push(listener);
-}
+};
 
 FBTrace.removeListener = function(listener)
 {
@@ -28,12 +28,11 @@ FBTrace.removeListener = function(listener)
         }
     }
     return false;
-}
+};
 
 // ********************************************************************************************* //
 // Hooks
 
-var originalSysout = FBTrace.sysout;
 FBTrace.sysout = function(msg)
 {
     // Dispatch to registered listeners.
@@ -41,8 +40,8 @@ FBTrace.sysout = function(msg)
         listeners[i].sysout.apply(listeners[i], arguments);
 
     // Dispatch to the original handler.
-    originalSysout.apply(this, arguments);
-}
+    console.log(console, arguments);
+};
 
 // ********************************************************************************************* //
 
