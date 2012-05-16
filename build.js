@@ -13,7 +13,32 @@ var shell = require("shelljs");
 // Command Line Arguments
 
 var args = process.argv;
-var autoInstall = (args.length == 3 && args[2] === "install")
+var autoInstall = (args.length == 3 && args[2] === "install");
+
+// ********************************************************************************************* //
+// Setup Common JS
+
+// Common JS project dependency tracking.
+var project = copy.createCommonJsProject({
+    roots: [ __dirname + "/content" ]
+});
+
+// Munge define lines to add module names
+function moduleDefines(input, source)
+{
+    input = (typeof input !== "string") ? input.toString() : input;
+
+    var deps = source.deps ? Object.keys(source.deps) : [];
+    deps = deps.length ? (", '" + deps.join("', '") + "'") : "";
+
+    var module = source.isLocation ? source.path : source;
+    module = module.replace(/\.js$/, "");
+
+    return input.replace(/define\(\[/, "define('" + module + "', [");
+}
+moduleDefines.onRead = true;
+
+// ********************************************************************************************* //
 
 // ********************************************************************************************* //
 // Clean Up
@@ -44,29 +69,6 @@ copy({
     source: [ copy.getMiniRequire() ],
     dest: release + "/content/loader.js"
 });
-
-// ********************************************************************************************* //
-// Setup Common JS
-
-// Common JS project dependency tracking.
-var project = copy.createCommonJsProject({
-    roots: [ __dirname + "/content" ]
-});
-
-// Munge define lines to add module names
-function moduleDefines(input, source)
-{
-    input = (typeof input !== "string") ? input.toString() : input;
-
-    var deps = source.deps ? Object.keys(source.deps) : [];
-    deps = deps.length ? (", '" + deps.join("', '") + "'") : "";
-
-    var module = source.isLocation ? source.path : source;
-    module = module.replace(/\.js$/, "");
-
-    return input.replace(/define\(\[/, "define('" + module + "', [");
-};
-moduleDefines.onRead = true;
 
 // ********************************************************************************************* //
 // Build Main Module
