@@ -1,6 +1,6 @@
 /* See license.txt for terms of usage */
 
-define([], function() {
+define([ "httpmonitor/lib/trace" ], function(FBTrace) {
 
 // ********************************************************************************************* //
 // Module
@@ -11,8 +11,6 @@ var Cu = Components.utils;
 
 // ********************************************************************************************* //
 // Services
-
-var FBTrace = Cu.import("resource://httpmonitor/modules/fbtrace.js").FBTrace;
 
 // Import of PluralForm object.
 Cu.import("resource://gre/modules/PluralForm.jsm");
