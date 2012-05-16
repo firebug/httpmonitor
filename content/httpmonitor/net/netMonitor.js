@@ -5,6 +5,7 @@ define([
     "httpmonitor/lib/object",
     "httpmonitor/lib/options",
     "httpmonitor/lib/string",
+    "httpmonitor/lib/http",
     "httpmonitor/net/httpActivityObserver",
     "httpmonitor/net/httpRequestObserver",
     "httpmonitor/net/netProgress",          //xxxHonza:is this dep correct?.
@@ -14,9 +15,13 @@ define([
     "httpmonitor/base/module",
     "httpmonitor/chrome/chrome",
     "httpmonitor/lib/window",
+    "httpmonitor/chrome/defaultPrefs",
+    "httpmonitor/net/documentLoadObserver",
+    "httpmonitor/net/windowEventObserver",
 ],
-function(FBTrace, Obj, Options, Str, HttpActivityObserver, HttpRequestObserver,
-    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win) {
+function(FBTrace, Obj, Options, Str, Http, HttpActivityObserver, HttpRequestObserver,
+    NetProgress, NetUtils, Events, NetCacheListener, Module, Chrome, Win, DefaultPrefs,
+    DocumentLoadObserver, WindowEventObserver) {
 
 // ********************************************************************************************* //
 // Constants
@@ -45,6 +50,9 @@ var NetMonitor = Obj.extend(Module,
     dispatchName: "netMonitor",
     maxQueueRequests: 500,
 
+    // Observes document load.
+    loadObserver: new DocumentLoadObserver(),
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Module
 
@@ -52,7 +60,13 @@ var NetMonitor = Obj.extend(Module,
     {
         Module.initialize.apply(this, arguments);
 
-        HttpRequestObserver.registerObserver();
+        // Initialize options and pass in the pref domain for this application.
+        Options.initialize("extensions.httpmonitor");
+        Options.registerDefaultPrefs(DefaultPrefs);
+
+        // Register document load observer to get notification about new top document
+        // being requested to load.
+        this.loadObserver.register(this);
     },
 
     initializeUI: function()
@@ -70,7 +84,7 @@ var NetMonitor = Obj.extend(Module,
     {
         Module.shutdown.apply(this, arguments);
 
-        HttpRequestObserver.unregisterObserver();
+        this.loadObserver.unregister();
     },
 
     initContext: function(context, persistedState)
@@ -107,6 +121,36 @@ var NetMonitor = Obj.extend(Module,
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // Document Load Observer
+
+    onLoadDocument: function(request, win)
+    {
+        var context = Chrome.currentContext;
+        if (!context || context.window != Win.getRootWindow(win))
+        {
+            FBTrace.sysout("This request doesn't come from selected tab " +
+                Http.safeGetRequestName(request), context);
+            return;
+        }
+
+        var persist = Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked");
+        persist = (persist == "true");
+
+        // New page loaded, clear UI if 'Persist' isn't active.
+        if (!persist)
+            context.netProgress.clear();
+
+        // Since new top document starts loading we need to reset some context flags.
+        // loaded: is set as soon as 'load' even is fired
+        // currentPhase: ensure that new phase is created.
+        context.netProgress.loaded = false;
+        context.netProgress.currentPhase = null;
+
+        if (FBTrace.DBG_NET)
+            FBTrace.sysout("netMonitor.onModifyRequest; Top document loading...");
+    },
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     // Activation
 
     initNetContext: function(context)
@@ -119,6 +163,8 @@ var NetMonitor = Obj.extend(Module,
 
         var netProgress = new NetProgress(context, this.fbListeners);
         context.netProgress = netProgress;
+
+        return netProgress;
     },
 
     destroyNetContext: function(context)
@@ -134,13 +180,33 @@ var NetMonitor = Obj.extend(Module,
             return;
 
         // Register activity-distributor observer if available (#488270)
-        netProgress.httpActivityObserver = new HttpActivityObserver(context);
-        netProgress.httpActivityObserver.registerObserver();
+        if (!netProgress.httpActivityObserver)
+        {
+            netProgress.httpActivityObserver = new HttpActivityObserver(context);
+            netProgress.httpActivityObserver.registerObserver();
+        }
+
+        // Register observer for HTTP events
+        if (!netProgress.httpRequestObserver)
+        {
+            netProgress.httpRequestObserver = new HttpRequestObserver(context);
+            netProgress.httpRequestObserver.registerObserver();
+        }
 
         // Add cache listener so, net panel has always fresh responses.
         // Safe to call multiple times.
-        netProgress.cacheListener = new NetCacheListener(netProgress);
-        netProgress.cacheListener.register(context.sourceCache);
+        if (!netProgress.cacheListener && context.sourceCache)
+        {
+            netProgress.cacheListener = new NetCacheListener(netProgress);
+            netProgress.cacheListener.register(context.sourceCache);
+        }
+
+        // Register observer for window events (load, DOMContentLoaded)
+        if (!netProgress.windowObserver && context.uid)
+        {
+            netProgress.windowObserver = new WindowEventObserver(context);
+            netProgress.windowObserver.registerListeners();
+        }
     },
 
     detachObservers: function(context)
@@ -152,9 +218,14 @@ var NetMonitor = Obj.extend(Module,
         netProgress.httpActivityObserver.unregisterObserver();
         delete netProgress.httpActivityObserver;
 
-        // Remove cache listener. Safe to call multiple times.
+        netProgress.httpRequestObserver.registerObserver();
+        delete netProgress.httpRequestObserver;
+
         netProgress.cacheListener.unregister();
         delete netProgress.cacheListener;
+
+        netProgress.windowObserver.unregisterListeners();
+        delete netProgress.windowObserver;
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -162,10 +233,10 @@ var NetMonitor = Obj.extend(Module,
 
     clear: function(context)
     {
-        // The user pressed a Clear button so, remove content of the panel...
-        var panel = context.getPanel(panelName, true);
-        if (panel)
-            panel.clear();
+        // The user pressed a Clear button so, remove all HTTP collected data. The Net panel
+        // is context handler and so the clear action will be automatically forwarded to it.
+        if (context.netProgress)
+            context.netProgress.clear();
     },
 
     onToggleFilter: function(context, filterCategory)

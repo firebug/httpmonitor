@@ -6,14 +6,9 @@ define([
     "httpmonitor/lib/http",
     "httpmonitor/net/netUtils",
     "httpmonitor/net/requestObserver",
-    "httpmonitor/lib/xpcom",
-    "httpmonitor/lib/string",
     "httpmonitor/net/netProgress",
-    "httpmonitor/chrome/chrome",
-    "httpmonitor/net/windowEventObserver",
 ],
-function(FBTrace, Win, Http, NetUtils, RequestObserver, Xpcom, Str, NetProgress, Chrome,
-    WindowEventObserver) {
+function(FBTrace, Win, Http, NetUtils, RequestObserver, NetProgress) {
 
 // ********************************************************************************************* //
 // Constants
@@ -30,6 +25,11 @@ var respondedCacheFile = NetProgress.prototype.respondedCacheFile;
 // ********************************************************************************************* //
 // HTTP Observer
 
+function HttpRequestObserver(context)
+{
+    this.context = context;
+}
+
 /**
  * HTTP listener - based on HttpRequestObserver module
  * 
@@ -37,7 +37,8 @@ var respondedCacheFile = NetProgress.prototype.respondedCacheFile;
  * is initialized (initContext method call). Without this observer this events
  * would be lost and the time measuring would be wrong.
  */
-var HttpRequestObserver =
+HttpRequestObserver.prototype =
+/** @lends HttpRequestObserver */
 {
     dispatchName: "HttpRequestObserver",
     registered: false,
@@ -73,12 +74,6 @@ var HttpRequestObserver =
     {
         try
         {
-            if (FBTrace.DBG_NET_EVENTS)
-            {
-                FBTrace.sysout("net.events.observe " + (topic ? topic.toUpperCase() : topic) +
-                    ", " + ((subject instanceof Ci.nsIRequest) ? Http.safeGetRequestName(subject) : ""));
-            }
-
             if (!(subject instanceof Ci.nsIHttpChannel))
                 return;
 
@@ -93,26 +88,22 @@ var HttpRequestObserver =
                 return;
             }
 
-            // xxxHonza
-            //var context = connection.getContextByWindow(win);
-            //var context = HttpMonitor.tabWatcher.getContextByWindow(win);
-            var context = Chrome.currentContext;
-            if (!context || context.window != Win.getRootWindow(win))
+            if (this.context.window != Win.getRootWindow(win))
             {
-                //FBTrace.sysout("This request doesn't come from selected tab  " +
-                //    Http.safeGetRequestName(subject), context);
+                if (FBTrace.DBG_NET)
+                {
+                    FBTrace.sysout("This request doesn't come from selected tab " +
+                        Http.safeGetRequestName(subject));
+                }
                 return;
             }
 
-            // The context doesn't have to exist yet. In such cases a temp Net context is
-            // created within onModifyRequest.
-
             if (topic == "http-on-modify-request")
-                this.onModifyRequest(subject, win, context);
+                this.onModifyRequest(subject, win);
             else if (topic == "http-on-examine-response")
-                this.onExamineResponse(subject, win, context);
+                this.onExamineResponse(subject, win);
             else if (topic == "http-on-examine-cached-response")
-                this.onExamineCachedResponse(subject, win, context);
+                this.onExamineCachedResponse(subject, win);
         }
         catch (err)
         {
@@ -121,54 +112,12 @@ var HttpRequestObserver =
         }
     },
 
-    onModifyRequest: function(request, win, context)
+    onModifyRequest: function(request, win)
     {
-        var name = request.URI.asciiSpec;
-        var origName = request.originalURI.asciiSpec;
-        var isRedirect = (name != origName);
-
-        // We only need to create a new context if this is a top document uri (not frames).
-        if ((request.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI) &&
-            request.loadGroup && request.loadGroup.groupObserver &&
-            win == win.parent && !isRedirect)
+        var netProgress = this.context.netProgress;
+        if (netProgress)
         {
-            var persist = Chrome.getGlobalAttribute("cmd_togglePersistNet", "checked");
-            persist = (persist == "true");
-
-            // New page loaded, clear UI if 'Persist' isn't active.
-            if (!persist)
-            {
-                // Clear the UI
-                var panel = context.getPanel("net");
-                if (panel)
-                    panel.clear();
-
-                // Clear the underlying data structure.
-                context.netProgress.clear();
-            }
-
-            // Since new top document starts loading we need to reset some context flags.
-            // loaded: is set as soon as 'load' even is fired
-            // currentPhase: ensure that new phase is created.
-            context.netProgress.loaded = false;
-            context.netProgress.currentPhase = null;
-
-            if (this.eventObserver)
-                this.eventObserver.unregisterListeners();
-
-            // Register an observer for window events (load, paint, etc.)
-            this.eventObserver = new WindowEventObserver(context);
-            this.eventObserver.registerListeners();
-
-            if (FBTrace.DBG_NET)
-                FBTrace.sysout("httpRequestObserver.onModifyRequest; Top document loading...");
-        }
-
-        var networkContext = context ? context.netProgress : null;
-
-        if (networkContext)
-        {
-            networkContext.post(startFile, [request, win]);
+            netProgress.post(startFile, [request, win]);
 
             // We need to track the request now since the activity observer is not used in case
             // the response comes from BF cache. If it's a regular HTTP request the timing
@@ -176,15 +125,14 @@ var HttpRequestObserver =
             // Even if the netShowBFCacheResponses is false now, the user could
             // switch it on later.
             var xhr = Http.isXHR(request);
-            networkContext.post(requestedFile, [request, NetUtils.now(), win, xhr]);
+            netProgress.post(requestedFile, [request, NetUtils.now(), win, xhr]);
         }
     },
 
-    onExamineResponse: function(request, win, context)
+    onExamineResponse: function(request, win)
     {
-        var networkContext = context ? context.netProgress : null;
-
-        if (!networkContext)
+        var netProgress = this.context.netProgress;
+        if (!netProgress)
             return;
 
         var info = new Object();
@@ -193,26 +141,25 @@ var HttpRequestObserver =
 
         // Initialize info.postText property.
         info.request = request;
-        NetUtils.getPostText(info, context);
+        NetUtils.getPostText(info, this.context);
 
         // Get response headers now. They could be replaced by cached headers later
         // (if the response is coming from the cache).
-        NetUtils.getHttpHeaders(request, info, context);
+        NetUtils.getHttpHeaders(request, info, this.context);
 
         if (FBTrace.DBG_NET && info.postText)
             FBTrace.sysout("net.onExamineResponse, POST data: " + info.postText, info);
 
-        networkContext.post(respondedFile, [request, NetUtils.now(), info]);
+        netProgress.post(respondedFile, [request, NetUtils.now(), info]);
 
         // Make sure to track the first document response.
         //TabCacheModel.registerStreamListener(request, win, true);
     },
 
-    onExamineCachedResponse: function(request, win, context)
+    onExamineCachedResponse: function(request, win)
     {
-        var networkContext = context ? context.netProgress : null;
-
-        if (!networkContext)
+        var netProgress = this.context.netProgress;
+        if (!netProgress)
         {
             if (FBTrace.DBG_NET_EVENTS)
                 FBTrace.sysout("net.onExamineCachedResponse; No CONTEXT for:" +
@@ -226,9 +173,9 @@ var HttpRequestObserver =
 
         // Initialize info.postText property.
         info.request = request;
-        NetUtils.getPostText(info, context);
+        NetUtils.getPostText(info, this.context);
 
-        networkContext.post(respondedCacheFile, [request, NetUtils.now(), info]);
+        netProgress.post(respondedCacheFile, [request, NetUtils.now(), info]);
     },
 }
 
