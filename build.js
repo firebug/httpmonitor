@@ -39,6 +39,13 @@ function moduleDefines(input, source)
 moduleDefines.onRead = true;
 
 // ********************************************************************************************* //
+// Special firefox build
+
+if (args.length == 3 && args[2] == "firefox")
+{
+    buildFirefox();
+    process.exit(0);
+}
 
 // ********************************************************************************************* //
 // Clean Up
@@ -198,3 +205,14 @@ zip.on("exit", function()
 });
 
 // ********************************************************************************************* //
+
+function buildFirefox() {
+    copy({
+        source: [
+            "mozilla/module-prefix.jsm",
+            { project: project, require: [ "httpmonitor/app/httpMonitor" ] }
+        ],
+        filter: moduleDefines,
+        dest: __dirname + "/monitor.jsm"
+    });
+}
