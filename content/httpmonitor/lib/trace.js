@@ -40,7 +40,7 @@ FBTrace.sysout = function(msg)
         listeners[i].sysout.apply(listeners[i], arguments);
 
     // Dispatch to the original handler.
-    console.log(console, arguments);
+    console.debug.apply(console, arguments);
 };
 
 // ********************************************************************************************* //
