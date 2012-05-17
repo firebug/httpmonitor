@@ -49,7 +49,7 @@ const Ci = Components.interfaces;
  * the main root that must be loaded. All the other modules are specified as (direct or
  * indirect) dependencies.
  */
-var HttpMonitor = 
+var NewHttpMonitor =
 /** @lends HttpMonitor */
 {
     initialize: function(win, options)
@@ -59,6 +59,10 @@ var HttpMonitor =
         options.locale = options.locale || "chrome://httpmonitor/locale/httpmonitor.properties";
         Locale.setDefaultStringBundleURI(options.locale);
         Locale.registerStringBundle(options.locale);
+
+        HttpMonitor = NewHttpMonitor;
+        top = win;
+        win.HttpMonitor = NewHttpMonitor;
 
         FBTrace.DBG_ERRORS = true;
 
@@ -289,7 +293,7 @@ var HttpMonitor =
 // ********************************************************************************************* //
 // Registration
 
-return HttpMonitor;
+return NewHttpMonitor;
 
 // ********************************************************************************************* //
 });

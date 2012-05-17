@@ -49,4 +49,6 @@ Components.utils.import("resource:///modules/devtools/Require.jsm");
 Components.utils.import("resource:///modules/devtools/Console.jsm");
 Components.utils.import("resource:///modules/devtools/Browser.jsm");
 
+var top = undefined;
+var HttpMonitor = undefined;
 
