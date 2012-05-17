@@ -60,6 +60,8 @@ var HttpMonitor =
         Locale.setDefaultStringBundleURI(options.locale);
         Locale.registerStringBundle(options.locale);
 
+        FBTrace.DBG_ERRORS = true;
+
         // The parent XUL window.
         this.win = win;
 
