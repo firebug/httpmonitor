@@ -52,8 +52,14 @@ const Ci = Components.interfaces;
 var HttpMonitor = 
 /** @lends HttpMonitor */
 {
-    initialize: function(win)
+    initialize: function(win, options)
     {
+        options = options || {};
+
+        options.locale = options.locale || "chrome://httpmonitor/locale/httpmonitor.properties";
+        Locale.setDefaultStringBundleURI(options.locale);
+        Locale.registerStringBundle(options.locale);
+
         // The parent XUL window.
         this.win = win;
 
@@ -68,8 +74,6 @@ var HttpMonitor =
 
         this.tabWatcher = new TabWatcher(this.getPanelDocument());
         this.proxy = new LocalProxy();
-
-        Locale.registerStringBundle("chrome://httpmonitor/locale/httpmonitor.properties");
 
         // Localize all strings in the application UI.
         this.internationalizeUI(win.document);
