@@ -3,9 +3,39 @@
 (function() {
 
 // ********************************************************************************************* //
+// Constants
+
+var Cu = Components.utils;
 
 var config = {};
 config.baseUrl = "resource://httpmonitor/content";
+config.skinBaseUrl = "chrome://httpmonitor/skin/";
+
+// ********************************************************************************************* //
+// Setup
+
+// Forward all tracing into FBTrace console service.
+require(config, ["httpmonitor/lib/trace"], function(Trace)
+{
+    Trace.addListener(Cu.import("resource://httpmonitor/modules/fbtrace.js").FBTrace);
+});
+
+// Set domain for preferences.
+require(config, ["httpmonitor/lib/options", "httpmonitor/chrome/defaultPrefs"],
+    function(Options, DefaultPrefs)
+{
+    Options.initialize("extensions.httpmonitor");
+    Options.registerDefaultPrefs(DefaultPrefs);
+});
+
+// Register string bundle
+require(config, ["httpmonitor/lib/locale"], function(Locale)
+{
+    Locale.registerStringBundle("chrome://httpmonitor/locale/httpmonitor.properties");
+});
+
+// ********************************************************************************************* //
+// Application
 
 /**
  * The entire application is represented by "httpmonitor/app/httpMonitor" module so, load it.
@@ -30,7 +60,7 @@ function initialize()
 
     try
     {
-        HttpMonitor.initialize(this);
+        HttpMonitor.initialize(this, config);
     }
     catch (e)
     {

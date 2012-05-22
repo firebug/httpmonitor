@@ -1,6 +1,9 @@
 /* See license.txt for terms of usage */
 
-define([ "httpmonitor/lib/trace" ], function(FBTrace) {
+define([
+    "httpmonitor/lib/trace"
+],
+function(FBTrace) {
 
 // ********************************************************************************************* //
 // Module
