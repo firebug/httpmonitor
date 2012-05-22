@@ -494,12 +494,20 @@ NetPanel.prototype = Obj.extend(Panel,
 
     resend: function(file)
     {
-        var proxy = Chrome.currentContext.getProxy();
-        proxy.sendRequest(file, function(packet)
+        // Proxies are not supported in externals contexts.
+        if (typeof(this.context.getProxy) == "function")
         {
-            if (FBTrace.DBG_REMOTEBUG)
-                FBTrace.sysout("netPanel; Request sent: " + packet.from, packet);
-        });
+            var proxy = this.context.getProxy();
+            proxy.sendRequest(file, function(packet)
+            {
+                if (FBTrace.DBG_REMOTEBUG)
+                    FBTrace.sysout("netPanel; Request sent: " + packet.from, packet);
+            });
+        }
+        else
+        {
+            NetMonitor.sendRequest(this.context, file);
+        }
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
