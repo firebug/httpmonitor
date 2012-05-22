@@ -61,7 +61,7 @@ body {
 .infoTipLoading {
     width: 16px;
     height: 16px;
-    background: url(loading_16.gif) no-repeat;
+    background: url(netmonitor-loading_16.gif) no-repeat;
 }
 
 .infoTipImageBox {
