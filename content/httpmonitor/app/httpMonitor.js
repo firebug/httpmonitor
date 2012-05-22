@@ -49,11 +49,23 @@ const Ci = Components.interfaces;
  * the main root that must be loaded. All the other modules are specified as (direct or
  * indirect) dependencies.
  */
-var HttpMonitor = 
+var NewHttpMonitor =
 /** @lends HttpMonitor */
 {
-    initialize: function(win)
+    initialize: function(win, options)
     {
+        options = options || {};
+
+        options.locale = options.locale || "chrome://httpmonitor/locale/httpmonitor.properties";
+        Locale.setDefaultStringBundleURI(options.locale);
+        Locale.registerStringBundle(options.locale);
+
+        HttpMonitor = NewHttpMonitor;
+        top = win;
+        win.HttpMonitor = NewHttpMonitor;
+
+        FBTrace.DBG_ERRORS = true;
+
         // The parent XUL window.
         this.win = win;
 
@@ -68,8 +80,6 @@ var HttpMonitor =
 
         this.tabWatcher = new TabWatcher(this.getPanelDocument());
         this.proxy = new LocalProxy();
-
-        Locale.registerStringBundle("chrome://httpmonitor/locale/httpmonitor.properties");
 
         // Localize all strings in the application UI.
         this.internationalizeUI(win.document);
@@ -283,7 +293,7 @@ var HttpMonitor =
 // ********************************************************************************************* //
 // Registration
 
-return HttpMonitor;
+return NewHttpMonitor;
 
 // ********************************************************************************************* //
 });
