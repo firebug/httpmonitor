@@ -43,7 +43,7 @@ var TabListMenu = Obj.extend(Module,
         // Create temporary menu item.
         Menu.createMenuItem(popup, {
             nol10n: true,
-            image: "chrome://browser/skin/devtools/netmonitor-loading_16.gif",
+            image: Chrome.config.skinBaseUrl + "netmonitor-loading_16.gif",
             label: "Fetching list of remote tabs...",
             disabled: true,
         });

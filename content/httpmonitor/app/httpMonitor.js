@@ -53,7 +53,7 @@ var NewHttpMonitor =
 {
     initialize: function(win, config)
     {
-        config = config || {};
+        Chrome.config = config || {};
 
         HttpMonitor = NewHttpMonitor;
         top = win;
