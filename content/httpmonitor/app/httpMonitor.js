@@ -10,7 +10,6 @@ define([
     "httpmonitor/lib/events",
     "httpmonitor/lib/dom",
     "httpmonitor/lib/options",
-    "httpmonitor/chrome/defaultPrefs",
     "httpmonitor/app/tabListMenu",
     "httpmonitor/app/connectionMenu",
     "httpmonitor/chrome/localProxy",
@@ -52,18 +51,15 @@ const Ci = Components.interfaces;
 var NewHttpMonitor =
 /** @lends HttpMonitor */
 {
-    initialize: function(win, options)
+    initialize: function(win, config)
     {
-        options = options || {};
-
-        options.locale = options.locale || "chrome://httpmonitor/locale/httpmonitor.properties";
-        Locale.setDefaultStringBundleURI(options.locale);
-        Locale.registerStringBundle(options.locale);
+        config = config || {};
 
         HttpMonitor = NewHttpMonitor;
         top = win;
         win.HttpMonitor = NewHttpMonitor;
 
+        // Should be set to false in final release.
         FBTrace.DBG_ERRORS = true;
 
         // The parent XUL window.
@@ -83,10 +79,6 @@ var NewHttpMonitor =
 
         // Localize all strings in the application UI.
         this.internationalizeUI(win.document);
-
-        // Initialize options and pass in the pref domain for this application.
-        //Options.initialize("extensions.httpmonitor");
-        //Options.registerDefaultPrefs(DefaultPrefs);
 
         // Initialize modules. Modules represent independent application
         // components that are registered during application load and

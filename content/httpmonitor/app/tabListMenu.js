@@ -51,8 +51,9 @@ var TabListMenu = Obj.extend(Module,
         var self = this;
 
         // Context is not available at this moment, it's going to be created
-        // by selecting a tab though this menu so, use the proxy from global
+        // by selecting a tab through this menu so, use the proxy from global
         // HttpMonitor (application) object.
+        // xxxHonza: it's hacky to use 'top', but how to access the proxy?
         var proxy = top.HttpMonitor.proxy;
 
         proxy.getTabs(function(tabs)
