@@ -3,11 +3,10 @@
 define([
     "httpmonitor/lib/trace",
     "httpmonitor/chrome/tabContext",
-    "httpmonitor/net/netMonitor",
     "httpmonitor/lib/window",
     "httpmonitor/chrome/chrome",
 ],
-function(FBTrace, TabContext, NetMonitor, Win, Chrome) {
+function(FBTrace, TabContext, Win, Chrome) {
 
 // ********************************************************************************************* //
 // Constants

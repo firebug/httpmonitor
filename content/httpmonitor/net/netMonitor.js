@@ -187,10 +187,11 @@ var NetMonitor = Obj.extend(Module,
         context.netProgress = netProgress;
 
         // Just in case the context would be created outside of this extension.
-        // It's normally created by httpmonitor/chrome/tabWatcher module, but 
+        // It's normally created by httpmonitor/chrome/tabWatcher module, but
         // in case HTTPM is embedded in another project the context is provided
-        // by that project.
-        Chrome.currentContext = context;
+        // by the parent project.
+        if (!Chrome.currentContext)
+            Chrome.currentContext = context;
 
         return netProgress;
     },
