@@ -23,7 +23,7 @@ var stringBundleService = Services.strings;
 var categoryManager = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
 
 // xxxHonza: should be pref
-var useDefaultLocale = false; 
+var useDefaultLocale = false;
 
 // This module
 var Locale = {};
@@ -229,6 +229,16 @@ Locale.getStringBundle = function()
     return this.stringBundle;
 }
 
+/**
+ * TODO: find a better way to do this
+ */
+Locale.defaultStringBundleURI = "chrome://browser/locale/devtools/netmonitor.properties";
+
+Locale.setDefaultStringBundleURI = function(bundleURI)
+{
+    this.defaultStringBundleURI = bundleURI
+}
+
 Locale.getDefaultStringBundle = function()
 {
     if (!this.defaultStringBundle)
@@ -236,7 +246,7 @@ Locale.getDefaultStringBundle = function()
         var chromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"].
             getService(Ci.nsIChromeRegistry);
 
-        var uri = Services.io.newURI("chrome://httpmonitor/locale/httpmonitor.properties", "UTF-8", null);
+        var uri = Services.io.newURI(this.defaultStringBundleURI, "UTF-8", null);
         var fileURI = chromeRegistry.convertChromeURL(uri).spec;
         var parts = fileURI.split("/");
         parts[parts.length - 2] = "en-US";
