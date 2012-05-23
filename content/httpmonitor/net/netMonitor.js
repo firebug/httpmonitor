@@ -60,10 +60,6 @@ var NetMonitor = Obj.extend(Module,
     {
         Module.initialize.apply(this, arguments);
 
-        // Initialize options and pass in the pref domain for this application.
-        //Options.initialize("extensions.httpmonitor");
-        //Options.registerDefaultPrefs(DefaultPrefs);
-
         // Register document load observer to get notification about new top document
         // being requested to load.
         this.loadObserver.register(this);

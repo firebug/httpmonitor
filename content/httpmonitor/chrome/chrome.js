@@ -97,8 +97,14 @@ var Chrome =
         var target = null;
         for (var child = node; child; child = child.parentNode)
         {
-            if (Css.hasClass(child, "repTarget"))
+try {
+	            if (Css.hasClass(child, "repTarget"))
                 target = child;
+
+} catch (e) {
+FBTrace.sysout("EXCEPTION " + e, e);
+}
+
 
             if (child.repObject)
             {
