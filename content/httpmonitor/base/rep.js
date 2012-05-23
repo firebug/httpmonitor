@@ -1,9 +1,5 @@
 /* See license.txt for terms of usage */
 
-/**
- * Firebug module can depend only on modules that don't use the 'Firebug' namespace.
- * So, be careful before you create a new dependency.
- */
 define([
     "httpmonitor/lib/trace",
     "httpmonitor/lib/css",

@@ -263,7 +263,7 @@ var Panel = Obj.extend(new Listener(),
     },
 
     /**
-     * Firebug wants to show an object to the user and this panel has the best supportsObject()
+     * The framework wants to show an object to the user and this panel has the best supportsObject()
      * result for the object. If the panel displays a container for objects of this type,
      * it should set this.selectedObject = object
      */
@@ -354,7 +354,7 @@ var Panel = Obj.extend(new Listener(),
 
     /**
      * Called by chrome.onContextMenu to build the context menu when this panel has focus.
-     * See also FirebugRep for a similar function also called by onContextMenu
+     * See also rep.js for a similar function also called by onContextMenu
      * Extensions may monkey patch and chain off this call
      * @param object: the 'realObject', a model value, eg a DOM property
      * @param target: the HTML element clicked on.

@@ -207,7 +207,7 @@ var DragDrop = {};
 DragDrop.Tracker = Tracker;
 
 // ********************************************************************************************* //
-// Registration in Firebug namespace
+// Registration
 
 return DragDrop;
 
