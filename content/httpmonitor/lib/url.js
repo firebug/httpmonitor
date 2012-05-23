@@ -70,7 +70,7 @@ Url.splitDataURL = function(url)
             props[nv[0]] = nv[1];
     }
 
-    // Additional Firebug-specific properties
+    // Additional properties
     if (props.hasOwnProperty("fileName"))
     {
          var caller_URL = decodeURIComponent(props["fileName"]);

@@ -23,7 +23,7 @@ var categoryManager = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICate
 
 /**
  * @service This service is intended as the only HTTP observer registered.
- * All FB extensions and Firebug itself should register a listener within this
+ * All FB observers (can come from extensions) should register a listener within this
  * service in order to listen for http-on-modify-request, http-on-examine-response and
  * http-on-examine-cached-response events.
  *
@@ -195,9 +195,6 @@ function getObserverList()
 
 // ********************************************************************************************* //
 // Registration
-
-// Compatibility with Firebug 1.7 extensions: deprecated, obsolete
-//FBL.httpObserver = HttpRequestObserver;
 
 // xxxHonza: Do we need to remove the listener?
 //TraceModule.addListener(new TraceListener("httpObserver.", "DBG_HTTPOBSERVER", true));

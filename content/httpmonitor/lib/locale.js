@@ -20,7 +20,7 @@ Cu.import("resource://gre/modules/PluralForm.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
 // ********************************************************************************************* //
-// Firebug UI Localization
+// Localization
 
 var stringBundleService = Services.strings;
 var categoryManager = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);

@@ -6,7 +6,7 @@
 var EXPORTED_SYMBOLS = [];
 
 // ********************************************************************************************* //
-// Firebug Trace - FBTrace
+// FBTrace
 
 var Cu = Components.utils;
 var scope = {};

@@ -116,7 +116,7 @@ Http.getResource = function(aURL)
  * headers using {@link Http.removeHeadersFromPostText}
  * 
  * @param {Object} request The request object
- * @param {Object} context Current Firebug context (to get charset of the current document)
+ * @param {Object} context Current context (to get charset of the current document)
  */
 Http.readPostTextFromRequest = function(request, context)
 {

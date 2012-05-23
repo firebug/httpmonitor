@@ -409,7 +409,7 @@ Str.convertToUnicode = function(text, charset)
         }
 
         // the exception is worthless, make up a new one
-        throw new Error("Firebug failed to convert to unicode using charset: "+conv.charset+
+        throw new Error("Failed to convert to unicode using charset: "+conv.charset+
             " in @mozilla.org/intl/scriptableunicodeconverter");
     }
 };

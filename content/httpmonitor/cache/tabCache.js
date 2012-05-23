@@ -156,7 +156,7 @@ TabCache.prototype = Obj.extend(SourceCache.prototype,
         // This new implementation (TabCache) uses nsITraceableChannel so, all responses
         // should be already cached.
 
-        // xxxHonza: TODO entire implementation of this method should be removed in Firebug 1.5
+        // xxxHonza: TODO entire implementation of this method should be removed
         // xxxHonza: let's try to get the response from the cache till #449198 is fixed.
         var stream;
         var responseText;
