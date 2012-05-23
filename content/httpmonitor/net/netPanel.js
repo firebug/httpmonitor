@@ -48,7 +48,7 @@ var NetRequestEntry = NetMonitor.NetRequestEntry;
 // ********************************************************************************************* //
 
 /**
- * @panel Represents a Firebug panel that displayes info about HTTP activity associated with
+ * @panel Represents a panel that displayes info about HTTP activity associated with
  * the current page. This class is derived from <code>Panel</code> in order
  * to support activation (enable/disable). This allows to avoid (performance) expensive
  * features if the functionality is not necessary for the user.
@@ -1547,7 +1547,7 @@ var NetPanelSearch = function(panel, rowFinder)
 
     this.shouldSearchResponses = function()
     {
-        return Firebug["netSearchResponseBody"];
+        return Options.get("netSearchResponseBody");
     }
 };
 
