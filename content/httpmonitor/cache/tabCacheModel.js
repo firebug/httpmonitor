@@ -10,13 +10,12 @@ define([
     "httpmonitor/lib/url",
     "httpmonitor/lib/http",
     "httpmonitor/lib/string",
-    "httpmonitor/viewers/jsonViewer",       //xxxHonza: this dep should not be here
     "httpmonitor/lib/window",
     "httpmonitor/base/module",
     "httpmonitor/chrome/chrome",
 ],
 function(FBTrace, Obj, Options, RequestObserver, HttpResponseObserver, Events,
-    Url, Http, Str, JSONViewer, Win, Module, Chrome) {
+    Url, Http, Str, Win, Module, Chrome) {
 
 // ********************************************************************************************* //
 // Constants
@@ -38,6 +37,7 @@ var contentTypes =
     "text/x-setext": 1,
     "text/richtext": 1,
     "text/javascript": 1,
+    "text/x-javascript": 1,
     "text/jscript": 1,
     "text/tab-separated-values": 1,
     "text/rdf": 1,
@@ -66,7 +66,11 @@ var contentTypes =
     "application/x-js": 1,
     "multipart/mixed" : 1,
     "multipart/x-mixed-replace" : 1,
-    "image/svg+xml" : 1
+    "image/svg+xml" : 1,
+    "text/json": 1,
+    "text/x-json": 1,
+    "application/x-json": 1,
+    "application/json-rpc": 1
 };
 
 // ********************************************************************************************* //
@@ -112,11 +116,6 @@ var TabCacheModel = Obj.extend(Module,
             for (var i=0; i<list.length; i++)
                 contentTypes[list[i]] = 1;
         }
-
-        // Merge with JSON types
-        var jsonTypes = JSONViewer.contentTypes;
-        for (var p in jsonTypes)
-            contentTypes[p] = 1;
     },
 
     shutdown: function()

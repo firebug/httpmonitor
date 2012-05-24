@@ -22,13 +22,6 @@ define([
     "httpmonitor/chrome/infotip",
     "httpmonitor/net/netPanel",
     "httpmonitor/cache/tabCacheModel",
-
-    // Request/response body viewers are loaded here.
-    // xxxHonza: there should be API for creating new viewers in extensions.
-    "httpmonitor/viewers/xmlViewer",
-    "httpmonitor/viewers/svgViewer",
-    "httpmonitor/viewers/jsonViewer",
-    "httpmonitor/viewers/fontViewer",
 ],
 function(FBTrace, TabWatcher, Menu, Arr, Css, Locale, Events, Dom, Options,
     TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy, Chrome,

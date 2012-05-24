@@ -19,7 +19,7 @@ var Json = {};
 
 Json.parseJSONString = function(jsonString, originURL)
 {
-    if (FBTrace.DBG_JSONVIEWER)
+    if (FBTrace.DBG_JSON)
         FBTrace.sysout("jsonviewer.parseJSON; " + jsonString);
 
     // See if this is a Prototype style *-secure request.
@@ -54,7 +54,7 @@ Json.parseJSONString = function(jsonString, originURL)
     }
     catch(e)
     {
-        if (FBTrace.DBG_JSONVIEWER)
+        if (FBTrace.DBG_JSON)
             FBTrace.sysout("jsonviewer.parseJSON FAILS on "+originURL+" for \""+jsonString+
                 "\" with EXCEPTION "+e, e);
     }
@@ -65,12 +65,12 @@ Json.parseJSONString = function(jsonString, originURL)
     if (!m || !m[1])
         return null;
 
-    if (FBTrace.DBG_JSONVIEWER)
+    if (FBTrace.DBG_JSON)
         FBTrace.sysout("jsonviewer.parseJSONP; " + jsonString);
 
     var callbackName = m[1];
 
-    if (FBTrace.DBG_JSONVIEWER)
+    if (FBTrace.DBG_JSON)
         FBTrace.sysout("jsonviewer.parseJSONP; Look like we have a JSONP callback: " + callbackName);
 
     // Replace the original callback (it can be e.g. foo.bar[1]) with simple function name.
@@ -84,7 +84,7 @@ Json.parseJSONString = function(jsonString, originURL)
     }
     catch(ex)
     {
-        if (FBTrace.DBG_JSONVIEWER)
+        if (FBTrace.DBG_JSON)
             FBTrace.sysout("jsonviewer.parseJSON EXCEPTION", e);
     }
 

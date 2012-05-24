@@ -22,15 +22,11 @@ define([
     "httpmonitor/base/listener",
     "httpmonitor/base/rep",
     "httpmonitor/chrome/chrome",
-    "httpmonitor/viewers/xmlViewer",    //xxxHonza: viewers shouldn't be here
-    "httpmonitor/viewers/svgViewer",
-    "httpmonitor/viewers/jsonViewer",
-    "httpmonitor/viewers/fontViewer",
     "httpmonitor/net/netMonitor",
 ],
 function(FBTrace, Obj, Domplate, Locale, Events, Options, Url, Css, Dom, Win, Str,
     Json, Arr, ToggleBranch, DragDrop, NetUtils, NetProgress, Http, Listener, Rep, Chrome,
-    XMLViewer, SVGViewer, JSONViewer, FontViewer, NetMonitor) {
+    NetMonitor) {
 
 with (Domplate) {
 
@@ -1268,76 +1264,6 @@ var NetInfoPostData = domplate(Rep, new Listener(),
             )
         ),
 
-    // application/json
-    jsonTable:
-        TABLE({"class": "netInfoPostJSONTable", cellpadding: 0, cellspacing: 0,
-            "role": "presentation"},
-            TBODY({"role": "list", "aria-label": Locale.$STR("jsonviewer.tab.JSON")},
-                TR({"class": "netInfoPostJSONTitle", "role": "presentation"},
-                    TD({"role": "presentation" },
-                        DIV({"class": "netInfoPostParams"},
-                            Locale.$STR("jsonviewer.tab.JSON")
-                        )
-                    )
-                ),
-                TR(
-                    TD({"class": "netInfoPostJSONBody"})
-                )
-            )
-        ),
-
-    // application/xml
-    xmlTable:
-        TABLE({"class": "netInfoPostXMLTable", cellpadding: 0, cellspacing: 0,
-            "role": "presentation"},
-            TBODY({"role": "list", "aria-label": Locale.$STR("xmlviewer.tab.XML")},
-                TR({"class": "netInfoPostXMLTitle", "role": "presentation"},
-                    TD({"role": "presentation" },
-                        DIV({"class": "netInfoPostParams"},
-                            Locale.$STR("xmlviewer.tab.XML")
-                        )
-                    )
-                ),
-                TR(
-                    TD({"class": "netInfoPostXMLBody"})
-                )
-            )
-        ),
-
-    // image/svg+xml
-    svgTable:
-        TABLE({"class": "netInfoPostSVGTable", cellpadding: 0, cellspacing: 0,
-            "role": "presentation"},
-            TBODY({"role": "list", "aria-label": Locale.$STR("svgviewer.tab.SVG")},
-                TR({"class": "netInfoPostSVGTitle", "role": "presentation"},
-                    TD({"role": "presentation" },
-                        DIV({"class": "netInfoPostParams"},
-                            Locale.$STR("svgviewer.tab.SVG")
-                        )
-                    )
-                ),
-                TR(
-                    TD({"class": "netInfoPostSVGBody"})
-                )
-            )
-        ),
-
-    // application/x-woff
-    fontTable:
-      TABLE({"class": "netInfoPostFontTable", cellpadding: 0, cellspacing: 0,
-        "role": "presentation"},
-          TBODY({"role": "list", "aria-label": Locale.$STR("fontviewer.tab.Font")},
-              TR({"class": "netInfoPostFontTitle", "role": "presentation"},
-                  TD({"role": "presentation" },
-                      Locale.$STR("fontviewer.tab.Font")
-                  )
-              ),
-              TR(
-                  TD({"class": "netInfoPostFontBody"})
-              )
-          )
-      ),
-
     sourceTable:
         TABLE({"class": "netInfoPostSourceTable", cellpadding: 0, cellspacing: 0,
             "role": "presentation"},
@@ -1387,24 +1313,14 @@ var NetInfoPostData = domplate(Rep, new Listener(),
                 this.insertParts(parentNode, data);
         }
 
-        var contentType = NetUtils.findHeader(file.requestHeaders, "content-type");
-
-        // xxxHonza: there should be APIs for registering viewersw.
-        if (JSONViewer.isJSON(contentType, text))
-            this.insertJSON(parentNode, file, context);
-
-        if (XMLViewer.isXML(contentType))
-            this.insertXML(parentNode, file, context);
-
-        if (SVGViewer.isSVG(contentType))
-            this.insertSVG(parentNode, file, context);
-
-        if (FontViewer.isFont(contentType, file.href, text))
-            this.insertFont(parentNode, file, context);
-
-        var postText = NetUtils.getPostText(file, context);
+        // Notify listeners about update so, additional content can be appended
+        // into the post/put tab. This content is typically appended by post-body
+        // and response body viewers/formatters.
+        Events.dispatch(NetMonitor.NetInfoBody.fbListeners, "updatePostTabBody",
+            [parentNode, file, context]);
 
         // Make sure headers are not displayed in the 'source' section.
+        var postText = NetUtils.getPostText(file, context);
         postText = Http.removeHeadersFromPostText(file.request, postText);
         postText = NetUtils.formatPostText(postText);
         if (postText)
@@ -1431,54 +1347,6 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         var row = partsTable.getElementsByClassName("netInfoPostPartsTitle").item(0);
 
         NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: data.params}, row);
-    },
-
-    insertJSON: function(parentNode, file, context)
-    {
-        var text = NetUtils.getPostText(file, context);
-        var data = Json.parseJSONString(text, "http://" + file.request.originalURI.host);
-        if (!data)
-            return;
-
-        var jsonTable = this.jsonTable.append({}, parentNode);
-        var jsonBody = jsonTable.getElementsByClassName("netInfoPostJSONBody").item(0);
-
-        if (!this.toggles)
-            this.toggles = new ToggleBranch.ToggleBranch();
-
-        //xxxHonza: DOMPanel is not part of HTTP Monitor, should it be ported?
-        //DOMPanel.DirTable.tag.replace(
-        //    {object: data, toggles: this.toggles}, jsonBody);
-    },
-
-    insertXML: function(parentNode, file, context)
-    {
-        var text = NetUtils.getPostText(file, context);
-
-        var jsonTable = this.xmlTable.append({}, parentNode);
-        var jsonBody = jsonTable.getElementsByClassName("netInfoPostXMLBody").item(0);
-
-        XMLViewer.insertXML(jsonBody, text);
-    },
-
-    insertSVG: function(parentNode, file, context)
-    {
-        var text = NetUtils.getPostText(file, context);
-
-        var jsonTable = this.svgTable.append({}, parentNode);
-        var jsonBody = jsonTable.getElementsByClassName("netInfoPostSVGBody").item(0);
-
-        SVGViewer.insertSVG(jsonBody, text);
-    },
-
-    insertFont: function(parentNode, file, context)
-    {
-        var text = NetUtils.getPostText(file, context);
-
-        var fontTable = this.fontTable.append({}, parentNode);
-        var fontBody = fontTable.getElementsByClassName("netInfoPostFontBody").item(0);
-
-        FontViewer.insertFont(fontBody, text);
     },
 
     insertSource: function(parentNode, text)
