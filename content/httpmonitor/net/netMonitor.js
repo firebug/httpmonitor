@@ -59,6 +59,13 @@ var NetMonitor = Obj.extend(Module,
     {
         Module.initialize.apply(this, arguments);
 
+<<<<<<< HEAD
+=======
+        // Initialize options and pass in the pref domain for this application.
+        Options.initialize("extensions.httpmonitor");
+        Options.registerDefaultPrefs(DefaultPrefs);
+
+>>>>>>> Introduce documenLoadObserver firing an event when a new doc is requested to load
         // Register document load observer to get notification about new top document
         // being requested to load.
         this.loadObserver.register(this);
@@ -123,8 +130,13 @@ var NetMonitor = Obj.extend(Module,
         var context = Chrome.currentContext;
         if (!context || context.window != Win.getRootWindow(win))
         {
+<<<<<<< HEAD
             FBTrace.sysout("This request doesn't come from selected tab " +
                 Http.safeGetRequestName(request), context);
+=======
+            FBTrace.sysout("This request doesn't come from selected tab  " +
+                Http.safeGetRequestName(subject), context);
+>>>>>>> Introduce documenLoadObserver firing an event when a new doc is requested to load
             return;
         }
 
@@ -141,8 +153,20 @@ var NetMonitor = Obj.extend(Module,
         context.netProgress.loaded = false;
         context.netProgress.currentPhase = null;
 
+<<<<<<< HEAD
         if (FBTrace.DBG_NET)
             FBTrace.sysout("netMonitor.onModifyRequest; Top document loading...");
+=======
+        if (this.eventObserver)
+            this.eventObserver.unregisterListeners();
+
+        // Register an observer for window events (load, paint, etc.)
+        this.eventObserver = new WindowEventObserver(context);
+        this.eventObserver.registerListeners();
+
+        if (FBTrace.DBG_NET)
+            FBTrace.sysout("httpRequestObserver.onModifyRequest; Top document loading...");
+>>>>>>> Introduce documenLoadObserver firing an event when a new doc is requested to load
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -187,6 +211,10 @@ var NetMonitor = Obj.extend(Module,
             netProgress.httpRequestObserver = new HttpRequestObserver(context);
             netProgress.httpRequestObserver.registerObserver();
         }
+
+        // Register observer for HTTP events
+        netProgress.httpRequestObserver = new HttpRequestObserver(context);
+        netProgress.httpRequestObserver.registerObserver();
 
         // Add cache listener so, net panel has always fresh responses.
         // Safe to call multiple times.
