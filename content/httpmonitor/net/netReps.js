@@ -1416,7 +1416,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         if (!params || !params.length)
             return;
 
-        var paramTable = this.paramsTable.append(null, parentNode);
+        var paramTable = this.paramsTable.append({}, parentNode);
         var row = paramTable.getElementsByClassName("netInfoPostParamsTitle").item(0);
 
         NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: params}, row);
@@ -1427,7 +1427,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         if (!data.params || !data.params.length)
             return;
 
-        var partsTable = this.partsTable.append(null, parentNode);
+        var partsTable = this.partsTable.append({}, parentNode);
         var row = partsTable.getElementsByClassName("netInfoPostPartsTitle").item(0);
 
         NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: data.params}, row);
