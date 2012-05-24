@@ -26,11 +26,12 @@ define([
     "httpmonitor/chrome/infoTip",
     "httpmonitor/net/netMonitor",
     "httpmonitor/net/netFile",
+    "httpmonitor/net/netPanelSearch",
     "httpmonitor/net/netReps",
 ],
 function(FBTrace, Obj, Domplate, Xpcom, Locale, Events, Options, Url, Http,
     Css, Dom, Win, Search, Str, Arr, System, Menu, NetUtils, NetProgress, BrowserCache,
-    Panel, Chrome, InfoTip, NetMonitor, NetFile) {
+    Panel, Chrome, InfoTip, NetMonitor, NetFile, NetPanelSearch) {
 
 with (Domplate) {
 
@@ -670,64 +671,14 @@ NetPanel.prototype = Obj.extend(Panel,
 
     getSearchOptionsMenuItems: function()
     {
-        //xxxHonza
+        // xxxHonza: any default search options?
         return [];
-        /*return [
-            Search.searchOptionMenu("search.Case_Sensitive", "searchCaseSensitive",
-                "search.tip.Case_Sensitive"),
-            //Search.searchOptionMenu("search.net.Headers", "netSearchHeaders"),
-            //Search.searchOptionMenu("search.net.Parameters", "netSearchParameters"),
-            Search.searchOptionMenu("search.Use_Regular_Expression",
-                "searchUseRegularExpression", "search.tip.Use_Regular_Expression"),
-            Search.searchOptionMenu("search.net.Response_Bodies", "netSearchResponseBody",
-                "search.net.tip.Response_Bodies")
-        ];*/
     },
 
     search: function(text, reverse)
     {
-        if (!text)
-        {
-            delete this.currentSearch;
-            this.highlightNode(null);
-            return false;
-        }
-
-        var row;
-        if (this.currentSearch && text == this.currentSearch.text)
-        {
-            row = this.currentSearch.findNext(true, false, reverse, Search.isCaseSensitive(text));
-        }
-        else
-        {
-            this.currentSearch = new NetPanelSearch(this);
-            row = this.currentSearch.find(text, reverse, Search.isCaseSensitive(text));
-        }
-
-        if (row)
-        {
-            var sel = this.document.defaultView.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(this.currentSearch.range);
-
-            Dom.scrollIntoCenterView(row, this.panelNode);
-            if(this.currentSearch.shouldSearchResponses() &&
-                Dom.getAncestorByClass(row, "netInfoResponseText"))
-            {
-                this.highlightNode(row)
-            }
-            else
-            {
-                this.highlightNode(Dom.getAncestorByClass(row, "netRow"));
-            }
-            Events.dispatch(this.fbListeners, 'onNetMatchFound', [this, text, row]);
-            return true;
-        }
-        else
-        {
-            Events.dispatch(this.fbListeners, 'onNetMatchFound', [this, text, null]);
-            return false;
-        }
+        // xxxHonza: the search box needs to be implemented in the HTTPM UI
+        // NetPanelSearch should be used to search within the HTTP entries
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
