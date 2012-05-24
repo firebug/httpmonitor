@@ -31,7 +31,7 @@ define([
     "httpmonitor/viewers/fontViewer",
 ],
 function(FBTrace, TabWatcher, Menu, Arr, Css, Locale, Events, Dom, Options,
-    DefaultPrefs, TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy, Chrome,
+    TabListMenu, ConnectionMenu, LocalProxy, RemoteProxy, Chrome,
     NetMonitor) {
 
 // ********************************************************************************************* //
