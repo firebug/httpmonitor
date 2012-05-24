@@ -14,23 +14,21 @@ config.skinBaseUrl = "chrome://httpmonitor/skin/";
 // ********************************************************************************************* //
 // Setup
 
-// Forward all tracing into FBTrace console service.
-require(config, ["httpmonitor/lib/trace"], function(Trace)
+require(config, [
+    "httpmonitor/lib/trace",
+    "httpmonitor/lib/options",
+    "httpmonitor/chrome/defaultPrefs",
+    "httpmonitor/lib/locale"
+],
+function(Trace, Options, DefaultPrefs, Locale)
 {
+    // Forward all tracing into FBTrace console service.
     Trace.addListener(Cu.import("resource://httpmonitor/modules/fbtrace.js").FBTrace);
-});
 
-// Set domain for preferences.
-require(config, ["httpmonitor/lib/options", "httpmonitor/chrome/defaultPrefs"],
-    function(Options, DefaultPrefs)
-{
+    // Set domain for preferences.
     Options.initialize("extensions.httpmonitor");
     Options.registerDefaultPrefs(DefaultPrefs);
-});
 
-// Register string bundle
-require(config, ["httpmonitor/lib/locale"], function(Locale)
-{
     Locale.registerStringBundle("chrome://httpmonitor/locale/httpmonitor.properties");
 });
 
