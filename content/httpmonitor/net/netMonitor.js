@@ -131,12 +131,17 @@ var NetMonitor = Obj.extend(Module,
         if (!context || context.window != Win.getRootWindow(win))
         {
 <<<<<<< HEAD
+<<<<<<< HEAD
             FBTrace.sysout("This request doesn't come from selected tab " +
                 Http.safeGetRequestName(request), context);
 =======
             FBTrace.sysout("This request doesn't come from selected tab  " +
                 Http.safeGetRequestName(subject), context);
 >>>>>>> Introduce documenLoadObserver firing an event when a new doc is requested to load
+=======
+            FBTrace.sysout("This request doesn't come from selected tab " +
+                Http.safeGetRequestName(request), context);
+>>>>>>> Update tracing
             return;
         }
 
