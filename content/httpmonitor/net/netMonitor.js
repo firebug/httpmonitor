@@ -124,7 +124,7 @@ var NetMonitor = Obj.extend(Module,
         if (!context || context.window != Win.getRootWindow(win))
         {
             FBTrace.sysout("This request doesn't come from selected tab  " +
-                Http.safeGetRequestName(subject), context);
+                Http.safeGetRequestName(request), context);
             return;
         }
 
