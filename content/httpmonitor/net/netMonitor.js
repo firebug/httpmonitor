@@ -59,13 +59,6 @@ var NetMonitor = Obj.extend(Module,
     {
         Module.initialize.apply(this, arguments);
 
-<<<<<<< HEAD
-=======
-        // Initialize options and pass in the pref domain for this application.
-        Options.initialize("extensions.httpmonitor");
-        Options.registerDefaultPrefs(DefaultPrefs);
-
->>>>>>> Introduce documenLoadObserver firing an event when a new doc is requested to load
         // Register document load observer to get notification about new top document
         // being requested to load.
         this.loadObserver.register(this);
@@ -159,6 +152,7 @@ var NetMonitor = Obj.extend(Module,
         context.netProgress.currentPhase = null;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (FBTrace.DBG_NET)
             FBTrace.sysout("netMonitor.onModifyRequest; Top document loading...");
 =======
@@ -172,6 +166,10 @@ var NetMonitor = Obj.extend(Module,
         if (FBTrace.DBG_NET)
             FBTrace.sysout("httpRequestObserver.onModifyRequest; Top document loading...");
 >>>>>>> Introduce documenLoadObserver firing an event when a new doc is requested to load
+=======
+        if (FBTrace.DBG_NET)
+            FBTrace.sysout("netMonitor.onModifyRequest; Top document loading...");
+>>>>>>> Register window event listener within attachObserver method where all the other observers are registered too.
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -209,6 +207,7 @@ var NetMonitor = Obj.extend(Module,
             netProgress.httpActivityObserver = new HttpActivityObserver(context);
             netProgress.httpActivityObserver.registerObserver();
         }
+<<<<<<< HEAD
 
         // Register observer for HTTP events
         if (!netProgress.httpRequestObserver)
@@ -216,10 +215,15 @@ var NetMonitor = Obj.extend(Module,
             netProgress.httpRequestObserver = new HttpRequestObserver(context);
             netProgress.httpRequestObserver.registerObserver();
         }
+=======
+>>>>>>> Register window event listener within attachObserver method where all the other observers are registered too.
 
         // Register observer for HTTP events
-        netProgress.httpRequestObserver = new HttpRequestObserver(context);
-        netProgress.httpRequestObserver.registerObserver();
+        if (!netProgress.httpRequestObserver)
+        {
+            netProgress.httpRequestObserver = new HttpRequestObserver(context);
+            netProgress.httpRequestObserver.registerObserver();
+        }
 
         // Add cache listener so, net panel has always fresh responses.
         // Safe to call multiple times.
