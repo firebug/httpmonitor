@@ -1416,7 +1416,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         if (!params || !params.length)
             return;
 
-        var paramTable = this.paramsTable.append(null, parentNode);
+        var paramTable = this.paramsTable.append({}, parentNode);
         var row = paramTable.getElementsByClassName("netInfoPostParamsTitle").item(0);
 
         NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: params}, row);
@@ -1427,7 +1427,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         if (!data.params || !data.params.length)
             return;
 
-        var partsTable = this.partsTable.append(null, parentNode);
+        var partsTable = this.partsTable.append({}, parentNode);
         var row = partsTable.getElementsByClassName("netInfoPostPartsTitle").item(0);
 
         NetMonitor.NetInfoBody.headerDataTag.insertRows({headers: data.params}, row);
@@ -1440,7 +1440,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
         if (!data)
             return;
 
-        var jsonTable = this.jsonTable.append(null, parentNode);
+        var jsonTable = this.jsonTable.append({}, parentNode);
         var jsonBody = jsonTable.getElementsByClassName("netInfoPostJSONBody").item(0);
 
         if (!this.toggles)
@@ -1455,7 +1455,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
     {
         var text = NetUtils.getPostText(file, context);
 
-        var jsonTable = this.xmlTable.append(null, parentNode);
+        var jsonTable = this.xmlTable.append({}, parentNode);
         var jsonBody = jsonTable.getElementsByClassName("netInfoPostXMLBody").item(0);
 
         XMLViewer.insertXML(jsonBody, text);
@@ -1465,7 +1465,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
     {
         var text = NetUtils.getPostText(file, context);
 
-        var jsonTable = this.svgTable.append(null, parentNode);
+        var jsonTable = this.svgTable.append({}, parentNode);
         var jsonBody = jsonTable.getElementsByClassName("netInfoPostSVGBody").item(0);
 
         SVGViewer.insertSVG(jsonBody, text);
@@ -1475,7 +1475,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
     {
         var text = NetUtils.getPostText(file, context);
 
-        var fontTable = this.fontTable.append(null, parentNode);
+        var fontTable = this.fontTable.append({}, parentNode);
         var fontBody = fontTable.getElementsByClassName("netInfoPostFontBody").item(0);
 
         FontViewer.insertFont(fontBody, text);
@@ -1483,7 +1483,7 @@ var NetInfoPostData = domplate(Rep, new Listener(),
 
     insertSource: function(parentNode, text)
     {
-        var sourceTable = this.sourceTable.append(null, parentNode);
+        var sourceTable = this.sourceTable.append({}, parentNode);
         var row = sourceTable.getElementsByClassName("netInfoPostSourceTitle").item(0);
 
         var param = {value: text};
