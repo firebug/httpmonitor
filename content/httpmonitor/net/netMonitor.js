@@ -123,18 +123,8 @@ var NetMonitor = Obj.extend(Module,
         var context = Chrome.currentContext;
         if (!context || context.window != Win.getRootWindow(win))
         {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            FBTrace.sysout("This request doesn't come from selected tab " +
-                Http.safeGetRequestName(request), context);
-=======
             FBTrace.sysout("This request doesn't come from selected tab  " +
                 Http.safeGetRequestName(subject), context);
->>>>>>> Introduce documenLoadObserver firing an event when a new doc is requested to load
-=======
-            FBTrace.sysout("This request doesn't come from selected tab " +
-                Http.safeGetRequestName(request), context);
->>>>>>> Update tracing
             return;
         }
 
@@ -151,25 +141,8 @@ var NetMonitor = Obj.extend(Module,
         context.netProgress.loaded = false;
         context.netProgress.currentPhase = null;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         if (FBTrace.DBG_NET)
             FBTrace.sysout("netMonitor.onModifyRequest; Top document loading...");
-=======
-        if (this.eventObserver)
-            this.eventObserver.unregisterListeners();
-
-        // Register an observer for window events (load, paint, etc.)
-        this.eventObserver = new WindowEventObserver(context);
-        this.eventObserver.registerListeners();
-
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("httpRequestObserver.onModifyRequest; Top document loading...");
->>>>>>> Introduce documenLoadObserver firing an event when a new doc is requested to load
-=======
-        if (FBTrace.DBG_NET)
-            FBTrace.sysout("netMonitor.onModifyRequest; Top document loading...");
->>>>>>> Register window event listener within attachObserver method where all the other observers are registered too.
     },
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -214,16 +187,6 @@ var NetMonitor = Obj.extend(Module,
             netProgress.httpActivityObserver = new HttpActivityObserver(context);
             netProgress.httpActivityObserver.registerObserver();
         }
-<<<<<<< HEAD
-
-        // Register observer for HTTP events
-        if (!netProgress.httpRequestObserver)
-        {
-            netProgress.httpRequestObserver = new HttpRequestObserver(context);
-            netProgress.httpRequestObserver.registerObserver();
-        }
-=======
->>>>>>> Register window event listener within attachObserver method where all the other observers are registered too.
 
         // Register observer for HTTP events
         if (!netProgress.httpRequestObserver)
