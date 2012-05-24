@@ -48,16 +48,15 @@ const Ci = Components.interfaces;
  * the main root that must be loaded. All the other modules are specified as (direct or
  * indirect) dependencies.
  */
-var NewHttpMonitor =
+var HttpMonitor =
 /** @lends HttpMonitor */
 {
     initialize: function(win, config)
     {
         Chrome.config = config || {};
 
-        HttpMonitor = NewHttpMonitor;
         top = win;
-        win.HttpMonitor = NewHttpMonitor;
+        win.HttpMonitor = HttpMonitor;
 
         // Should be set to false in final release.
         FBTrace.DBG_ERRORS = true;
@@ -285,7 +284,7 @@ var NewHttpMonitor =
 // ********************************************************************************************* //
 // Registration
 
-return NewHttpMonitor;
+return HttpMonitor;
 
 // ********************************************************************************************* //
 });
