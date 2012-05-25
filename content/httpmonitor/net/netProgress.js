@@ -128,7 +128,7 @@ NetProgress.prototype =
         {
             // Parse URL params so, they are available for conditional breakpoints.
             file.urlParams = Url.parseURLParams(file.href);
-            //xxxHonza: this.breakOnXHR(file);
+            this.breakOnXHR(file);
         }
     },
 
@@ -188,49 +188,11 @@ NetProgress.prototype =
         }
     },
 
-    /*breakOnXHR: function breakOnXHR(file)
+    breakOnXHR: function breakOnXHR(file)
     {
-        var halt = false;
-        var conditionIsFalse = false;
-
-        // If there is an enabled breakpoint with condition:
-        // 1) break if the condition is evaluated to true.
-        var breakpoints = this.context.netProgress.breakpoints;
-        var bp = breakpoints ? breakpoints.findBreakpoint(file.getFileURL()) : null;
-        if (bp && bp.checked)
-        {
-            halt = true;
-            if (bp.condition)
-            {
-                halt = bp.evaluateCondition(this.context, file);
-                conditionIsFalse = !halt;
-            }
-        }
-
-        // 2) If break on XHR flag is set and there is no condition evaluated to false,
-        // break with "break on next" breaking cause (this new breaking cause can override
-        // an existing one that is set when evaluating a breakpoint condition).
-        if (this.context.breakOnXHR && !conditionIsFalse)
-        {
-            this.context.breakingCause = {
-                title: Locale.$STR("net.Break On XHR"),
-                message: Str.cropString(file.href, 200),
-                copyAction: Obj.bindFixed(System.copyToClipboard, System, file.href)
-            };
-
-            halt = true;
-        }
-
-        // Ignore if there is no reason to break.
-        if (!halt)
-            return;
-
-        // Even if the execution was stopped at breakpoint reset the global
-        // breakOnXHR flag.
-        this.context.breakOnXHR = false;
-
-        Breakpoint.breakNow(this.context.getPanel(panelName, true));
-    },*/
+        // It's up to registered listeners to break in available debugger.
+        Events.dispatch(this.fbListeners, "breakOnXHR", [this.context, file]);
+    },
 
     respondedHeaderFile: function respondedHeaderFile(request, time, extraStringData)
     {
