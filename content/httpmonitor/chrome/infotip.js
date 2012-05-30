@@ -213,9 +213,6 @@ var InfoTip = Obj.extend(Module,
 
     showInfoTip: function(infoTip, panel, target, x, y, rangeParent, rangeOffset)
     {
-        if (!Options.get("showInfoTips"))
-            return;
-
         var scrollParent = Dom.getOverflowParent(target);
         var scrollX = x + (scrollParent ? scrollParent.scrollLeft : 0);
 

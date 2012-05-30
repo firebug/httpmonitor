@@ -14,19 +14,12 @@ function() {
 var DefaultPrefs =
 {
 // Global
-    "textSize": 0,
-    "showInfoTips": true,
-    "toolbarCustomizationDone": false,
     "alwaysOpen": false,
-    "stringCropLength": 50, 
-
-// Console
-    "showNetworkErrors": true,
+    "stringCropLength": 50,
 
 // Net
     "netFilterCategory": "all",
     "net.logLimit": 500,
-    "net.enableSites": false,
     "netDisplayedResponseLimit": 102400,
     "netDisplayedPostBodyLimit": 10240,
     "net.hiddenColumns": "netProtocolCol netLocalAddressCol",
@@ -36,9 +29,6 @@ var DefaultPrefs =
     "netShowPaintEvents": false,
     "netShowBFCacheResponses": true,
     "netHtmlPreviewHeight": 100,
-
-// JSON Preview
-    "sortJsonPreview": false,
 
 // Cache
     "cache.mimeTypes": "",
