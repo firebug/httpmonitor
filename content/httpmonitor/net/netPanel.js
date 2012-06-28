@@ -207,7 +207,7 @@ NetPanel.prototype = Obj.extend(Panel,
 
         this.showToolbarButtons("fbNetButtons", false);
 
-        delete this.infoTipURL;  // clear the state that is tracking the infotip so it is reset after next show()
+        delete this.infoTipURL;  // clear the state that is tracking the infoTip so it is reset after next show()
         this.wasScrolledToBottom = Dom.isScrolledToBottom(this.panelNode);
 
         clearInterval(this.layoutInterval);

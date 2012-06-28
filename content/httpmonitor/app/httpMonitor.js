@@ -19,7 +19,7 @@ define([
 
     // These are independent modules. We don't actually need to reference them, but
     // they need to be loaded.
-    "httpmonitor/chrome/infotip",
+    "httpmonitor/chrome/infoTip",
     "httpmonitor/net/netPanel",
     "httpmonitor/cache/tabCacheModel",
 ],

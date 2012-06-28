@@ -254,7 +254,7 @@ var InfoTip = Obj.extend(Module,
             }
 
             if (FBTrace.DBG_INFOTIP)
-                FBTrace.sysout("infotip.showInfoTip; top: " + infoTip.style.top +
+                FBTrace.sysout("infoTip.showInfoTip; top: " + infoTip.style.top +
                     ", left: " + infoTip.style.left + ", bottom: " + infoTip.style.bottom +
                     ", right:" + infoTip.style.right + ", offsetHeight: " + infoTip.offsetHeight +
                     ", offsetWidth: " + infoTip.offsetWidth +
@@ -316,7 +316,7 @@ var InfoTip = Obj.extend(Module,
         var fontObject = Fonts.getFontInfo(null, null, fontName.replace(/"/g, ""));
 
         if (FBTrace.DBG_INFOTIP)
-            FBTrace.sysout("infotip.populateFontFamilyInfoTip;", {fontName: fontName,
+            FBTrace.sysout("infoTip.populateFontFamilyInfoTip;", {fontName: fontName,
                 fontObject: fontObject});
 
         var node = this.tags.fontFamilyTag.replace({fontStyles: fontStyles, fontName: fontName,
