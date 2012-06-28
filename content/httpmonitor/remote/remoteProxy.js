@@ -28,6 +28,7 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         this.protocol.getTabList(function(packet)
         {
             var result = [];
+            var networkMonitorActor = packet.networkMonitorActor;
             var tabs = packet.tabs;
             for (var i=0; i<tabs.length; ++i)
             {
