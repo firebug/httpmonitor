@@ -25,10 +25,11 @@ RemoteProxy.prototype = Obj.extend(Proxy,
         if (FBTrace.DBG_REMOTENETMONITOR)
             FBTrace.sysout("remotenet; RemoteProxy.getTabs()");
 
+        var self = this;
         this.protocol.getTabList(function(packet)
         {
             var result = [];
-            var networkMonitorActor = packet.networkMonitorActor;
+            self.protocol.traceActor = packet.traceActor;
             var tabs = packet.tabs;
             for (var i=0; i<tabs.length; ++i)
             {
@@ -36,9 +37,9 @@ RemoteProxy.prototype = Obj.extend(Proxy,
                 result.push({
                     id: tab.actor,
                     label: tab.title ? tab.title : tab.url,
+                    networkMonitorActor: tab.networkMonitorActor
                 })
             }
-
             callback(result);
         });
     },

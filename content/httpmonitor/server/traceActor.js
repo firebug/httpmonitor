@@ -124,23 +124,7 @@ TraceActor.prototype.requestTypes =
     "detach": TraceActor.prototype.onDetach,
 };
 
-// ********************************************************************************************* //
-// Trace Actor Handler
-
-function traceActorHandler(rootActor, request)
-{
-    // Reuse a previously-created actor, if any.
-    if (rootActor.traceActor)
-        return rootActor.traceActor.grip();
-
-    var actor = new TraceActor(rootActor);
-    rootActor.traceActor = actor;
-    rootActor.conn.addActor(actor);
-
-    return actor.grip();
-}
-
-DebuggerServer.addGlobalActor("traceActor", TraceActor);
+DebuggerServer.addGlobalActor(TraceActor, "traceActor");
 
 // ********************************************************************************************* //
 });
