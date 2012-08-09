@@ -56,7 +56,7 @@ var HttpServer =
                 if (!DebuggerServer.initialized)
                 {
                     // Initialize the server (e.g. appends script debugger actors)
-                    DebuggerServer.init(HttpServer._allowConnection);
+                    DebuggerServer.init();
                     DebuggerServer.addBrowserActors();
                 }
                 // Open a TCP listener
@@ -74,33 +74,6 @@ var HttpServer =
         FBTrace.sysout("HttpServer; shutdown");
 
         DebuggerServer.closeListener();
-    },
-
-    /**
-     * Prompt the user to accept or decline the incoming connection.
-     *
-     * @return true if the connection should be permitted, false otherwise
-     */
-    _allowConnection: function()
-    {
-        let title = "Incoming Connection";
-        let msg = "An incoming request to permit remote debugging connection was detected. A remote client can take complete control over your browser! Allow connection?";
-        let disableButton = "Disable";
-        let prompt = Services.prompt;
-        let flags = prompt.BUTTON_POS_0 * prompt.BUTTON_TITLE_OK +
-                    prompt.BUTTON_POS_1 * prompt.BUTTON_TITLE_CANCEL +
-                    prompt.BUTTON_POS_2 * prompt.BUTTON_TITLE_IS_STRING +
-                    prompt.BUTTON_POS_1_DEFAULT;
-        let result = prompt.confirmEx(null, title, msg, flags, null, null,
-                                      disableButton, null, { value: false });
-        if (result == 0) {
-            return true;
-        }
-        if (result == 2) {
-            DebuggerServer.closeListener(true);
-            Services.prefs.setBoolPref("devtools.debugger.remote-enabled", false);
-        }
-        return false;
     },
 }
 
