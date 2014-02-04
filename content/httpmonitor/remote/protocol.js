@@ -95,11 +95,6 @@ Protocol.prototype =
         return this.currentTab ? this.currentTab.actor : null;
     },
 
-    getNetActor: function(tabActor, callback)
-    {
-        this.connection.sendPacket(tabActor, "networkMonitorActor", true, callback);
-    },
-
     subscribe: function(netActor, callback)
     {
         if (this.currentNetActor)
@@ -139,13 +134,10 @@ Protocol.prototype =
 
         // A tab has been selected so, subscribe to the Net monitor actor. The callback
         // will receive events about any HTTP traffic within the target tab.
-        this.getNetActor(tabActor.id, function(packet)
-        {
-            self.subscribe(packet.actor, netEvent);
+        self.subscribe(tabActor.networkMonitorActor, netEvent);
 
-            // Also register callback for 'tabNavigated' events.
-            self.connection.addCallback(tabActor.id, tabNavigated, false);
-        });
+        // Also register callback for 'tabNavigated' events.
+        self.connection.addCallback(tabActor.id, tabNavigated, false);
     },
 
     onTabUnselected: function(tabActor)

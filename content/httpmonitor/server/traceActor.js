@@ -124,33 +124,7 @@ TraceActor.prototype.requestTypes =
     "detach": TraceActor.prototype.onDetach,
 };
 
-// ********************************************************************************************* //
-// Trace Actor Handler
-
-function traceActorHandler(rootActor, request)
-{
-    // Reuse a previously-created actor, if any.
-    if (rootActor.traceActor)
-        return rootActor.traceActor.grip();
-
-    var actor = new TraceActor(rootActor);
-    rootActor.traceActor = actor;
-    rootActor.conn.addActor(actor);
-
-    return actor.grip();
-}
-
-// xxxHonza: I believe this should be part of dbg-browser-actor.js
-if (typeof(DebuggerServer.addRequest) == "undefined")
-{
-    DebuggerServer.addRequest = function DS_addRequest(aName, aFunction) {
-      DebuggerServer.BrowserRootActor.prototype.requestTypes[aName] = function(aRequest) {
-        return aFunction(this, aRequest);
-      }
-    };
-}
-
-DebuggerServer.addRequest("traceActor", traceActorHandler);
+DebuggerServer.addGlobalActor(TraceActor, "traceActor");
 
 // ********************************************************************************************* //
 });

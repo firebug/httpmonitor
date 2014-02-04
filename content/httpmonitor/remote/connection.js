@@ -13,7 +13,7 @@ var Cu = Components.utils;
 
 try
 {
-    Cu["import"]("resource:///modules/devtools/dbg-client.jsm");
+    Cu["import"]("resource://gre/modules/devtools/dbg-client.jsm");
 }
 catch (err)
 {
